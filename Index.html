@@ -29,17 +29,25 @@ const BRD="rgba(0,0,0,0.07)";const GRN="#10B981";
 function LiveTracker(){
   var SUPA_URL="https://rgmuqduzunbpfdmuktdr.supabase.co";
   var SUPA_KEY="sb_publishable_A6wN98bBlt5v31o1ucy9xQ_s_aIkSqz";
-  var [counts,setCounts]=useState({i:4,c:7,p:3});
+  var [inv,setInv]=useState(4);
+  var [con,setCon]=useState(7);
+  var [prop,setProp]=useState(3);
   useEffect(function(){
-    fetch(SUPA_URL+"/rest/v1/investors?select=id",{headers:{"apikey":SUPA_KEY,"Prefer":"count=exact","Range":"0-0"}}).then(function(r){var cr=r.headers.get("content-range");if(cr){var t=parseInt(cr.split("/")[1]);if(!isNaN(t))setCounts(function(s){return{...s,i:Math.max(4,t)};});}});
-    fetch(SUPA_URL+"/rest/v1/contractors?select=id",{headers:{"apikey":SUPA_KEY,"Prefer":"count=exact","Range":"0-0"}}).then(function(r){var cr=r.headers.get("content-range");if(cr){var t=parseInt(cr.split("/")[1]);if(!isNaN(t))setCounts(function(s){return{...s,c:Math.max(7,t)};});}});
-    fetch(SUPA_URL+"/rest/v1/listings?select=id",{headers:{"apikey":SUPA_KEY,"Prefer":"count=exact","Range":"0-0"}}).then(function(r){var cr=r.headers.get("content-range");if(cr){var t=parseInt(cr.split("/")[1]);if(!isNaN(t))setCounts(function(s){return{...s,p:Math.max(3,t)};});}});
+    function getCount(table,base,setter){
+      fetch(SUPA_URL+"/rest/v1/"+table+"?select=id",{headers:{"apikey":SUPA_KEY,"Prefer":"count=exact","Range":"0-0"}}).then(function(r){
+        var cr=r.headers.get("content-range");
+        if(cr){var t=parseInt(cr.split("/")[1]);if(!isNaN(t)&&t>base)setter(t);}
+      }).catch(function(){});
+    }
+    getCount("investors",4,setInv);
+    getCount("contractors",7,setCon);
+    getCount("listings",3,setProp);
   },[]);
   return(
     <div style={{background:BLK,padding:"28px 6%"}}>
       <div style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,0.2)",textTransform:"uppercase",letterSpacing:"0.14em",marginBottom:16,textAlign:"center"}}>Live Platform Stats</div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16}}>
-        {[["Total "+counts.i,"Vetted Investors"],["Total "+counts.c,"Verified Contractors"],["Total "+counts.p,"Active Properties"],["Total 3","States Live"]].map(function(item){return(
+        {[["Total "+inv,"Vetted Investors"],["Total "+con,"Verified Contractors"],["Total "+prop,"Active Properties"],["Total 3","States Live"]].map(function(item){return(
           <div key={item[1]} style={{textAlign:"center"}}>
             <div style={{fontSize:"clamp(16px,3vw,28px)",fontWeight:900,background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",letterSpacing:"-0.02em"}}>{item[0]}</div>
             <div style={{fontSize:9,color:"rgba(255,255,255,0.25)",marginTop:4,textTransform:"uppercase",letterSpacing:"0.08em",lineHeight:1.4}}>{item[1]}</div>
@@ -1118,7 +1126,6 @@ function App(){
   var [fadeOut,setFadeOut]=useState(false);
   var [landingVis,setLandingVis]=useState(false);
   var [selectedDeal,setSelectedDeal]=useState(null);
-  var [view2,setView2]=useState(null);
   useEffect(function(){
     document.title="FundFlip \u2014 AI-Powered Inherited Home Investment";
     setTimeout(function(){setFadeOut(true);},1700);
