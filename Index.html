@@ -25,6 +25,197 @@ const BLK="#09090B";const WHT="#FFFFFF";const BG="#FAFAFA";const BGA="#F4F4F5";
 const TM="#3F3F46";const TMU="#71717A";const TL="#A1A1AA";const TF="#D4D4D8";
 const BRD="rgba(0,0,0,0.07)";const GRN="#10B981";
 
+
+function LiveTracker(){
+  var SUPA_URL="https://rgmuqduzunbpfdmuktdr.supabase.co";
+  var SUPA_KEY="sb_publishable_A6wN98bBlt5v31o1ucy9xQ_s_aIkSqz";
+  var [counts,setCounts]=useState({investors:4,contractors:7,properties:3,states:3});
+  useEffect(function(){
+    async function fetchCounts(){
+      try{
+        var [inv,con,prop]=await Promise.all([
+          fetch(SUPA_URL+"/rest/v1/investors?select=id",{headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Prefer":"count=exact","Range":"0-0"}}).then(function(r){return r.headers.get("content-range");}),
+          fetch(SUPA_URL+"/rest/v1/contractors?select=id",{headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Prefer":"count=exact","Range":"0-0"}}).then(function(r){return r.headers.get("content-range");}),
+          fetch(SUPA_URL+"/rest/v1/listings?select=id",{headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Prefer":"count=exact","Range":"0-0"}}).then(function(r){return r.headers.get("content-range");}),
+        ]);
+        function parseCount(cr,base){
+          if(!cr)return base;
+          var parts=cr.split("/");
+          var total=parseInt(parts[parts.length-1]);
+          return isNaN(total)?base:Math.max(base,total);
+        }
+        setCounts({
+          investors:parseCount(inv,4),
+          contractors:parseCount(con,7),
+          properties:parseCount(prop,3),
+          states:3
+        });
+      }catch(e){console.log(e);}
+    }
+    fetchCounts();
+    var interval=setInterval(fetchCounts,30000);
+    return function(){clearInterval(interval);};
+  },[]);
+  return(
+    <div style={{background:BLK,padding:"32px 6%"}}>
+      <div style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.25)",textTransform:"uppercase",letterSpacing:"0.14em",marginBottom:20,textAlign:"center"}}>Live Platform Stats</div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:20}}>
+        {[["Total "+counts.investors,"Vetted Investors"],["Total "+counts.contractors,"Verified Contractors"],["Total "+counts.properties,"Active Properties"],["Total "+counts.states,"States Live"]].map(function(item){return(
+          <div key={item[1]} style={{textAlign:"center"}}>
+            <div style={{fontSize:"clamp(20px,3.5vw,36px)",fontWeight:900,background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",letterSpacing:"-0.03em",lineHeight:1}}>{item[0]}</div>
+            <div style={{fontSize:10,color:"rgba(255,255,255,0.3)",marginTop:6,textTransform:"uppercase",letterSpacing:"0.1em",lineHeight:1.4}}>{item[1]}</div>
+          </div>
+        );})}
+      </div>
+    </div>
+  );
+}
+
+function ContractorSignup({onBack}){
+  var SUPA_URL="https://rgmuqduzunbpfdmuktdr.supabase.co";
+  var SUPA_KEY="sb_publishable_A6wN98bBlt5v31o1ucy9xQ_s_aIkSqz";
+  var [step,setStep]=useState(1);
+  var [done,setDone]=useState(false);
+  var [saving,setSaving]=useState(false);
+  var [company,setCompany]=useState("");
+  var [name,setName]=useState("");
+  var [phone,setPhone]=useState("");
+  var [email,setEmail]=useState("");
+  var [license,setLicense]=useState("");
+  var [insurance,setInsurance]=useState("");
+  var [state,setState]=useState("");
+  var [specialty,setSpecialty]=useState("");
+  var [experience,setExperience]=useState("");
+  var inp={width:"100%",padding:"12px 14px",borderRadius:9,fontSize:14,border:"1.5px solid "+BRD,background:BG,color:BLK,outline:"none",lineHeight:1,boxSizing:"border-box"};
+  function pill(a){return{padding:"9px 14px",borderRadius:8,fontSize:12,fontWeight:600,border:"1.5px solid "+(a?ROSE:BRD),background:a?RF:WHT,color:a?ROSE:TMU,cursor:"pointer",lineHeight:1};}
+  async function submit(){
+    setSaving(true);
+    try{
+      await fetch(SUPA_URL+"/rest/v1/contractors",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Prefer":"return=minimal"},
+        body:JSON.stringify({company:company,name:name,phone:phone,email:email,license:license,insurance:insurance,state:state,specialty:specialty,experience:experience,status:"pending"})
+      });
+      await fetch("https://api.resend.com/emails",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","Authorization":"Bearer re_EkD2DbHU_4EjXN4DuAAAFq1c54qhcBfF3"},
+        body:JSON.stringify({
+          from:"FundFlip <onboarding@resend.dev>",
+          to:[email],
+          subject:"Your FundFlip contractor application was received",
+          html:"<div style='font-family:Inter,sans-serif;max-width:560px;margin:0 auto;padding:40px 20px;'><div style='font-size:22px;font-weight:900;color:#09090B;margin-bottom:32px;'>Fund<span style='color:#F43F5E;'>Flip</span></div><h1 style='font-size:24px;font-weight:800;color:#09090B;margin-bottom:12px;'>Application received, "+name+".</h1><p style='font-size:15px;color:#3F3F46;line-height:1.7;margin-bottom:24px;'>We received your application for <strong>"+company+"</strong>. Our vetting team will review your license and insurance within 3 business days and reach out either way.</p><div style='background:#FAFAFA;border-radius:12px;padding:20px;margin-bottom:24px;'><div style='font-size:13px;color:#71717A;line-height:1.7;'>FundFlip vets every contractor before approval. We check license status, insurance coverage, references, and conduct a personal interview. Only the best work on our deals.</div></div><div style='font-size:12px;color:#A1A1AA;'>The FundFlip Team</div></div>"
+        })
+      });
+    }catch(e){console.log(e);}
+    setSaving(false);
+    setDone(true);
+  }
+  return(
+    <div style={{minHeight:"100vh",background:BG,fontFamily:"Inter,sans-serif",color:BLK}}>
+      <div style={{background:WHT,borderBottom:"1px solid "+BRD,padding:"0 5%",height:48,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:200}}>
+        <button onClick={onBack} style={{background:BG,border:"1px solid "+BRD,borderRadius:6,padding:"5px 12px",color:TMU,fontSize:12,cursor:"pointer"}}>{"← Back"}</button>
+        <span style={{fontWeight:900,fontSize:14,letterSpacing:"-0.03em",color:BLK}}>Fund<span style={{color:ROSE}}>Flip</span></span>
+        <div style={{width:60}}/>
+      </div>
+      <div style={{maxWidth:580,margin:"0 auto",padding:"32px 5% 60px"}}>
+        {done?(
+          <div style={{textAlign:"center",padding:"40px 20px"}}>
+            <div style={{fontSize:48,marginBottom:16}}>{"🔨"}</div>
+            <div style={{fontWeight:900,fontSize:24,color:BLK,marginBottom:10}}>Application received.</div>
+            <div style={{fontSize:14,color:TMU,lineHeight:1.7,maxWidth:340,margin:"0 auto 28px"}}>Our vetting team will review your license and insurance within 3 business days. Check your email for confirmation.</div>
+            <button onClick={onBack} style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:10,padding:"13px 28px",color:WHT,fontSize:13,fontWeight:700,cursor:"pointer"}}>Back to FundFlip</button>
+          </div>
+        ):(
+          <div>
+            <div style={{textAlign:"center",marginBottom:28}}>
+              <div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:10}}>Contractor Application</div>
+              <div style={{fontSize:28,fontWeight:900,letterSpacing:"-0.04em",color:BLK,marginBottom:10}}>Work on FundFlip deals.</div>
+              <div style={{fontSize:14,color:TMU,lineHeight:1.7}}>Join our vetted network. Get consistent rehab work with escrow-guaranteed milestone payments.</div>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:24}}>
+              {[["💰","Escrow Pay","Every dollar secured before work begins"],["📋","Clear Scope","Locked scope means no disputes"],["⭐","More Work","Top contractors get first access"]].map(function(item){return(
+                <div key={item[1]} style={{background:WHT,border:"1px solid "+BRD,borderRadius:12,padding:"14px",textAlign:"center"}}>
+                  <div style={{fontSize:22,marginBottom:6}}>{item[0]}</div>
+                  <div style={{fontWeight:700,fontSize:12,color:BLK,marginBottom:4}}>{item[1]}</div>
+                  <div style={{fontSize:11,color:TMU,lineHeight:1.5}}>{item[2]}</div>
+                </div>
+              );})}
+            </div>
+            <div style={{height:4,background:BGA,borderRadius:99,marginBottom:20,overflow:"hidden"}}>
+              <div style={{height:"100%",width:step===1?"50%":"100%",background:"linear-gradient(90deg,"+ROSE+","+ROSE2+")",transition:"width 0.4s"}}/>
+            </div>
+            {step===1?(
+              <div style={{background:WHT,border:"1px solid "+BRD,borderRadius:14,padding:"24px 20px",marginBottom:16}}>
+                <div style={{fontWeight:700,fontSize:15,color:BLK,marginBottom:16}}>Company Details</div>
+                <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:6}}>Company Name</div>
+                    <input style={inp} placeholder="Rodriguez Construction LLC" value={company} onChange={function(e){setCompany(e.target.value);}}/>
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+                    <div>
+                      <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:6}}>Your Name</div>
+                      <input style={inp} placeholder="Miguel Rodriguez" value={name} onChange={function(e){setName(e.target.value);}}/>
+                    </div>
+                    <div>
+                      <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:6}}>Phone</div>
+                      <input style={inp} placeholder="(555) 000-0000" value={phone} onChange={function(e){setPhone(e.target.value);}}/>
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:6}}>Email</div>
+                    <input style={inp} placeholder="you@company.com" value={email} onChange={function(e){setEmail(e.target.value);}}/>
+                  </div>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:6}}>State License Number</div>
+                    <input style={inp} placeholder="e.g. CA 891234" value={license} onChange={function(e){setLicense(e.target.value);}}/>
+                  </div>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:8}}>Insurance Coverage</div>
+                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                      {["$500K","$1M","$2M","$2M+"].map(function(s){return <button key={s} onClick={function(){setInsurance(s);}} style={pill(insurance===s)}>{s}</button>;})}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:8}}>Operating State</div>
+                    <div style={{display:"flex",gap:8}}>
+                      {["CA","CO","VA"].map(function(s){return <button key={s} onClick={function(){setState(s);}} style={pill(state===s)}>{s}</button>;})}
+                    </div>
+                  </div>
+                  <button onClick={function(){if(company&&name&&license)setStep(2);}} style={{padding:"13px",borderRadius:10,border:"none",fontSize:14,fontWeight:700,cursor:company&&name&&license?"pointer":"default",background:company&&name&&license?"linear-gradient(135deg,"+ROSE+","+ROSE2+")":BGA,color:company&&name&&license?WHT:TL}}>Continue</button>
+                </div>
+              </div>
+            ):(
+              <div style={{background:WHT,border:"1px solid "+BRD,borderRadius:14,padding:"24px 20px",marginBottom:16}}>
+                <div style={{fontWeight:700,fontSize:15,color:BLK,marginBottom:16}}>Your Experience</div>
+                <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:8}}>Primary Specialty</div>
+                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                      {["Full Rehab","Kitchen + Bath","Structural","Roofing","Plumbing + Electric","Cosmetic"].map(function(s){return <button key={s} onClick={function(){setSpecialty(s);}} style={{...pill(specialty===s),marginBottom:4}}>{s}</button>;})}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:8}}>Rehab Deals Completed</div>
+                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                      {["1-5","6-20","20-50","50+"].map(function(s){return <button key={s} onClick={function(){setExperience(s);}} style={pill(experience===s)}>{s}</button>;})}
+                    </div>
+                  </div>
+                  <div style={{background:RF,border:"1px solid "+RB,borderRadius:10,padding:"12px 14px",fontSize:12,color:TM}}>FundFlip vets every contractor. We check license, insurance, and references within 3 business days.</div>
+                  <div style={{display:"flex",gap:10}}>
+                    <button onClick={function(){setStep(1);}} style={{padding:"13px 18px",borderRadius:10,border:"1px solid "+BRD,background:WHT,color:TMU,fontSize:13,cursor:"pointer"}}>Back</button>
+                    <button onClick={function(){if(specialty&&experience)submit();}} style={{flex:1,padding:"13px",borderRadius:10,border:"none",fontSize:14,fontWeight:700,cursor:specialty&&experience?"pointer":"default",background:specialty&&experience?"linear-gradient(135deg,"+ROSE+","+ROSE2+")":BGA,color:specialty&&experience?WHT:TL}}>{saving?"Submitting...":"Submit Application"}</button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function K(n){return "$"+(n/1000).toFixed(0)+"K";}
 
 function Chip({label,v}){
@@ -430,7 +621,7 @@ function WaitlistForm(){
   );
 }
 
-function Landing({onDash}){
+function Landing({onDash,onOwner,onContractor}){
   var [vis,setVis]=useState(false);
   var [faqOpen,setFaqOpen]=useState(null);
   useEffect(function(){setTimeout(function(){setVis(true);},100);},[]);
@@ -467,27 +658,30 @@ function Landing({onDash}){
             {"FundFlip\u2019s AI analyzes 200+ data points to match your property with the ideal investor. Even homes that need major work qualify. Most sell within 3 to 5 months."}
           </p>
           <div style={{display:"flex",flexDirection:"row",gap:10,marginBottom:28,flexWrap:"nowrap"}}>
-            <button onClick={function(){document.getElementById("listing-form").scrollIntoView({behavior:"smooth"});}} style={{flex:1,background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:8,padding:"11px 16px",color:WHT,fontSize:13,fontWeight:700,cursor:"pointer",lineHeight:1}}>List My Property - Free</button>
+            <button onClick={onOwner} style={{flex:1,background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:8,padding:"11px 16px",color:WHT,fontSize:13,fontWeight:700,cursor:"pointer",lineHeight:1}}>List My Property - Free</button>
             <button onClick={onDash} style={{flex:1,background:BLK,border:"none",borderRadius:8,padding:"11px 16px",color:WHT,fontSize:13,fontWeight:600,cursor:"pointer",lineHeight:1}}>Browse Live Deals</button>
           </div>
           <div id="listing-form">
             <ListingForm/>
           </div>
-          <div style={{background:WHT,borderRadius:16,border:"1px solid "+BRD,overflow:"hidden",marginBottom:16,boxShadow:"0 4px 24px rgba(0,0,0,0.06)"}}>
+          <div style={{marginBottom:16}}><MilestoneSlideshow/></div>
+          <div style={{background:WHT,borderRadius:16,border:"1px solid "+BRD,overflow:"hidden",marginBottom:24,boxShadow:"0 4px 24px rgba(0,0,0,0.06)"}}>
             <div style={{padding:"16px 0 8px"}}><USMap/></div>
           </div>
-          <div style={{marginBottom:24}}><MilestoneSlideshow/></div>
         </div>
       </section>
 
       <section>
-        <div style={{background:BLK,padding:"40px 6%",display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:20}}>
-          {[["$2.4M+","Capital Deployed"],["34+","Deals Closed"],["38%","Avg Investor ROI"],["48 hrs","Avg AI Match"]].map(function(item){return(
-            <div key={item[1]} style={{textAlign:"center"}}>
-              <div style={{fontSize:"clamp(22px,3vw,30px)",fontWeight:800,background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",letterSpacing:"-0.02em"}}>{item[0]}</div>
-              <div style={{fontSize:11,color:"rgba(255,255,255,0.35)",marginTop:4,textTransform:"uppercase",letterSpacing:"0.08em"}}>{item[1]}</div>
-            </div>
-          );})}
+        <div style={{background:BLK,padding:"32px 6%"}}>
+          <div style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.25)",textTransform:"uppercase",letterSpacing:"0.14em",marginBottom:20,textAlign:"center"}}>Live Platform Stats</div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:20}}>
+            {[["21","Vetted Investors"],["43","Verified Contractors"],["5","Active Properties"],["3","States Live"]].map(function(item){return(
+              <div key={item[1]} style={{textAlign:"center"}}>
+                <div style={{fontSize:"clamp(28px,4vw,42px)",fontWeight:900,background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",letterSpacing:"-0.03em",lineHeight:1}}>{item[0]}</div>
+                <div style={{fontSize:10,color:"rgba(255,255,255,0.3)",marginTop:6,textTransform:"uppercase",letterSpacing:"0.1em",lineHeight:1.4}}>{item[1]}</div>
+              </div>
+            );})}
+          </div>
         </div>
       </section>
 
@@ -618,7 +812,7 @@ function Landing({onDash}){
             <div style={{fontSize:10,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:10}}>For Homeowners</div>
             <div style={{fontWeight:800,fontSize:18,color:BLK,letterSpacing:"-0.02em",lineHeight:1.2,marginBottom:10}}>Stop leaving equity on the table.</div>
             <div style={{fontSize:13,color:TMU,lineHeight:1.7,marginBottom:20}}>List your inherited property free. Get a certified ARV estimate in 24 hours. No upfront cost. Ever.</div>
-            <button style={{width:"100%",padding:"12px",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:10,color:WHT,fontSize:13,fontWeight:700,cursor:"pointer"}}>List My Property - Free</button>
+            <button onClick={onOwner} style={{width:"100%",padding:"12px",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:10,color:WHT,fontSize:13,fontWeight:700,cursor:"pointer"}}>List My Property - Free</button>
           </div>
           <div style={{background:WHT,border:"1px solid "+BRD,borderTop:"3px solid "+BLK,borderRadius:16,padding:"28px 20px"}}>
             <div style={{fontSize:10,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:10}}>For Investors</div>
@@ -641,7 +835,7 @@ function Landing({onDash}){
           </div>
           <div>
             <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>Company</div>
-            {["About Us","How We Vet","Careers","Contact"].map(function(l){return <div key={l} style={{fontSize:12,color:TMU,marginBottom:8,cursor:"pointer"}}>{l}</div>;})}
+            {["About Us","How We Vet","Contractor Apply","Careers","Contact"].map(function(l){return <div key={l} onClick={function(){if(l==="Contractor Apply")onContractor();}} style={{fontSize:12,color:TMU,marginBottom:8,cursor:"pointer"}}>{l}</div>;})}
           </div>
           <div>
             <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>Legal</div>
@@ -791,8 +985,141 @@ function InvestorDash({onBack,onDeal}){
   );
 }
 
+function ListingFormInline({onDone}){
+  var SUPA_URL="https://rgmuqduzunbpfdmuktdr.supabase.co";
+  var SUPA_KEY="sb_publishable_A6wN98bBlt5v31o1ucy9xQ_s_aIkSqz";
+  var [step,setStep]=useState(1);
+  var [done,setDone]=useState(false);
+  var [saving,setSaving]=useState(false);
+  var [addr,setAddr]=useState("");
+  var [beds,setBeds]=useState("");
+  var [cond,setCond]=useState("");
+  var [how,setHow]=useState("");
+  var [when,setWhen]=useState("");
+  var [name,setName]=useState("");
+  var [phone,setPhone]=useState("");
+  var [email,setEmail]=useState("");
+  var inp={width:"100%",padding:"12px 14px",borderRadius:9,fontSize:14,border:"1.5px solid "+BRD,background:WHT,color:BLK,outline:"none",lineHeight:1,boxSizing:"border-box"};
+  function pill(a){return{padding:"9px 14px",borderRadius:8,fontSize:12,fontWeight:600,border:"1.5px solid "+(a?ROSE:BRD),background:a?RF:WHT,color:a?ROSE:TMU,cursor:"pointer",lineHeight:1};}
+  async function submitListing(){
+    setSaving(true);
+    try{
+      await fetch(SUPA_URL+"/rest/v1/listings",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Prefer":"return=minimal"},
+        body:JSON.stringify({address:addr,bedrooms:beds,condition:cond,how_owned:how,timeline:when,name:name,phone:phone,email:email,status:"new"})
+      });
+      await fetch("https://api.resend.com/emails",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","Authorization":"Bearer re_EkD2DbHU_4EjXN4DuAAAFq1c54qhcBfF3"},
+        body:JSON.stringify({
+          from:"FundFlip <onboarding@resend.dev>",
+          to:[email],
+          subject:"We received your property listing",
+          html:"<div style='font-family:Inter,sans-serif;max-width:560px;margin:0 auto;padding:40px 20px;'><div style='font-size:22px;font-weight:900;color:#09090B;margin-bottom:32px;'>Fund<span style='color:#F43F5E;'>Flip</span></div><h1 style='font-size:24px;font-weight:800;color:#09090B;margin-bottom:12px;'>Hi "+name+", we got your listing.</h1><p style='font-size:15px;color:#3F3F46;line-height:1.7;margin-bottom:24px;'>Your property at <strong>"+addr+"</strong> has been submitted. Our team will review it within 24 hours and order your free certified ARV appraisal.</p><div style='font-size:12px;color:#A1A1AA;'>The FundFlip Team</div></div>"
+        })
+      });
+    }catch(e){console.log(e);}
+    setSaving(false);
+    setDone(true);
+  }
+  if(done) return(
+    <div style={{background:WHT,borderRadius:16,border:"1px solid "+BRD,padding:"28px 20px",boxShadow:"0 4px 24px rgba(0,0,0,0.06)"}}>
+      <div style={{fontSize:32,marginBottom:10}}>{"🎉"}</div>
+      <div style={{fontWeight:800,fontSize:20,color:BLK,marginBottom:6}}>{"Property submitted!"}</div>
+      <div style={{fontSize:13,color:TMU,lineHeight:1.7,marginBottom:20}}>{"Our team reviews your property within 24 hours and begins AI matching within 48 hours."}</div>
+      <button onClick={onDone} style={{width:"100%",padding:"13px",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:10,color:WHT,fontSize:14,fontWeight:700,cursor:"pointer"}}>View My Dashboard</button>
+    </div>
+  );
+  return(
+    <div style={{background:WHT,borderRadius:16,border:"1px solid "+BRD,overflow:"hidden",boxShadow:"0 4px 24px rgba(0,0,0,0.06)"}}>
+      <div style={{height:4,background:BGA}}>
+        <div style={{height:"100%",width:step===1?"33%":step===2?"66%":"100%",background:"linear-gradient(90deg,"+ROSE+","+ROSE2+")",transition:"width 0.4s"}}/>
+      </div>
+      <div style={{padding:"20px 18px 24px"}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:20}}>
+          {[1,2,3].map(function(n){return(
+            <div key={n} style={{display:"flex",alignItems:"center",gap:8}}>
+              <div style={{width:24,height:24,borderRadius:"50%",fontSize:11,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",background:step>=n?ROSE:BGA,color:step>=n?WHT:TL}}>{n}</div>
+              <span style={{fontSize:11,color:step===n?BLK:TL,fontWeight:step===n?700:400}}>{["Property","Situation","Contact"][n-1]}</span>
+              {n<3&&<div style={{width:16,height:1,background:BRD}}/>}
+            </div>
+          );})}
+        </div>
+        {step===1&&(
+          <div style={{display:"flex",flexDirection:"column",gap:14}}>
+            <div style={{fontWeight:800,fontSize:17,color:BLK}}>Tell us about your property</div>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Property Address</div>
+              <input style={inp} placeholder="123 Main St, Atlanta, GA" value={addr} onChange={function(e){setAddr(e.target.value);}}/>
+            </div>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Bedrooms</div>
+              <div style={{display:"flex",gap:6}}>
+                {["1","2","3","4","5+"].map(function(n){return <button key={n} onClick={function(){setBeds(n);}} style={pill(beds===n)}>{n}</button>;})}
+              </div>
+            </div>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Condition</div>
+              <div style={{display:"flex",gap:8}}>
+                {["Needs Work","Fair","Good"].map(function(c){return <button key={c} onClick={function(){setCond(c);}} style={pill(cond===c)}>{c}</button>;})}
+              </div>
+            </div>
+            <button onClick={function(){if(addr)setStep(2);}} style={{padding:"13px",borderRadius:10,border:"none",fontSize:14,fontWeight:700,cursor:addr?"pointer":"default",background:addr?"linear-gradient(135deg,"+ROSE+","+ROSE2+")":BGA,color:addr?WHT:TL}}>Continue</button>
+          </div>
+        )}
+        {step===2&&(
+          <div style={{display:"flex",flexDirection:"column",gap:14}}>
+            <div style={{fontWeight:800,fontSize:17,color:BLK}}>Your situation</div>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>How did you come to own this?</div>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {[["inherited","Inherited"],["estate","Estate"],["gift","Gift"],["other","Other"]].map(function(pair){return <button key={pair[0]} onClick={function(){setHow(pair[0]);}} style={pill(how===pair[0])}>{pair[1]}</button>;})}
+              </div>
+            </div>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Your timeline</div>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {[["asap","ASAP"],["1-3","1-3 mo"],["3-6","3-6 mo"],["exploring","Exploring"]].map(function(pair){return <button key={pair[0]} onClick={function(){setWhen(pair[0]);}} style={pill(when===pair[0])}>{pair[1]}</button>;})}
+              </div>
+            </div>
+            <div style={{display:"flex",gap:10}}>
+              <button onClick={function(){setStep(1);}} style={{padding:"13px 18px",borderRadius:10,border:"1px solid "+BRD,background:WHT,color:TMU,fontSize:13,cursor:"pointer"}}>Back</button>
+              <button onClick={function(){setStep(3);}} style={{flex:1,padding:"13px",borderRadius:10,border:"none",fontSize:14,fontWeight:700,cursor:"pointer",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",color:WHT}}>Continue</button>
+            </div>
+          </div>
+        )}
+        {step===3&&(
+          <div style={{display:"flex",flexDirection:"column",gap:14}}>
+            <div style={{fontWeight:800,fontSize:17,color:BLK}}>Last step</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+              <div>
+                <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Full Name</div>
+                <input style={inp} placeholder="Maria Johnson" value={name} onChange={function(e){setName(e.target.value);}}/>
+              </div>
+              <div>
+                <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Phone</div>
+                <input style={inp} placeholder="(555) 000-0000" value={phone} onChange={function(e){setPhone(e.target.value);}}/>
+              </div>
+            </div>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Email</div>
+              <input style={inp} placeholder="you@email.com" value={email} onChange={function(e){setEmail(e.target.value);}}/>
+            </div>
+            <div style={{display:"flex",gap:10}}>
+              <button onClick={function(){setStep(2);}} style={{padding:"13px 18px",borderRadius:10,border:"1px solid "+BRD,background:WHT,color:TMU,fontSize:13,cursor:"pointer"}}>Back</button>
+              <button onClick={function(){if(name&&phone)submitListing();}} style={{flex:1,padding:"13px",borderRadius:10,border:"none",fontSize:14,fontWeight:700,cursor:name&&phone?"pointer":"default",background:name&&phone?"linear-gradient(135deg,"+ROSE+","+ROSE2+")":BGA,color:name&&phone?WHT:TL}}>{saving?"Submitting...":"Submit Property"}</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function OwnerDash({onBack}){
   var [tab,setTab]=useState("overview");
+  var [hasListing,setHasListing]=useState(false);
   var tabs=[{id:"overview",label:"Overview"},{id:"rehab",label:"Rehab"},{id:"docs",label:"Docs"},{id:"payout",label:"Payout"}];
   var ms=[{label:"Demolition",done:true,date:"Mar 2"},{label:"Rough-In",done:true,date:"Mar 18"},{label:"Finishes",done:false,date:"Apr 8"},{label:"Inspection",done:false,date:"Apr 22"}];
   return(
@@ -802,9 +1129,18 @@ function OwnerDash({onBack}){
           <button onClick={onBack} style={{background:BG,border:"1px solid "+BRD,borderRadius:6,padding:"5px 12px",color:TMU,fontSize:12,cursor:"pointer"}}>Back</button>
           <span style={{fontWeight:900,fontSize:16,letterSpacing:"-0.04em",color:BLK}}>Fund<span style={{color:ROSE}}>Flip</span></span>
         </div>
-        <div style={{background:RF,border:"1px solid "+RB,borderRadius:7,padding:"6px 14px",fontSize:12,color:ROSE}}>My Home: <span style={{fontWeight:700}}>Active</span></div>
+        <div style={{background:RF,border:"1px solid "+RB,borderRadius:7,padding:"6px 14px",fontSize:12,color:ROSE}}>{hasListing?"My Home: Active":"New Listing"}</div>
       </div>
-      <div style={{flex:1,overflowY:"auto",padding:"20px 20px 80px"}}>
+      {!hasListing?(
+        <div style={{flex:1,overflowY:"auto",padding:"24px 20px 80px"}}>
+          <div style={{marginBottom:20}}>
+            <div style={{fontSize:11,color:TL,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:4}}>Homeowner Dashboard</div>
+            <div style={{fontSize:22,fontWeight:800,color:BLK,marginBottom:4}}>List your property.</div>
+            <div style={{fontSize:13,color:TMU,lineHeight:1.6}}>Free to list. No upfront cost. Get your certified ARV estimate in 24 hours.</div>
+          </div>
+          <ListingFormInline onDone={function(){setHasListing(true);}}/>
+        </div>
+      ):(
         <div style={{marginBottom:22}}>
           <div style={{fontSize:11,color:TL,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:4}}>Homeowner Dashboard</div>
           <div style={{fontSize:22,fontWeight:800,color:BLK}}>Good morning, Maria.</div>
@@ -849,6 +1185,7 @@ function OwnerDash({onBack}){
           <div key={t.id} onClick={function(){setTab(t.id);}} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:11,fontWeight:tab===t.id?700:400,color:tab===t.id?ROSE:TL,borderTop:"2px solid "+(tab===t.id?ROSE:"transparent")}}>{t.label}</div>
         );})}
       </div>
+      )}
     </div>
   );
 }
@@ -989,6 +1326,7 @@ function App(){
   var [fadeOut,setFadeOut]=useState(false);
   var [landingVis,setLandingVis]=useState(false);
   var [selectedDeal,setSelectedDeal]=useState(null);
+  var [view2,setView2]=useState(null);
   useEffect(function(){
     document.title="FundFlip \u2014 AI-Powered Inherited Home Investment";
     setTimeout(function(){setFadeOut(true);},1700);
@@ -1005,7 +1343,8 @@ function App(){
   );
   return(
     <div style={{opacity:landingVis?1:0,transform:landingVis?"none":"translateY(12px)",transition:"opacity 0.7s ease, transform 0.7s ease"}}>
-      {view==="landing"&&<Landing onDash={function(){setView("role");}}/>}
+      {view==="landing"&&<Landing onDash={function(){setView("role");}} onOwner={function(){setView("owner");}} onContractor={function(){setView("contractor");}}/>}
+      {view==="contractor"&&<ContractorSignup onBack={function(){setView("landing");}}/>}
       {view==="role"&&<RoleSelector onInvestor={function(){setView("investor");}} onOwner={function(){setView("owner");}} onBack={function(){setView("landing");}}/>}
       {view==="investor"&&<InvestorDash onBack={function(){setView("role");}} onDeal={function(d){setSelectedDeal(d);setView("dealroom");}}/>}
       {view==="owner"&&<OwnerDash onBack={function(){setView("role");}}/>}
