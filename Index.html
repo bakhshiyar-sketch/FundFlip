@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -19,1001 +20,1006 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
+const ROSE=”#F43F5E”;const ROSE2=”#FB7185”;const RF=“rgba(244,63,94,0.07)”;const RB=“rgba(244,63,94,0.2)”;
+const BLK=”#09090B”;const WHT=”#FFFFFF”;const BG=”#FAFAFA”;const BGA=”#F4F4F5”;
+const TM=”#3F3F46”;const TMU=”#71717A”;const TL=”#A1A1AA”;const TF=”#D4D4D8”;
+const BRD=“rgba(0,0,0,0.07)”;const GRN=”#10B981”;
 
-const ROSE="#F43F5E";const ROSE2="#FB7185";const RF="rgba(244,63,94,0.07)";const RB="rgba(244,63,94,0.2)";
-const BLK="#09090B";const WHT="#FFFFFF";const BG="#FAFAFA";const BGA="#F4F4F5";
-const TM="#3F3F46";const TMU="#71717A";const TL="#A1A1AA";const TF="#D4D4D8";
-const BRD="rgba(0,0,0,0.07)";const GRN="#10B981";
-
-function K(n){return "$"+(n/1000).toFixed(0)+"K";}
+function K(n){return “$”+(n/1000).toFixed(0)+“K”;}
 
 function Chip({label,v}){
-  const r=v==="rose",g=v==="green",gray=v==="gray";
-  return <span style={{display:"inline-block",padding:"4px 12px",borderRadius:99,fontSize:10,fontWeight:600,letterSpacing:"0.07em",textTransform:"uppercase",
-    background:r?RF:g?"rgba(16,185,129,0.15)":gray?"rgba(255,255,255,0.18)":BGA,
-    color:r?ROSE:g?GRN:gray?"rgba(255,255,255,0.95)":TMU,
-    border:r?"1px solid "+RB:g?"1px solid rgba(16,185,129,0.3)":gray?"1px solid rgba(255,255,255,0.25)":"1px solid "+BRD
-  }}>{label}</span>;
+const r=v===“rose”,g=v===“green”,gray=v===“gray”;
+return <span style={{display:“inline-block”,padding:“4px 12px”,borderRadius:99,fontSize:10,fontWeight:600,letterSpacing:“0.07em”,textTransform:“uppercase”,
+background:r?RF:g?“rgba(16,185,129,0.15)”:gray?“rgba(255,255,255,0.18)”:BGA,
+color:r?ROSE:g?GRN:gray?“rgba(255,255,255,0.95)”:TMU,
+border:r?“1px solid “+RB:g?“1px solid rgba(16,185,129,0.3)”:gray?“1px solid rgba(255,255,255,0.25)”:“1px solid “+BRD
+}}>{label}</span>;
 }
 
 const DEALS=[
-  {id:1,addr:"1842 Peachtree Blvd",city:"Atlanta, GA",img:"https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600",arv:265000,rehab:52000,profit:65000,funded:38000,roi:40,tag:"Inherited",status:"funding"},
-  {id:2,addr:"307 Magnolia Street",city:"Tampa, FL",img:"https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600",arv:340000,rehab:78000,profit:70000,funded:78000,roi:36,tag:"Estate",status:"funded"},
-  {id:3,addr:"5519 Elm Creek Dr",city:"Houston, TX",img:"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600",arv:218000,rehab:44000,profit:53000,funded:12000,roi:48,tag:"Inherited",status:"funding"},
+{id:1,addr:“1842 Peachtree Blvd”,city:“Atlanta, GA”,img:“https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600”,arv:265000,rehab:52000,profit:65000,funded:38000,roi:40,tag:“Inherited”,status:“funding”},
+{id:2,addr:“307 Magnolia Street”,city:“Tampa, FL”,img:“https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600”,arv:340000,rehab:78000,profit:70000,funded:78000,roi:36,tag:“Estate”,status:“funded”},
+{id:3,addr:“5519 Elm Creek Dr”,city:“Houston, TX”,img:“https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600”,arv:218000,rehab:44000,profit:53000,funded:12000,roi:48,tag:“Inherited”,status:“funding”},
 ];
 
 function USMap(){
-  const [hov,setHov]=useState(null);
-  const ACTIVE=["CA","CO","VA"];
-  const states=[
-    {id:"WA",d:"M 68 32 L 130 26 L 133 60 L 115 65 L 90 68 L 68 62 Z"},
-    {id:"OR",d:"M 68 62 L 90 68 L 115 65 L 118 105 L 68 108 Z"},
-    {id:"CA",d:"M 62 105 L 118 105 L 122 155 L 108 185 L 78 200 L 58 170 L 55 140 Z"},
-    {id:"ID",d:"M 118 45 L 155 38 L 162 85 L 148 105 L 118 105 L 115 65 L 133 60 Z"},
-    {id:"NV",d:"M 108 105 L 148 100 L 155 155 L 120 170 L 100 155 Z"},
-    {id:"AZ",d:"M 108 170 L 155 160 L 158 210 L 108 210 Z"},
-    {id:"MT",d:"M 133 26 L 238 18 L 242 72 L 162 78 L 155 60 Z"},
-    {id:"WY",d:"M 162 78 L 242 72 L 245 128 L 165 132 Z"},
-    {id:"UT",d:"M 148 105 L 165 100 L 168 155 L 148 158 L 130 155 Z"},
-    {id:"CO",d:"M 168 128 L 248 122 L 250 168 L 170 172 Z"},
-    {id:"NM",d:"M 158 172 L 250 168 L 252 218 L 158 218 Z"},
-    {id:"ND",d:"M 238 18 L 318 14 L 320 65 L 240 68 Z"},
-    {id:"SD",d:"M 240 68 L 320 65 L 322 115 L 242 118 Z"},
-    {id:"NE",d:"M 245 118 L 322 115 L 325 148 L 245 152 Z"},
-    {id:"KS",d:"M 248 152 L 325 148 L 328 182 L 248 185 Z"},
-    {id:"OK",d:"M 248 185 L 330 182 L 332 215 L 248 218 Z"},
-    {id:"TX",d:"M 210 215 L 332 212 L 338 278 L 285 295 L 225 285 L 205 260 Z"},
-    {id:"MN",d:"M 318 14 L 385 12 L 388 72 L 322 75 Z"},
-    {id:"IA",d:"M 322 75 L 388 72 L 390 112 L 323 115 Z"},
-    {id:"MO",d:"M 325 115 L 392 112 L 395 158 L 330 162 Z"},
-    {id:"AR",d:"M 330 162 L 395 158 L 397 192 L 330 195 Z"},
-    {id:"LA",d:"M 330 195 L 395 192 L 398 225 L 360 235 L 335 228 Z"},
-    {id:"WI",d:"M 388 30 L 430 28 L 432 72 L 388 75 Z"},
-    {id:"IL",d:"M 392 75 L 432 72 L 435 128 L 393 132 Z"},
-    {id:"MS",d:"M 395 195 L 430 192 L 432 232 L 398 235 Z"},
-    {id:"MI",d:"M 430 32 L 470 28 L 472 68 L 432 72 Z"},
-    {id:"IN",d:"M 433 75 L 470 72 L 472 118 L 435 120 Z"},
-    {id:"TN",d:"M 435 165 L 510 158 L 512 182 L 436 185 Z"},
-    {id:"AL",d:"M 432 185 L 468 182 L 470 228 L 433 232 Z"},
-    {id:"GA",d:"M 468 182 L 512 178 L 515 222 L 472 228 Z"},
-    {id:"FL",d:"M 470 228 L 515 222 L 525 258 L 505 275 L 478 268 Z"},
-    {id:"SC",d:"M 510 175 L 545 168 L 548 200 L 512 205 Z"},
-    {id:"NC",d:"M 485 155 L 558 145 L 560 172 L 488 178 Z"},
-    {id:"OH",d:"M 470 95 L 508 92 L 510 132 L 472 135 Z"},
-    {id:"KY",d:"M 435 132 L 510 125 L 512 158 L 436 162 Z"},
-    {id:"WV",d:"M 510 118 L 545 112 L 548 148 L 512 152 Z"},
-    {id:"VA",d:"M 510 100 L 562 92 L 568 128 L 512 135 Z"},
-    {id:"PA",d:"M 510 72 L 565 65 L 568 100 L 512 105 Z"},
-    {id:"NY",d:"M 510 38 L 578 28 L 582 68 L 513 75 Z"},
-    {id:"MA",d:"M 580 52 L 618 48 L 620 65 L 582 68 Z"},
-    {id:"ME",d:"M 608 15 L 630 10 L 635 48 L 610 52 Z"},
-    {id:"AK",d:"M 58 265 L 120 258 L 128 298 L 92 308 L 58 295 Z"},
-    {id:"HI",d:"M 148 282 L 195 280 L 196 295 L 148 296 Z"},
-  ];
-  const sorted=[...states].sort((a,b)=>ACTIVE.includes(a.id)?1:ACTIVE.includes(b.id)?-1:0);
-  return(
-    <div style={{padding:"0 4%",position:"relative"}}>
-      <div style={{display:"flex",justifyContent:"center",gap:20,marginBottom:16}}>
-        <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:10,height:10,borderRadius:"50%",background:ROSE}}/><span style={{fontSize:11,color:TMU,fontWeight:600}}>Live Now</span></div>
-        <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:10,height:10,borderRadius:"50%",background:BGA,border:"1px solid "+BRD}}/><span style={{fontSize:11,color:TMU}}>Coming Soon</span></div>
-      </div>
-      <svg viewBox="40 5 610 310" style={{width:"100%",height:"auto",display:"block"}}>
-        {sorted.map(function(st){
-          var isActive=ACTIVE.includes(st.id);
-          var isHov=hov===st.id;
-          var nums=st.d.match(/[\d.]+/g).map(Number);
-          var xs=[],ys=[];
-          for(var i=0;i<nums.length;i++){if(i%2===0)xs.push(nums[i]);else ys.push(nums[i]);}
-          var cx=(Math.max.apply(null,xs)+Math.min.apply(null,xs))/2;
-          var cy=(Math.max.apply(null,ys)+Math.min.apply(null,ys))/2+4;
-          return(
-            <g key={st.id} onMouseEnter={function(){setHov(st.id);}} onMouseLeave={function(){setHov(null);}} style={{cursor:"pointer"}}>
-              <path d={st.d} fill={isActive?(isHov?"#d4253e":ROSE):(isHov?"#d0d0d0":"#E2E2E2")} stroke={WHT} strokeWidth={isActive?"1.5":"1"}/>
-              {isActive&&<text x={cx} y={cy} textAnchor="middle" fontSize="11" fontWeight="800" fill={WHT} style={{pointerEvents:"none"}}>{st.id}</text>}
-            </g>
-          );
-        })}
-      </svg>
-      {hov&&(
-        <div style={{position:"absolute",top:40,left:"50%",transform:"translateX(-50%)",background:ACTIVE.includes(hov)?ROSE:TM,color:WHT,fontSize:11,fontWeight:700,padding:"4px 14px",borderRadius:99,pointerEvents:"none",whiteSpace:"nowrap"}}>
-          {hov+" \u2014 "+(ACTIVE.includes(hov)?"Live Now":"Coming Soon")}
-        </div>
-      )}
-    </div>
-  );
+const [hov,setHov]=useState(null);
+const ACTIVE=[“CA”,“CO”,“VA”];
+const states=[
+{id:“WA”,d:“M 68 32 L 130 26 L 133 60 L 115 65 L 90 68 L 68 62 Z”},
+{id:“OR”,d:“M 68 62 L 90 68 L 115 65 L 118 105 L 68 108 Z”},
+{id:“CA”,d:“M 62 105 L 118 105 L 122 155 L 108 185 L 78 200 L 58 170 L 55 140 Z”},
+{id:“ID”,d:“M 118 45 L 155 38 L 162 85 L 148 105 L 118 105 L 115 65 L 133 60 Z”},
+{id:“NV”,d:“M 108 105 L 148 100 L 155 155 L 120 170 L 100 155 Z”},
+{id:“AZ”,d:“M 108 170 L 155 160 L 158 210 L 108 210 Z”},
+{id:“MT”,d:“M 133 26 L 238 18 L 242 72 L 162 78 L 155 60 Z”},
+{id:“WY”,d:“M 162 78 L 242 72 L 245 128 L 165 132 Z”},
+{id:“UT”,d:“M 148 105 L 165 100 L 168 155 L 148 158 L 130 155 Z”},
+{id:“CO”,d:“M 168 128 L 248 122 L 250 168 L 170 172 Z”},
+{id:“NM”,d:“M 158 172 L 250 168 L 252 218 L 158 218 Z”},
+{id:“ND”,d:“M 238 18 L 318 14 L 320 65 L 240 68 Z”},
+{id:“SD”,d:“M 240 68 L 320 65 L 322 115 L 242 118 Z”},
+{id:“NE”,d:“M 245 118 L 322 115 L 325 148 L 245 152 Z”},
+{id:“KS”,d:“M 248 152 L 325 148 L 328 182 L 248 185 Z”},
+{id:“OK”,d:“M 248 185 L 330 182 L 332 215 L 248 218 Z”},
+{id:“TX”,d:“M 210 215 L 332 212 L 338 278 L 285 295 L 225 285 L 205 260 Z”},
+{id:“MN”,d:“M 318 14 L 385 12 L 388 72 L 322 75 Z”},
+{id:“IA”,d:“M 322 75 L 388 72 L 390 112 L 323 115 Z”},
+{id:“MO”,d:“M 325 115 L 392 112 L 395 158 L 330 162 Z”},
+{id:“AR”,d:“M 330 162 L 395 158 L 397 192 L 330 195 Z”},
+{id:“LA”,d:“M 330 195 L 395 192 L 398 225 L 360 235 L 335 228 Z”},
+{id:“WI”,d:“M 388 30 L 430 28 L 432 72 L 388 75 Z”},
+{id:“IL”,d:“M 392 75 L 432 72 L 435 128 L 393 132 Z”},
+{id:“MS”,d:“M 395 195 L 430 192 L 432 232 L 398 235 Z”},
+{id:“MI”,d:“M 430 32 L 470 28 L 472 68 L 432 72 Z”},
+{id:“IN”,d:“M 433 75 L 470 72 L 472 118 L 435 120 Z”},
+{id:“TN”,d:“M 435 165 L 510 158 L 512 182 L 436 185 Z”},
+{id:“AL”,d:“M 432 185 L 468 182 L 470 228 L 433 232 Z”},
+{id:“GA”,d:“M 468 182 L 512 178 L 515 222 L 472 228 Z”},
+{id:“FL”,d:“M 470 228 L 515 222 L 525 258 L 505 275 L 478 268 Z”},
+{id:“SC”,d:“M 510 175 L 545 168 L 548 200 L 512 205 Z”},
+{id:“NC”,d:“M 485 155 L 558 145 L 560 172 L 488 178 Z”},
+{id:“OH”,d:“M 470 95 L 508 92 L 510 132 L 472 135 Z”},
+{id:“KY”,d:“M 435 132 L 510 125 L 512 158 L 436 162 Z”},
+{id:“WV”,d:“M 510 118 L 545 112 L 548 148 L 512 152 Z”},
+{id:“VA”,d:“M 510 100 L 562 92 L 568 128 L 512 135 Z”},
+{id:“PA”,d:“M 510 72 L 565 65 L 568 100 L 512 105 Z”},
+{id:“NY”,d:“M 510 38 L 578 28 L 582 68 L 513 75 Z”},
+{id:“MA”,d:“M 580 52 L 618 48 L 620 65 L 582 68 Z”},
+{id:“ME”,d:“M 608 15 L 630 10 L 635 48 L 610 52 Z”},
+{id:“AK”,d:“M 58 265 L 120 258 L 128 298 L 92 308 L 58 295 Z”},
+{id:“HI”,d:“M 148 282 L 195 280 L 196 295 L 148 296 Z”},
+];
+const sorted=[…states].sort((a,b)=>ACTIVE.includes(a.id)?1:ACTIVE.includes(b.id)?-1:0);
+return(
+<div style={{padding:“0 4%”,position:“relative”}}>
+<div style={{display:“flex”,justifyContent:“center”,gap:20,marginBottom:16}}>
+<div style={{display:“flex”,alignItems:“center”,gap:6}}><div style={{width:10,height:10,borderRadius:“50%”,background:ROSE}}/><span style={{fontSize:11,color:TMU,fontWeight:600}}>Live Now</span></div>
+<div style={{display:“flex”,alignItems:“center”,gap:6}}><div style={{width:10,height:10,borderRadius:“50%”,background:BGA,border:“1px solid “+BRD}}/><span style={{fontSize:11,color:TMU}}>Coming Soon</span></div>
+</div>
+<svg viewBox=“40 5 610 310” style={{width:“100%”,height:“auto”,display:“block”}}>
+{sorted.map(function(st){
+var isActive=ACTIVE.includes(st.id);
+var isHov=hov===st.id;
+var nums=st.d.match(/[\d.]+/g).map(Number);
+var xs=[],ys=[];
+for(var i=0;i<nums.length;i++){if(i%2===0)xs.push(nums[i]);else ys.push(nums[i]);}
+var cx=(Math.max.apply(null,xs)+Math.min.apply(null,xs))/2;
+var cy=(Math.max.apply(null,ys)+Math.min.apply(null,ys))/2+4;
+return(
+<g key={st.id} onMouseEnter={function(){setHov(st.id);}} onMouseLeave={function(){setHov(null);}} style={{cursor:“pointer”}}>
+<path d={st.d} fill={isActive?(isHov?”#d4253e”:ROSE):(isHov?”#d0d0d0”:”#E2E2E2”)} stroke={WHT} strokeWidth={isActive?“1.5”:“1”}/>
+{isActive&&<text x={cx} y={cy} textAnchor=“middle” fontSize=“11” fontWeight=“800” fill={WHT} style={{pointerEvents:“none”}}>{st.id}</text>}
+</g>
+);
+})}
+</svg>
+{hov&&(
+<div style={{position:“absolute”,top:40,left:“50%”,transform:“translateX(-50%)”,background:ACTIVE.includes(hov)?ROSE:TM,color:WHT,fontSize:11,fontWeight:700,padding:“4px 14px”,borderRadius:99,pointerEvents:“none”,whiteSpace:“nowrap”}}>
+{hov+” \u2014 “+(ACTIVE.includes(hov)?“Live Now”:“Coming Soon”)}
+</div>
+)}
+</div>
+);
 }
 
 function MilestoneSlideshow(){
-  var slides=[
-    {step:"01/06",tag:"Owner Lists",title:"Inherited home submitted",desc:"Owner submits property details. FundFlip orders a certified ARV appraisal and verifies clean title before the deal goes live.",s1:["Est. Value","$148K"],s2:["After Repair","$265K"],s3:["Potential Profit","$65K"]},
-    {step:"02/06",tag:"AI Matches",title:"AI finds your ideal investor",desc:"FundFlip AI analyzes 200+ data points to match your property with the highest-probability investor in 48 hours.",s1:["Data Points","200+"],s2:["Match Time","48 hrs"],s3:["Accuracy","AI-Verified"]},
-    {step:"03/06",tag:"Investor Picks",title:"One investor funds the rehab",desc:"A private investor browses the deal and funds the full rehab cost directly into escrow. No pools. 1-on-1.",s1:["Rehab Funded","$52K"],s2:["Into Escrow","100%"],s3:["Investors","1"]},
-    {step:"04/06",tag:"JV Contract",title:"Both parties sign on-platform",desc:"A Joint Venture agreement is auto-generated. Both owner and investor sign digitally. No lawyers needed.",s1:["Contract","Auto"],s2:["E-Signature","Yes"],s3:["Binding","Legal"]},
-    {step:"05/06",tag:"Rehab Milestones",title:"4-stage funded renovation",desc:"Contractor works in 4 approved stages. Investor reviews photos and releases escrow funds at each milestone.",s1:["Milestones","4"],s2:["M1 + M2","Done"],s3:["Progress","50%"]},
-    {step:"06/06",tag:"Home Sells",title:"Full value sale, profit split",desc:"Renovation complete. Home lists at full market value and sells. 50% owner, 40% investor, 10% FundFlip. Most deals close in 3-5 months.",s1:["Sale Price","$265K"],s2:["Owner Gets","$32.5K"],s3:["Total Time","~4 mo"]},
-  ];
-  var [slide,setSlide]=useState(0);
-  var [anim,setAnim]=useState(false);
-  useEffect(function(){
-    var t=setInterval(function(){
-      setAnim(true);
-      setTimeout(function(){setSlide(function(s){return(s+1)%slides.length;});setAnim(false);},200);
-    },5500);
-    return function(){clearInterval(t);};
-  },[]);
-  var s=slides[slide];
-  return(
-    <div style={{background:WHT,borderRadius:16,border:"1px solid "+BRD,boxShadow:"0 4px 24px rgba(0,0,0,0.06)",overflow:"hidden",width:"100%"}}>
-      <div style={{background:BG,padding:"10px 16px",borderBottom:"1px solid "+BRD,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-        <div style={{width:10}}/>
-        <div style={{background:WHT,border:"1px solid "+BRD,borderRadius:6,padding:"3px 12px",fontSize:10,color:TL}}>app.fundflip.com</div>
-        <span style={{fontSize:10,color:TL}}>{s.step}</span>
-      </div>
-      <div style={{padding:"18px 20px 4px",opacity:anim?0:1,transform:anim?"translateY(6px)":"translateY(0)",transition:"all 0.2s",height:320,overflow:"hidden"}}>
-        <span style={{fontSize:9,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",padding:"3px 9px",borderRadius:99,background:RF,color:ROSE,border:"1px solid "+RB}}>{s.tag}</span>
-        <div style={{fontWeight:800,fontSize:16,color:BLK,letterSpacing:"-0.02em",marginBottom:6,marginTop:10,lineHeight:1.2}}>{s.title}</div>
-        <div style={{fontSize:12,color:TMU,lineHeight:1.6,marginBottom:14}}>{s.desc}</div>
-        <div style={{background:BG,borderRadius:12,padding:"14px",marginBottom:14,border:"1px solid "+BRD,display:"flex",justifyContent:"center",alignItems:"center",minHeight:80}}>
-          <div style={{display:"flex",gap:16,alignItems:"center"}}>
-            {[0,1,2,3].map(function(i){
-              var filled=i<parseInt(s.step)/10;
-              return(
-                <div key={i} style={{display:"flex",flexDirection:"column",alignItems:"center"}}>
-                  <div style={{width:32,height:32,borderRadius:"50%",background:filled?"linear-gradient(135deg,"+ROSE+","+ROSE2+")":BGA,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:4}}>
-                    {filled&&<span style={{color:WHT,fontSize:12,fontWeight:800}}>{"✓"}</span>}
-                  </div>
-                  <span style={{fontSize:8,color:filled?ROSE:TL}}>{["Submit","Match","Fund","Sign","Build","Sell"][i]}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
-          {[s.s1,s.s2,s.s3].map(function(item){
-            return(
-              <div key={item[0]} style={{background:BG,borderRadius:8,padding:"8px 10px",border:"1px solid "+BRD}}>
-                <div style={{fontSize:8,color:TL,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:3}}>{item[0]}</div>
-                <div style={{fontSize:13,fontWeight:700,color:BLK}}>{item[1]}</div>
-              </div>
-            );
-          })}
-        </div>
-        <div style={{display:"flex",justifyContent:"center",gap:5,marginTop:14}}>
-          {slides.map(function(_,i){return <div key={i} onClick={function(){setSlide(i);}} style={{width:i===slide?18:6,height:6,borderRadius:99,background:i===slide?ROSE:BGA,cursor:"pointer",transition:"all 0.3s"}}/>;  })}
-        </div>
-      </div>
-    </div>
-  );
+var slides=[
+{step:“01/06”,tag:“Owner Lists”,title:“Inherited home submitted”,desc:“Owner submits property details. FundFlip orders a certified ARV appraisal and verifies clean title before the deal goes live.”,s1:[“Est. Value”,”$148K”],s2:[“After Repair”,”$265K”],s3:[“Potential Profit”,”$65K”]},
+{step:“02/06”,tag:“AI Matches”,title:“AI finds your ideal investor”,desc:“FundFlip AI analyzes 200+ data points to match your property with the highest-probability investor in 48 hours.”,s1:[“Data Points”,“200+”],s2:[“Match Time”,“48 hrs”],s3:[“Accuracy”,“AI-Verified”]},
+{step:“03/06”,tag:“Investor Picks”,title:“One investor funds the rehab”,desc:“A private investor browses the deal and funds the full rehab cost directly into escrow. No pools. 1-on-1.”,s1:[“Rehab Funded”,”$52K”],s2:[“Into Escrow”,“100%”],s3:[“Investors”,“1”]},
+{step:“04/06”,tag:“JV Contract”,title:“Both parties sign on-platform”,desc:“A Joint Venture agreement is auto-generated. Both owner and investor sign digitally. No lawyers needed.”,s1:[“Contract”,“Auto”],s2:[“E-Signature”,“Yes”],s3:[“Binding”,“Legal”]},
+{step:“05/06”,tag:“Rehab Milestones”,title:“4-stage funded renovation”,desc:“Contractor works in 4 approved stages. Investor reviews photos and releases escrow funds at each milestone.”,s1:[“Milestones”,“4”],s2:[“M1 + M2”,“Done”],s3:[“Progress”,“50%”]},
+{step:“06/06”,tag:“Home Sells”,title:“Full value sale, profit split”,desc:“Renovation complete. Home lists at full market value and sells. 50% owner, 40% investor, 10% FundFlip. Most deals close in 3-5 months.”,s1:[“Sale Price”,”$265K”],s2:[“Owner Gets”,”$32.5K”],s3:[“Total Time”,“~4 mo”]},
+];
+var [slide,setSlide]=useState(0);
+var [anim,setAnim]=useState(false);
+useEffect(function(){
+var t=setInterval(function(){
+setAnim(true);
+setTimeout(function(){setSlide(function(s){return(s+1)%slides.length;});setAnim(false);},200);
+},5500);
+return function(){clearInterval(t);};
+},[]);
+var s=slides[slide];
+return(
+<div style={{background:WHT,borderRadius:16,border:“1px solid “+BRD,boxShadow:“0 4px 24px rgba(0,0,0,0.06)”,overflow:“hidden”,width:“100%”}}>
+<div style={{background:BG,padding:“10px 16px”,borderBottom:“1px solid “+BRD,display:“flex”,alignItems:“center”,justifyContent:“space-between”}}>
+<div style={{width:10}}/>
+<div style={{background:WHT,border:“1px solid “+BRD,borderRadius:6,padding:“3px 12px”,fontSize:10,color:TL}}>app.fundflip.com</div>
+<span style={{fontSize:10,color:TL}}>{s.step}</span>
+</div>
+<div style={{padding:“18px 20px 4px”,opacity:anim?0:1,transform:anim?“translateY(6px)”:“translateY(0)”,transition:“all 0.2s”,height:320,overflow:“hidden”}}>
+<span style={{fontSize:9,fontWeight:700,letterSpacing:“0.08em”,textTransform:“uppercase”,padding:“3px 9px”,borderRadius:99,background:RF,color:ROSE,border:“1px solid “+RB}}>{s.tag}</span>
+<div style={{fontWeight:800,fontSize:16,color:BLK,letterSpacing:”-0.02em”,marginBottom:6,marginTop:10,lineHeight:1.2}}>{s.title}</div>
+<div style={{fontSize:12,color:TMU,lineHeight:1.6,marginBottom:14}}>{s.desc}</div>
+<div style={{background:BG,borderRadius:12,padding:“14px”,marginBottom:14,border:“1px solid “+BRD,display:“flex”,justifyContent:“center”,alignItems:“center”,minHeight:80}}>
+<div style={{display:“flex”,gap:16,alignItems:“center”}}>
+{[0,1,2,3].map(function(i){
+var filled=i<parseInt(s.step)/10;
+return(
+<div key={i} style={{display:“flex”,flexDirection:“column”,alignItems:“center”}}>
+<div style={{width:32,height:32,borderRadius:“50%”,background:filled?“linear-gradient(135deg,”+ROSE+”,”+ROSE2+”)”:BGA,display:“flex”,alignItems:“center”,justifyContent:“center”,marginBottom:4}}>
+{filled&&<span style={{color:WHT,fontSize:12,fontWeight:800}}>{“✓”}</span>}
+</div>
+<span style={{fontSize:8,color:filled?ROSE:TL}}>{[“Submit”,“Match”,“Fund”,“Sign”,“Build”,“Sell”][i]}</span>
+</div>
+);
+})}
+</div>
+</div>
+<div style={{display:“grid”,gridTemplateColumns:“1fr 1fr 1fr”,gap:8}}>
+{[s.s1,s.s2,s.s3].map(function(item){
+return(
+<div key={item[0]} style={{background:BG,borderRadius:8,padding:“8px 10px”,border:“1px solid “+BRD}}>
+<div style={{fontSize:8,color:TL,textTransform:“uppercase”,letterSpacing:“0.08em”,marginBottom:3}}>{item[0]}</div>
+<div style={{fontSize:13,fontWeight:700,color:BLK}}>{item[1]}</div>
+</div>
+);
+})}
+</div>
+<div style={{display:“flex”,justifyContent:“center”,gap:5,marginTop:14}}>
+{slides.map(function(_,i){return <div key={i} onClick={function(){setSlide(i);}} style={{width:i===slide?18:6,height:6,borderRadius:99,background:i===slide?ROSE:BGA,cursor:“pointer”,transition:“all 0.3s”}}/>;  })}
+</div>
+</div>
+</div>
+);
 }
 
 function HowItWorks(){
-  var [active,setActive]=useState(null);
-  var steps=[
-    {n:"01",t:"Owner Lists",sub:"Submit your inherited property and get top value with trusted investors.",bullets:[["Certified ARV appraisal","ordered by FundFlip before the deal goes live"],["Title verified","clean title confirmed before any funding"],["Free to list","no upfront cost to the homeowner"]],
-     detail:{overview:"Most inherited homeowners are told they have two options: sell cheap to a cash buyer or spend money they don't have. FundFlip is a third option.",items:[["Do I pay anything upfront?","No. Listing is free. FundFlip covers the appraisal. The entire rehab is funded by your investor partner."],["Do I lose ownership?","Never. You hold the deed throughout. The JV agreement only governs profit distribution at closing."],["How long does it take?","Most deals complete in 3 to 5 months from listing to closing."]]}},
-    {n:"02",t:"AI Matches Investor",sub:"Our AI finds the right investor for your property in 48 hours.",bullets:[["200+ data points","location, ARV, rehab scope, and investor history all analyzed instantly"],["48-hour match","most properties matched with a qualified investor the same day"],["Explainable results","you see exactly why your investor was selected"]],
-     detail:{overview:"FundFlip's AI analyzes your property against our full investor database and surfaces the highest-probability match based on deal history, market knowledge, and availability.",items:[["What data does the AI use?","Property location, current value, ARV estimate, rehab scope, and your timeline — all factored alongside investor history and past deal performance."],["How fast does it work?","Most properties receive an investor match within 48 hours of listing."],["Can I reject a match?","Yes. You review the matched investor's profile before any contract is signed."]]}},
-    {n:"03",t:"Investor Picks",sub:"One investor funds the full rehab, direct and 1-on-1.",bullets:[["Full financials visible","ARV, rehab cost, profit projection, contractor scope"],["1-on-1 deal","no pools, no shared risk"],["Funds go to escrow","never touched by the owner until milestones hit"]],
-     detail:{overview:"FundFlip is not a crowdfunding platform. One investor picks one property and funds the entire rehab.",items:[["What does an investor see?","Full deal room: ARV report, rehab budget, contractor profile, projected profit, and timeline."],["How much does an investor put in?","Exactly the rehab cost, typically $40K to $120K depending on the property."],["Expected return?","FundFlip deals have averaged ~38% ROI in approximately 4 months."]]}},
-    {n:"04",t:"JV Contract Signed",sub:"Both parties sign a legally binding agreement on-platform.",bullets:[["Auto-generated","no lawyers, no back and forth"],["Terms locked in","profit split, timeline, and milestones agreed"],["Owner rights protected","homeowner keeps control throughout"]],
-     detail:{overview:"A Joint Venture agreement is a legally recognized contract. FundFlip generates it automatically based on negotiated terms.",items:[["Is it legally binding?","Yes. Executed via e-signature. Same legal weight as any signed real estate agreement."],["Does the owner give up their deed?","No. The JV agreement only governs profit distribution, not ownership."],["What if someone backs out?","Default provisions are included. Unused escrow is returned if a deal collapses before starting."]]}},
-    {n:"05",t:"Rehab Milestones",sub:"Contractor works in 4 funded stages, investor approves each one.",bullets:[["4 milestone releases","escrow funds released stage by stage"],["Photo proof required","contractor submits updates before funds release"],["Live dashboard","budget and progress tracked in real time"]],
-     detail:{overview:"Funds are released from escrow only when each stage is complete and the investor approves it.",items:[["What are the 4 milestones?","M1: Demo 20%. M2: Rough-in 25%. M3: Finishes 35%. M4: Final inspection 20%."],["How does the investor approve?","Contractor uploads photos. Investor reviews and approves to release funds."],["What if they go over budget?","Scope and budget are locked before funding. Any change orders require approval from both parties."]]}},
-    {n:"06",t:"Home Sells",sub:"Full market value sale. Everyone wins.",bullets:[["Lists after renovation","home hits market at full value, not discounted"],["Automatic distribution","proceeds split at closing without dispute"],["50 / 40 / 10 split","owner, investor, FundFlip"]],
-     detail:{overview:"Once renovation is complete, the home lists at full after-repair value and sells on the open market. Most deals complete in 3 to 5 months total.",items:[["Who lists the home?","The homeowner works with a licensed real estate agent of their choice."],["How is profit calculated?","Sale price minus original value minus rehab cost minus agent commission. Remaining profit splits per JV contract."],["Example deal","Inherited at $150K. Rehab $52K. Sells $265K. Net profit ~$63K. Owner gets $31.5K (50%). Investor gets $25.2K (40%, ~48% ROI). FundFlip gets $6.3K (10%). Total time: 4 months."]]}},
-  ];
-  return(
-    <div style={{position:"relative"}}>
-      {active!==null&&(
-        <div onClick={function(){setActive(null);}} style={{position:"fixed",inset:0,zIndex:9000,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
-          <div onClick={function(e){e.stopPropagation();}} style={{background:WHT,borderRadius:20,width:"100%",maxWidth:500,maxHeight:"88vh",overflowY:"auto",boxShadow:"0 24px 80px rgba(0,0,0,0.25)"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"18px 24px 0"}}>
-              <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",color:ROSE}}>{steps[active].n}</span>
-              <button onClick={function(){setActive(null);}} style={{background:BG,border:"1px solid "+BRD,borderRadius:8,width:30,height:30,cursor:"pointer",fontSize:14,color:TMU}}>{"x"}</button>
-            </div>
-            <div style={{padding:"16px 24px 32px"}}>
-              <div style={{fontWeight:800,fontSize:22,color:BLK,marginBottom:10,lineHeight:1.2}}>{steps[active].t}</div>
-              <div style={{fontSize:14,color:TM,lineHeight:1.75,marginBottom:24,padding:"14px 16px",background:BG,borderRadius:10}}>{steps[active].detail.overview}</div>
-              {steps[active].detail.items.map(function(item){return(
-                <div key={item[0]} style={{marginBottom:18}}>
-                  <div style={{fontWeight:700,fontSize:14,color:BLK,marginBottom:5}}>{item[0]}</div>
-                  <div style={{fontSize:13,color:TM,lineHeight:1.7}}>{item[1]}</div>
-                </div>
-              );})}
-            </div>
-          </div>
-        </div>
-      )}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr"}}>
-        {steps.map(function(step,i){
-          var isActive=active===i;
-          var isLeft=i%2===0;
-          return(
-            <div key={step.n} onClick={function(){setActive(isActive?null:i);}} style={{padding:"28px 6% 32px",borderRight:isLeft?"1px solid "+BRD:"none",borderBottom:"1px solid "+BRD,borderTop:"3px solid "+(isActive?ROSE:"transparent"),background:WHT,cursor:"pointer",boxSizing:"border-box"}}>
-              <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",marginBottom:10,color:ROSE,marginTop:-4}}>{step.n}</div>
-              <div style={{fontWeight:800,fontSize:18,color:BLK,marginBottom:4,lineHeight:1.2}}>{step.t}</div>
-              <div style={{fontSize:13,color:TMU,marginBottom:14,lineHeight:1.55}}>{step.sub}</div>
-              {step.bullets.map(function(b){return(
-                <div key={b[0]} style={{display:"flex",gap:10,alignItems:"flex-start",marginBottom:10}}>
-                  <div style={{width:7,height:7,borderRadius:"50%",flexShrink:0,marginTop:5,background:isActive?ROSE:TL}}/>
-                  <span style={{fontSize:13,color:TM,lineHeight:1.6}}><strong style={{color:BLK,fontWeight:700}}>{b[0]}</strong>{" \u2014 "}{b[1]}</span>
-                </div>
-              );})}
-              <div style={{marginTop:10,fontSize:10,color:isActive?ROSE:TF,letterSpacing:"0.06em",textTransform:"uppercase"}}>{isActive?"Tap to close":"Tap to expand"}</div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
+var [active,setActive]=useState(null);
+var steps=[
+{n:“01”,t:“Owner Lists”,sub:“Submit your inherited property and get top value with trusted investors.”,bullets:[[“Certified ARV appraisal”,“ordered by FundFlip before the deal goes live”],[“Title verified”,“clean title confirmed before any funding”],[“Free to list”,“no upfront cost to the homeowner”],[“Partner with Experts”,“experts already know what to do — you just say yes”]],
+detail:{overview:“Most inherited homeowners are told they have two options: sell cheap to a cash buyer or spend money they don’t have. FundFlip is a third option.”,items:[[“Do I pay anything upfront?”,“No. Listing is free. FundFlip covers the appraisal. The entire rehab is funded by your investor partner.”],[“Do I lose ownership?”,“Never. You hold the deed throughout. The JV agreement only governs profit distribution at closing.”],[“How long does it take?”,“Most deals complete in 3 to 5 months from listing to closing.”]]}},
+{n:“02”,t:“AI Matches Investor”,sub:“Our AI finds the right investor for your property in 48 hours.”,bullets:[[“200+ data points”,“location, ARV, rehab scope, and investor history all analyzed instantly”],[“48-hour match”,“most properties matched with a qualified investor the same day”],[“Explainable results”,“you see exactly why your investor was selected”]],
+detail:{overview:“FundFlip’s AI analyzes your property against our full investor database and surfaces the highest-probability match based on deal history, market knowledge, and availability.”,items:[[“What data does the AI use?”,“Property location, current value, ARV estimate, rehab scope, and your timeline — all factored alongside investor history and past deal performance.”],[“How fast does it work?”,“Most properties receive an investor match within 48 hours of listing.”],[“Can I reject a match?”,“Yes. You review the matched investor’s profile before any contract is signed.”]]}},
+{n:“03”,t:“Investor Picks”,sub:“One investor funds the full rehab, direct and 1-on-1.”,bullets:[[“Full financials visible”,“ARV, rehab cost, profit projection, contractor scope”],[“1-on-1 deal”,“no pools, no shared risk”],[“Funds go to escrow”,“never touched by the owner until milestones hit”]],
+detail:{overview:“FundFlip is not a crowdfunding platform. One investor picks one property and funds the entire rehab.”,items:[[“What does an investor see?”,“Full deal room: ARV report, rehab budget, contractor profile, projected profit, and timeline.”],[“How much does an investor put in?”,“Exactly the rehab cost, typically $40K to $120K depending on the property.”],[“Expected return?”,“FundFlip deals have averaged ~38% ROI in approximately 4 months.”]]}},
+{n:“04”,t:“JV Contract Signed”,sub:“Both parties sign a legally binding agreement on-platform.”,bullets:[[“Auto-generated”,“no lawyers, no back and forth”],[“Terms locked in”,“profit split, timeline, and milestones agreed”],[“Owner rights protected”,“homeowner keeps control throughout”]],
+detail:{overview:“A Joint Venture agreement is a legally recognized contract. FundFlip generates it automatically based on negotiated terms.”,items:[[“Is it legally binding?”,“Yes. Executed via e-signature. Same legal weight as any signed real estate agreement.”],[“Does the owner give up their deed?”,“No. The JV agreement only governs profit distribution, not ownership.”],[“What if someone backs out?”,“Default provisions are included. Unused escrow is returned if a deal collapses before starting.”]]}},
+{n:“05”,t:“Rehab Milestones”,sub:“Contractor works in 4 funded stages, investor approves each one.”,bullets:[[“4 milestone releases”,“escrow funds released stage by stage”],[“Photo proof required”,“contractor submits updates before funds release”],[“Live dashboard”,“budget and progress tracked in real time”]],
+detail:{overview:“Funds are released from escrow only when each stage is complete and the investor approves it.”,items:[[“What are the 4 milestones?”,“M1: Demo 20%. M2: Rough-in 25%. M3: Finishes 35%. M4: Final inspection 20%.”],[“How does the investor approve?”,“Contractor uploads photos. Investor reviews and approves to release funds.”],[“What if they go over budget?”,“Scope and budget are locked before funding. Any change orders require approval from both parties.”]]}},
+{n:“06”,t:“Home Sells”,sub:“Full market value sale. Everyone wins.”,bullets:[[“Lists after renovation”,“home hits market at full value, not discounted”],[“Automatic distribution”,“proceeds split at closing without dispute”],[“50 / 40 / 10 split”,“owner, investor, FundFlip”]],
+detail:{overview:“Once renovation is complete, the home lists at full after-repair value and sells on the open market. Most deals complete in 3 to 5 months total.”,items:[[“Who lists the home?”,“The homeowner works with a licensed real estate agent of their choice.”],[“How is profit calculated?”,“Sale price minus original value minus rehab cost minus agent commission. Remaining profit splits per JV contract.”],[“Example deal”,“Inherited at $150K. Rehab $52K. Sells $265K. Net profit ~$63K. Owner gets $31.5K (50%). Investor gets $25.2K (40%, ~48% ROI). FundFlip gets $6.3K (10%). Total time: 4 months.”]]}},
+];
+return(
+<div style={{position:“relative”}}>
+{active!==null&&(
+<div onClick={function(){setActive(null);}} style={{position:“fixed”,inset:0,zIndex:9000,background:“rgba(0,0,0,0.6)”,backdropFilter:“blur(8px)”,display:“flex”,alignItems:“center”,justifyContent:“center”,padding:20}}>
+<div onClick={function(e){e.stopPropagation();}} style={{background:WHT,borderRadius:20,width:“100%”,maxWidth:500,maxHeight:“88vh”,overflowY:“auto”,boxShadow:“0 24px 80px rgba(0,0,0,0.25)”}}>
+<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,padding:“18px 24px 0”}}>
+<span style={{fontSize:10,fontWeight:700,letterSpacing:“0.12em”,color:ROSE}}>{steps[active].n}</span>
+<button onClick={function(){setActive(null);}} style={{background:BG,border:“1px solid “+BRD,borderRadius:8,width:30,height:30,cursor:“pointer”,fontSize:14,color:TMU}}>{“x”}</button>
+</div>
+<div style={{padding:“16px 24px 32px”}}>
+<div style={{fontWeight:800,fontSize:22,color:BLK,marginBottom:10,lineHeight:1.2}}>{steps[active].t}</div>
+<div style={{fontSize:14,color:TM,lineHeight:1.75,marginBottom:24,padding:“14px 16px”,background:BG,borderRadius:10}}>{steps[active].detail.overview}</div>
+{steps[active].detail.items.map(function(item){return(
+<div key={item[0]} style={{marginBottom:18}}>
+<div style={{fontWeight:700,fontSize:14,color:BLK,marginBottom:5}}>{item[0]}</div>
+<div style={{fontSize:13,color:TM,lineHeight:1.7}}>{item[1]}</div>
+</div>
+);})}
+</div>
+</div>
+</div>
+)}
+<div style={{display:“grid”,gridTemplateColumns:“1fr 1fr”}}>
+{steps.map(function(step,i){
+var isActive=active===i;
+var isLeft=i%2===0;
+return(
+<div key={step.n} onClick={function(){setActive(isActive?null:i);}} style={{padding:“28px 6% 32px”,borderRight:isLeft?“1px solid “+BRD:“none”,borderBottom:“1px solid “+BRD,borderTop:“3px solid “+(isActive?ROSE:“transparent”),background:WHT,cursor:“pointer”,boxSizing:“border-box”}}>
+<div style={{fontSize:10,fontWeight:700,letterSpacing:“0.12em”,marginBottom:10,color:ROSE,marginTop:-4}}>{step.n}</div>
+<div style={{fontWeight:800,fontSize:18,color:BLK,marginBottom:4,lineHeight:1.2}}>{step.t}</div>
+<div style={{fontSize:13,color:TMU,marginBottom:14,lineHeight:1.55}}>{step.sub}</div>
+{step.bullets.map(function(b){return(
+<div key={b[0]} style={{display:“flex”,gap:10,alignItems:“flex-start”,marginBottom:10}}>
+<div style={{width:7,height:7,borderRadius:“50%”,flexShrink:0,marginTop:5,background:isActive?ROSE:TL}}/>
+<span style={{fontSize:13,color:TM,lineHeight:1.6}}><strong style={{color:BLK,fontWeight:700}}>{b[0]}</strong>{” \u2014 “}{b[1]}</span>
+</div>
+);})}
+<div style={{marginTop:10,fontSize:10,color:isActive?ROSE:TF,letterSpacing:“0.06em”,textTransform:“uppercase”}}>{isActive?“Tap to close”:“Tap to expand”}</div>
+</div>
+);
+})}
+</div>
+</div>
+);
 }
 
 function TrustGrid(){
-  var items=[
-    {n:"01",title:"Escrow Protected",sub:"Your money is never at risk.",bullets:[["FDIC-insured escrow","all investor funds held by a licensed escrow provider, never in the owner's account"],["Milestone-gated","funds release in 4 stages only after contractor completes approved work"],["Full refund if deal fails","if a deal collapses before starting, all escrowed funds are returned"]]},
-    {n:"02",title:"Legally Binding",sub:"Real contracts. Real protection.",bullets:[["Auto-generated JV agreement","no lawyers needed, built from your negotiated terms"],["E-signature on-platform","same legal weight as any signed real estate contract"],["Owner rights locked in","you keep the deed, the contract only governs profit distribution"]]},
-    {n:"03",title:"Independent Appraisals",sub:"No inflated numbers. Ever.",bullets:[["Certified ARV appraisal","ordered by FundFlip, not the investor, so the number is always fair"],["Before any funding","appraisal is complete before any investor sees your deal"],["Protects both sides","fair market value protects the owner from lowballing and the investor from overpaying"]]},
-    {n:"04",title:"Vetted Contractors",sub:"Only the best work on your home.",bullets:[["Licensed and insured","every contractor passes a full license and insurance verification"],["FundFlip interviewed","each contractor is personally reviewed by our team before approval"],["3 competitive bids","we get multiple quotes and lock in the best scope before funding"]]},
-    {n:"05",title:"AI Transparency",sub:"No black box. Full explainability.",bullets:[["200+ data points analyzed","location, ARV, rehab scope, and investor history all factor into every match"],["You see why you were matched","every investor recommendation comes with a clear match reason"],["Continuously learning","the model improves with every closed deal"]]},
-    {n:"06",title:"Full Accountability",sub:"Everyone answers to the deal.",bullets:[["Contractors paid by milestone","no work approved, no payment released, period"],["Investors held to contract","every commitment is legally binding with default provisions protecting the owner"],["FundFlip mediates disputes","if anything goes off track, our team steps in"]]},
-  ];
-  return(
-    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr"}}>
-      {items.map(function(item,i){
-        var isLeft=i%2===0;
-        return(
-          <div key={item.n} style={{padding:"28px 6% 32px",borderRight:isLeft?"1px solid "+BRD:"none",borderBottom:"1px solid "+BRD,borderTop:"1px solid "+BRD,background:WHT,boxSizing:"border-box"}}>
-            <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",marginBottom:12,color:ROSE,marginTop:-4}}>{item.n}</div>
-            <div style={{fontWeight:800,fontSize:18,color:BLK,marginBottom:4,lineHeight:1.2}}>{item.title}</div>
-            <div style={{fontSize:13,color:TMU,marginBottom:14,lineHeight:1.55}}>{item.sub}</div>
-            {item.bullets.map(function(b){return(
-              <div key={b[0]} style={{display:"flex",gap:10,alignItems:"flex-start",marginBottom:10}}>
-                <div style={{width:7,height:7,borderRadius:"50%",flexShrink:0,marginTop:5,background:TL}}/>
-                <span style={{fontSize:13,color:TM,lineHeight:1.6}}><strong style={{color:BLK,fontWeight:700}}>{b[0]}</strong>{" \u2014 "}{b[1]}</span>
-              </div>
-            );})}
-          </div>
-        );
-      })}
-    </div>
-  );
+var items=[
+{n:“01”,title:“Escrow Protected”,sub:“Your money is never at risk.”,bullets:[[“FDIC-insured escrow”,“all investor funds held by a licensed escrow provider, never in the owner’s account”],[“Milestone-gated”,“funds release in 4 stages only after contractor completes approved work”],[“Full refund if deal fails”,“if a deal collapses before starting, all escrowed funds are returned”]]},
+{n:“02”,title:“Legally Binding”,sub:“Real contracts. Real protection.”,bullets:[[“Auto-generated JV agreement”,“no lawyers needed, built from your negotiated terms”],[“E-signature on-platform”,“same legal weight as any signed real estate contract”],[“Owner rights locked in”,“you keep the deed, the contract only governs profit distribution”]]},
+{n:“03”,title:“Independent Appraisals”,sub:“No inflated numbers. Ever.”,bullets:[[“Certified ARV appraisal”,“ordered by FundFlip, not the investor, so the number is always fair”],[“Before any funding”,“appraisal is complete before any investor sees your deal”],[“Protects both sides”,“fair market value protects the owner from lowballing and the investor from overpaying”]]},
+{n:“04”,title:“Vetted Contractors”,sub:“Only the best work on your home.”,bullets:[[“Licensed and insured”,“every contractor passes a full license and insurance verification”],[“FundFlip interviewed”,“each contractor is personally reviewed by our team before approval”],[“3 competitive bids”,“we get multiple quotes and lock in the best scope before funding”]]},
+{n:“05”,title:“AI Transparency”,sub:“No black box. Full explainability.”,bullets:[[“200+ data points analyzed”,“location, ARV, rehab scope, and investor history all factor into every match”],[“You see why you were matched”,“every investor recommendation comes with a clear match reason”],[“Continuously learning”,“the model improves with every closed deal”]]},
+{n:“06”,title:“Full Accountability”,sub:“Everyone answers to the deal.”,bullets:[[“Contractors paid by milestone”,“no work approved, no payment released, period”],[“Investors held to contract”,“every commitment is legally binding with default provisions protecting the owner”],[“FundFlip mediates disputes”,“if anything goes off track, our team steps in”]]},
+];
+return(
+<div style={{display:“grid”,gridTemplateColumns:“1fr 1fr”}}>
+{items.map(function(item,i){
+var isLeft=i%2===0;
+return(
+<div key={item.n} style={{padding:“28px 6% 32px”,borderRight:isLeft?“1px solid “+BRD:“none”,borderBottom:“1px solid “+BRD,borderTop:“1px solid “+BRD,background:WHT,boxSizing:“border-box”}}>
+<div style={{fontSize:10,fontWeight:700,letterSpacing:“0.12em”,marginBottom:12,color:ROSE,marginTop:-4}}>{item.n}</div>
+<div style={{fontWeight:800,fontSize:18,color:BLK,marginBottom:4,lineHeight:1.2}}>{item.title}</div>
+<div style={{fontSize:13,color:TMU,marginBottom:14,lineHeight:1.55}}>{item.sub}</div>
+{item.bullets.map(function(b){return(
+<div key={b[0]} style={{display:“flex”,gap:10,alignItems:“flex-start”,marginBottom:10}}>
+<div style={{width:7,height:7,borderRadius:“50%”,flexShrink:0,marginTop:5,background:TL}}/>
+<span style={{fontSize:13,color:TM,lineHeight:1.6}}><strong style={{color:BLK,fontWeight:700}}>{b[0]}</strong>{” \u2014 “}{b[1]}</span>
+</div>
+);})}
+</div>
+);
+})}
+</div>
+);
 }
 
 function ListingForm(){
-  var [step,setStep]=useState(1);
-  var [done,setDone]=useState(false);
-  var [addr,setAddr]=useState("");
-  var [beds,setBeds]=useState("");
-  var [cond,setCond]=useState("");
-  var [how,setHow]=useState("");
-  var [when,setWhen]=useState("");
-  var [name,setName]=useState("");
-  var [phone,setPhone]=useState("");
-  var [email,setEmail]=useState("");
-  var inp={width:"100%",padding:"12px 14px",borderRadius:9,fontSize:14,border:"1.5px solid "+BRD,background:WHT,color:BLK,outline:"none",lineHeight:1,boxSizing:"border-box"};
-  function pill(a){return{padding:"9px 14px",borderRadius:8,fontSize:12,fontWeight:600,border:"1.5px solid "+(a?ROSE:BRD),background:a?RF:WHT,color:a?ROSE:TMU,cursor:"pointer",lineHeight:1};}
-  if(done) return(
-    <div style={{background:WHT,borderRadius:16,border:"1px solid "+BRD,padding:"28px 24px",boxShadow:"0 4px 24px rgba(0,0,0,0.06)"}}>
-      <div style={{fontSize:32,marginBottom:10}}>{"🎉"}</div>
-      <div style={{fontWeight:800,fontSize:20,color:BLK,marginBottom:6}}>{"You're on the list!"}</div>
-      <div style={{fontSize:13,color:TMU,lineHeight:1.7,marginBottom:20}}>{"Your property has been submitted. Here's exactly what happens next:"}</div>
-      {[["Within 24 hrs","Our team reviews your property and orders your free certified ARV appraisal"],["Within 48 hrs","FundFlip AI begins matching your property against our full investor database"],["Within 72 hrs","You receive your investor match and can review their profile before any commitment"]].map(function(item,i){return(
-        <div key={i} style={{display:"flex",gap:12,alignItems:"flex-start",marginBottom:14}}>
-          <div style={{width:24,height:24,borderRadius:"50%",flexShrink:0,background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <span style={{color:WHT,fontSize:11,fontWeight:800}}>{i+1}</span>
-          </div>
-          <div>
-            <div style={{fontSize:11,fontWeight:700,color:ROSE,marginBottom:2}}>{item[0]}</div>
-            <div style={{fontSize:12,color:TM,lineHeight:1.6}}>{item[1]}</div>
-          </div>
-        </div>
-      );})}
-      <div style={{borderTop:"1px solid "+BRD,marginTop:20,paddingTop:20}}>
-        <div style={{fontSize:12,color:TMU,marginBottom:10,textAlign:"center"}}>Know someone with an inherited home? Share FundFlip.</div>
-        <button onClick={function(){
-          if(navigator.share){navigator.share({title:"FundFlip",text:"Stop selling inherited homes for 60 cents on the dollar. FundFlip connects homeowners with trusted investors.",url:"https://fundflip.com"});}
-          else{navigator.clipboard&&navigator.clipboard.writeText("https://fundflip.com");}
-        }} style={{width:"100%",padding:"12px",background:BG,border:"1px solid "+BRD,borderRadius:10,color:BLK,fontSize:13,fontWeight:700,cursor:"pointer"}}>{"Share FundFlip \u2197"}</button>
-      </div>
-    </div>
-  );
-  return(
-    <div style={{background:WHT,borderRadius:16,border:"1px solid "+BRD,overflow:"hidden",marginBottom:16,boxShadow:"0 4px 24px rgba(0,0,0,0.06)"}}>
-      <div style={{height:4,background:BGA}}>
-        <div style={{height:"100%",width:step===1?"33%":step===2?"66%":"100%",background:"linear-gradient(90deg,"+ROSE+","+ROSE2+")",transition:"width 0.4s"}}/>
-      </div>
-      <div style={{padding:"24px 20px 28px"}}>
-        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:22}}>
-          {[1,2,3].map(function(n){return(
-            <div key={n} style={{display:"flex",alignItems:"center",gap:8}}>
-              <div style={{width:24,height:24,borderRadius:"50%",fontSize:11,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",background:step>=n?ROSE:BGA,color:step>=n?WHT:TL}}>{n}</div>
-              <span style={{fontSize:11,color:step===n?BLK:TL,fontWeight:step===n?700:400}}>{["Property","Situation","Contact"][n-1]}</span>
-              {n<3&&<div style={{width:20,height:1,background:BRD}}/>}
-            </div>
-          );})}
-        </div>
-        {step===1&&(
-          <div style={{display:"flex",flexDirection:"column",gap:16}}>
-            <div style={{fontWeight:800,fontSize:18,color:BLK}}>Tell us about your property</div>
-            <div>
-              <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Property Address</div>
-              <input style={inp} placeholder="123 Main St, Atlanta, GA" value={addr} onChange={function(e){setAddr(e.target.value);}}/>
-            </div>
-            <div>
-              <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Bedrooms</div>
-              <div style={{display:"flex",gap:6}}>
-                {["1","2","3","4","5+"].map(function(n){return <button key={n} onClick={function(){setBeds(n);}} style={pill(beds===n)}>{n}</button>;})}
-              </div>
-            </div>
-            <div>
-              <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Condition</div>
-              <div style={{display:"flex",gap:8}}>
-                {["Needs Work","Fair","Good"].map(function(c){return <button key={c} onClick={function(){setCond(c);}} style={pill(cond===c)}>{c}</button>;})}
-              </div>
-            </div>
-            <button onClick={function(){if(addr)setStep(2);}} style={{padding:"13px",borderRadius:10,border:"none",fontSize:14,fontWeight:700,cursor:addr?"pointer":"default",background:addr?"linear-gradient(135deg,"+ROSE+","+ROSE2+")":BGA,color:addr?WHT:TL}}>Continue - Step 2</button>
-          </div>
-        )}
-        {step===2&&(
-          <div style={{display:"flex",flexDirection:"column",gap:16}}>
-            <div style={{fontWeight:800,fontSize:18,color:BLK}}>Your situation</div>
-            <div>
-              <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>How did you come to own this?</div>
-              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                {[["inherited","Inherited"],["estate","Estate"],["gift","Gift"],["other","Other"]].map(function(pair){return <button key={pair[0]} onClick={function(){setHow(pair[0]);}} style={pill(how===pair[0])}>{pair[1]}</button>;})}
-              </div>
-            </div>
-            <div>
-              <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Your timeline</div>
-              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                {[["asap","ASAP"],["1-3","1-3 mo"],["3-6","3-6 mo"],["exploring","Exploring"]].map(function(pair){return <button key={pair[0]} onClick={function(){setWhen(pair[0]);}} style={pill(when===pair[0])}>{pair[1]}</button>;})}
-              </div>
-            </div>
-            <div style={{display:"flex",gap:10}}>
-              <button onClick={function(){setStep(1);}} style={{padding:"13px 18px",borderRadius:10,border:"1px solid "+BRD,background:WHT,color:TMU,fontSize:13,cursor:"pointer"}}>Back</button>
-              <button onClick={function(){setStep(3);}} style={{flex:1,padding:"13px",borderRadius:10,border:"none",fontSize:14,fontWeight:700,cursor:"pointer",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",color:WHT}}>Continue - Step 3</button>
-            </div>
-          </div>
-        )}
-        {step===3&&(
-          <div style={{display:"flex",flexDirection:"column",gap:16}}>
-            <div style={{fontWeight:800,fontSize:18,color:BLK}}>Last step</div>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-              <div>
-                <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Full Name</div>
-                <input style={inp} placeholder="Maria Johnson" value={name} onChange={function(e){setName(e.target.value);}}/>
-              </div>
-              <div>
-                <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Phone</div>
-                <input style={inp} placeholder="(555) 000-0000" value={phone} onChange={function(e){setPhone(e.target.value);}}/>
-              </div>
-            </div>
-            <div>
-              <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:7}}>Email</div>
-              <input style={inp} placeholder="you@email.com" value={email} onChange={function(e){setEmail(e.target.value);}}/>
-            </div>
-            <div style={{display:"flex",gap:10}}>
-              <button onClick={function(){setStep(2);}} style={{padding:"13px 18px",borderRadius:10,border:"1px solid "+BRD,background:WHT,color:TMU,fontSize:13,cursor:"pointer"}}>Back</button>
-              <button onClick={function(){if(name&&phone)setDone(true);}} style={{flex:1,padding:"13px",borderRadius:10,border:"none",fontSize:14,fontWeight:700,cursor:name&&phone?"pointer":"default",background:name&&phone?"linear-gradient(135deg,"+ROSE+","+ROSE2+")":BGA,color:name&&phone?WHT:TL}}>Submit - Get Free ARV Estimate</button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+var [step,setStep]=useState(1);
+var [done,setDone]=useState(false);
+var [addr,setAddr]=useState(””);
+var [beds,setBeds]=useState(””);
+var [cond,setCond]=useState(””);
+var [how,setHow]=useState(””);
+var [when,setWhen]=useState(””);
+var [name,setName]=useState(””);
+var [phone,setPhone]=useState(””);
+var [email,setEmail]=useState(””);
+var inp={width:“100%”,padding:“12px 14px”,borderRadius:9,fontSize:14,border:“1.5px solid “+BRD,background:WHT,color:BLK,outline:“none”,lineHeight:1,boxSizing:“border-box”};
+function pill(a){return{padding:“9px 14px”,borderRadius:8,fontSize:12,fontWeight:600,border:“1.5px solid “+(a?ROSE:BRD),background:a?RF:WHT,color:a?ROSE:TMU,cursor:“pointer”,lineHeight:1};}
+if(done) return(
+<div style={{background:WHT,borderRadius:16,border:“1px solid “+BRD,padding:“28px 24px”,boxShadow:“0 4px 24px rgba(0,0,0,0.06)”}}>
+<div style={{fontSize:32,marginBottom:10}}>{“🎉”}</div>
+<div style={{fontWeight:800,fontSize:20,color:BLK,marginBottom:6}}>{“You’re on the list!”}</div>
+<div style={{fontSize:13,color:TMU,lineHeight:1.7,marginBottom:20}}>{“Your property has been submitted. Here’s exactly what happens next:”}</div>
+{[[“Within 24 hrs”,“Our team reviews your property and orders your free certified ARV appraisal”],[“Within 48 hrs”,“FundFlip AI begins matching your property against our full investor database”],[“Within 72 hrs”,“You receive your investor match and can review their profile before any commitment”]].map(function(item,i){return(
+<div key={i} style={{display:“flex”,gap:12,alignItems:“flex-start”,marginBottom:14}}>
+<div style={{width:24,height:24,borderRadius:“50%”,flexShrink:0,background:“linear-gradient(135deg,”+ROSE+”,”+ROSE2+”)”,display:“flex”,alignItems:“center”,justifyContent:“center”}}>
+<span style={{color:WHT,fontSize:11,fontWeight:800}}>{i+1}</span>
+</div>
+<div>
+<div style={{fontSize:11,fontWeight:700,color:ROSE,marginBottom:2}}>{item[0]}</div>
+<div style={{fontSize:12,color:TM,lineHeight:1.6}}>{item[1]}</div>
+</div>
+</div>
+);})}
+<div style={{borderTop:“1px solid “+BRD,marginTop:20,paddingTop:20}}>
+<div style={{fontSize:12,color:TMU,marginBottom:10,textAlign:“center”}}>Know someone with an inherited home? Share FundFlip.</div>
+<button onClick={function(){
+if(navigator.share){navigator.share({title:“FundFlip”,text:“Stop selling inherited homes for 60 cents on the dollar. FundFlip connects homeowners with trusted investors.”,url:“https://fundflip.com”});}
+else{navigator.clipboard&&navigator.clipboard.writeText(“https://fundflip.com”);}
+}} style={{width:“100%”,padding:“12px”,background:BG,border:“1px solid “+BRD,borderRadius:10,color:BLK,fontSize:13,fontWeight:700,cursor:“pointer”}}>{“Share FundFlip \u2197”}</button>
+</div>
+</div>
+);
+return(
+<div style={{background:WHT,borderRadius:16,border:“1px solid “+BRD,overflow:“hidden”,marginBottom:16,boxShadow:“0 4px 24px rgba(0,0,0,0.06)”}}>
+<div style={{height:4,background:BGA}}>
+<div style={{height:“100%”,width:step===1?“33%”:step===2?“66%”:“100%”,background:“linear-gradient(90deg,”+ROSE+”,”+ROSE2+”)”,transition:“width 0.4s”}}/>
+</div>
+<div style={{padding:“24px 20px 28px”}}>
+<div style={{display:“flex”,alignItems:“center”,gap:8,marginBottom:22}}>
+{[1,2,3].map(function(n){return(
+<div key={n} style={{display:“flex”,alignItems:“center”,gap:8}}>
+<div style={{width:24,height:24,borderRadius:“50%”,fontSize:11,fontWeight:800,display:“flex”,alignItems:“center”,justifyContent:“center”,background:step>=n?ROSE:BGA,color:step>=n?WHT:TL}}>{n}</div>
+<span style={{fontSize:11,color:step===n?BLK:TL,fontWeight:step===n?700:400}}>{[“Property”,“Situation”,“Contact”][n-1]}</span>
+{n<3&&<div style={{width:20,height:1,background:BRD}}/>}
+</div>
+);})}
+</div>
+{step===1&&(
+<div style={{display:“flex”,flexDirection:“column”,gap:16}}>
+<div style={{fontWeight:800,fontSize:18,color:BLK}}>Tell us about your property</div>
+<div>
+<div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:“uppercase”,letterSpacing:“0.08em”,marginBottom:7}}>Property Address</div>
+<input style={inp} placeholder="123 Main St, Atlanta, GA" value={addr} onChange={function(e){setAddr(e.target.value);}}/>
+</div>
+<div>
+<div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:“uppercase”,letterSpacing:“0.08em”,marginBottom:7}}>Bedrooms</div>
+<div style={{display:“flex”,gap:6}}>
+{[“1”,“2”,“3”,“4”,“5+”].map(function(n){return <button key={n} onClick={function(){setBeds(n);}} style={pill(beds===n)}>{n}</button>;})}
+</div>
+</div>
+<div>
+<div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:“uppercase”,letterSpacing:“0.08em”,marginBottom:7}}>Condition</div>
+<div style={{display:“flex”,gap:8}}>
+{[“Needs Work”,“Fair”,“Good”].map(function(c){return <button key={c} onClick={function(){setCond(c);}} style={pill(cond===c)}>{c}</button>;})}
+</div>
+</div>
+<button onClick={function(){if(addr)setStep(2);}} style={{padding:“13px”,borderRadius:10,border:“none”,fontSize:14,fontWeight:700,cursor:addr?“pointer”:“default”,background:addr?“linear-gradient(135deg,”+ROSE+”,”+ROSE2+”)”:BGA,color:addr?WHT:TL}}>Continue - Step 2</button>
+</div>
+)}
+{step===2&&(
+<div style={{display:“flex”,flexDirection:“column”,gap:16}}>
+<div style={{fontWeight:800,fontSize:18,color:BLK}}>Your situation</div>
+<div>
+<div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:“uppercase”,letterSpacing:“0.08em”,marginBottom:7}}>How did you come to own this?</div>
+<div style={{display:“flex”,gap:8,flexWrap:“wrap”}}>
+{[[“inherited”,“Inherited”],[“estate”,“Estate”],[“gift”,“Gift”],[“other”,“Other”]].map(function(pair){return <button key={pair[0]} onClick={function(){setHow(pair[0]);}} style={pill(how===pair[0])}>{pair[1]}</button>;})}
+</div>
+</div>
+<div>
+<div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:“uppercase”,letterSpacing:“0.08em”,marginBottom:7}}>Your timeline</div>
+<div style={{display:“flex”,gap:8,flexWrap:“wrap”}}>
+{[[“asap”,“ASAP”],[“1-3”,“1-3 mo”],[“3-6”,“3-6 mo”],[“exploring”,“Exploring”]].map(function(pair){return <button key={pair[0]} onClick={function(){setWhen(pair[0]);}} style={pill(when===pair[0])}>{pair[1]}</button>;})}
+</div>
+</div>
+<div style={{display:“flex”,gap:10}}>
+<button onClick={function(){setStep(1);}} style={{padding:“13px 18px”,borderRadius:10,border:“1px solid “+BRD,background:WHT,color:TMU,fontSize:13,cursor:“pointer”}}>Back</button>
+<button onClick={function(){setStep(3);}} style={{flex:1,padding:“13px”,borderRadius:10,border:“none”,fontSize:14,fontWeight:700,cursor:“pointer”,background:“linear-gradient(135deg,”+ROSE+”,”+ROSE2+”)”,color:WHT}}>Continue - Step 3</button>
+</div>
+</div>
+)}
+{step===3&&(
+<div style={{display:“flex”,flexDirection:“column”,gap:16}}>
+<div style={{fontWeight:800,fontSize:18,color:BLK}}>Last step</div>
+<div style={{display:“grid”,gridTemplateColumns:“1fr 1fr”,gap:12}}>
+<div>
+<div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:“uppercase”,letterSpacing:“0.08em”,marginBottom:7}}>Full Name</div>
+<input style={inp} placeholder="Maria Johnson" value={name} onChange={function(e){setName(e.target.value);}}/>
+</div>
+<div>
+<div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:“uppercase”,letterSpacing:“0.08em”,marginBottom:7}}>Phone</div>
+<input style={inp} placeholder="(555) 000-0000" value={phone} onChange={function(e){setPhone(e.target.value);}}/>
+</div>
+</div>
+<div>
+<div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:“uppercase”,letterSpacing:“0.08em”,marginBottom:7}}>Email</div>
+<input style={inp} placeholder="you@email.com" value={email} onChange={function(e){setEmail(e.target.value);}}/>
+</div>
+<div style={{display:“flex”,gap:10}}>
+<button onClick={function(){setStep(2);}} style={{padding:“13px 18px”,borderRadius:10,border:“1px solid “+BRD,background:WHT,color:TMU,fontSize:13,cursor:“pointer”}}>Back</button>
+<button onClick={function(){if(name&&phone)setDone(true);}} style={{flex:1,padding:“13px”,borderRadius:10,border:“none”,fontSize:14,fontWeight:700,cursor:name&&phone?“pointer”:“default”,background:name&&phone?“linear-gradient(135deg,”+ROSE+”,”+ROSE2+”)”:BGA,color:name&&phone?WHT:TL}}>Submit - Get Free ARV Estimate</button>
+</div>
+</div>
+)}
+</div>
+</div>
+);
 }
 
 function WaitlistForm(){
-  var [email,setEmail]=useState("");
-  var [state,setState]=useState("");
-  var [done,setDone]=useState(false);
-  var states=["Texas","Florida","Georgia","Arizona","Nevada","Other"];
-  if(done) return(
-    <div style={{background:WHT,borderRadius:12,padding:"20px",border:"1px solid "+BRD,textAlign:"center"}}>
-      <div style={{fontSize:24,marginBottom:8}}>{"🎉"}</div>
-      <div style={{fontWeight:700,fontSize:16,color:BLK,marginBottom:4}}>{"You're on the list!"}</div>
-      <div style={{fontSize:13,color:TMU}}>{"We'll notify you the moment FundFlip launches in "+state+". Your information is already in our system."}</div>
-    </div>
-  );
-  return(
-    <div style={{background:WHT,borderRadius:12,padding:"20px",border:"1px solid "+BRD}}>
-      <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center",marginBottom:14}}>
-        {states.map(function(s){return(
-          <button key={s} onClick={function(){setState(s);}} style={{padding:"8px 14px",borderRadius:8,fontSize:12,fontWeight:600,border:"1.5px solid "+(state===s?ROSE:BRD),background:state===s?RF:BG,color:state===s?ROSE:TMU,cursor:"pointer"}}>{s}</button>
-        );})}
-      </div>
-      <div style={{display:"flex",gap:8}}>
-        <input style={{flex:1,padding:"12px 14px",borderRadius:9,fontSize:14,border:"1.5px solid "+BRD,background:BG,color:BLK,outline:"none"}} placeholder="your@email.com" value={email} onChange={function(e){setEmail(e.target.value);}}/>
-        <button onClick={function(){if(email&&state)setDone(true);}} style={{padding:"12px 18px",borderRadius:9,border:"none",fontSize:13,fontWeight:700,cursor:email&&state?"pointer":"default",background:email&&state?"linear-gradient(135deg,"+ROSE+","+ROSE2+")":BGA,color:email&&state?WHT:TL,whiteSpace:"nowrap"}}>Join Waitlist</button>
-      </div>
-    </div>
-  );
+var [email,setEmail]=useState(””);
+var [state,setState]=useState(””);
+var [done,setDone]=useState(false);
+var states=[“Texas”,“Florida”,“Georgia”,“Arizona”,“Nevada”,“Other”];
+if(done) return(
+<div style={{background:WHT,borderRadius:12,padding:“20px”,border:“1px solid “+BRD,textAlign:“center”}}>
+<div style={{fontSize:24,marginBottom:8}}>{“🎉”}</div>
+<div style={{fontWeight:700,fontSize:16,color:BLK,marginBottom:4}}>{“You’re on the list!”}</div>
+<div style={{fontSize:13,color:TMU}}>{“We’ll notify you the moment FundFlip launches in “+state+”. Your information is already in our system.”}</div>
+</div>
+);
+return(
+<div style={{background:WHT,borderRadius:12,padding:“20px”,border:“1px solid “+BRD}}>
+<div style={{display:“flex”,gap:8,flexWrap:“wrap”,justifyContent:“center”,marginBottom:14}}>
+{states.map(function(s){return(
+<button key={s} onClick={function(){setState(s);}} style={{padding:“8px 14px”,borderRadius:8,fontSize:12,fontWeight:600,border:“1.5px solid “+(state===s?ROSE:BRD),background:state===s?RF:BG,color:state===s?ROSE:TMU,cursor:“pointer”}}>{s}</button>
+);})}
+</div>
+<div style={{display:“flex”,gap:8}}>
+<input style={{flex:1,padding:“12px 14px”,borderRadius:9,fontSize:14,border:“1.5px solid “+BRD,background:BG,color:BLK,outline:“none”}} placeholder=“your@email.com” value={email} onChange={function(e){setEmail(e.target.value);}}/>
+<button onClick={function(){if(email&&state)setDone(true);}} style={{padding:“12px 18px”,borderRadius:9,border:“none”,fontSize:13,fontWeight:700,cursor:email&&state?“pointer”:“default”,background:email&&state?“linear-gradient(135deg,”+ROSE+”,”+ROSE2+”)”:BGA,color:email&&state?WHT:TL,whiteSpace:“nowrap”}}>Join Waitlist</button>
+</div>
+</div>
+);
 }
 
 function Landing({onDash}){
-  var [vis,setVis]=useState(false);
-  var [faqOpen,setFaqOpen]=useState(null);
-  useEffect(function(){setTimeout(function(){setVis(true);},100);},[]);
+var [vis,setVis]=useState(false);
+var [faqOpen,setFaqOpen]=useState(null);
+useEffect(function(){setTimeout(function(){setVis(true);},100);},[]);
 
-  var faqs=[
-    ["How does the AI matching work?","FundFlip analyzes 200+ data points including your property location, condition, ARV, and rehab scope against our investor database to find the highest-probability match."],
-    ["How fast does the AI find a match?","Most properties are matched within 48 hours of listing. The AI runs continuously so your deal is evaluated the moment it goes live."],
-    ["Do I pay anything upfront?","Nothing. FundFlip covers the ARV appraisal. The entire renovation is funded by your investor. You pay nothing until your home sells."],
-    ["Do I give up ownership?","Never. You hold the deed throughout. The JV agreement only determines profit distribution at closing."],
-    ["How is my money protected?","All investor funds go into FDIC-insured milestone escrow. Funds release in 4 stages only after approved contractor work."],
-    ["What if I inherited with siblings?","All legal co-owners must sign the JV contract. FundFlip provides a shared dashboard so co-heirs can review and sign from anywhere."],
-    ["How long does it take?","Most deals complete in 3 to 5 months. Major overhauls can take up to 6 to 7 months."],
-    ["Which states are you in?","Currently live in California, Colorado, and Virginia. Expanding to Texas, Florida, and Georgia next."],
-  ];
+var faqs=[
+[“How does the AI matching work?”,“FundFlip analyzes 200+ data points including your property location, condition, ARV, and rehab scope against our investor database to find the highest-probability match.”],
+[“How fast does the AI find a match?”,“Most properties are matched within 48 hours of listing. The AI runs continuously so your deal is evaluated the moment it goes live.”],
+[“Do I pay anything upfront?”,“Nothing. FundFlip covers the ARV appraisal. The entire renovation is funded by your investor. You pay nothing until your home sells.”],
+[“Do I give up ownership?”,“Never. You hold the deed throughout. The JV agreement only determines profit distribution at closing.”],
+[“How is my money protected?”,“All investor funds go into FDIC-insured milestone escrow. Funds release in 4 stages only after approved contractor work.”],
+[“What if I inherited with siblings?”,“All legal co-owners must sign the JV contract. FundFlip provides a shared dashboard so co-heirs can review and sign from anywhere.”],
+[“How long does it take?”,“Most deals complete in 3 to 5 months. Major overhauls can take up to 6 to 7 months.”],
+[“Which states are you in?”,“Currently live in California, Colorado, and Virginia. Expanding to Texas, Florida, and Georgia next.”],
+];
 
-  return(
-    <div style={{minHeight:"100vh",background:WHT,fontFamily:"Inter,sans-serif",color:BLK,overflowX:"hidden"}}>
-      <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:200,height:48,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 5%",background:"rgba(255,255,255,0.92)",backdropFilter:"blur(20px)",borderBottom:"1px solid "+BRD}}>
-        <span style={{fontWeight:800,fontSize:13,letterSpacing:"-0.03em",color:BLK,lineHeight:1,background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 12px"}}>Fund<span style={{color:ROSE}}>Flip</span></span>
-        <button onClick={onDash} style={{background:BLK,border:"none",borderRadius:7,padding:"7px 12px",color:WHT,fontSize:13,fontWeight:700,cursor:"pointer",lineHeight:1}}>Dashboard</button>
-      </nav>
+return(
+<div style={{minHeight:“100vh”,background:WHT,fontFamily:“Inter,sans-serif”,color:BLK,overflowX:“hidden”}}>
+<nav style={{position:“fixed”,top:0,left:0,right:0,zIndex:200,height:48,display:“flex”,alignItems:“center”,justifyContent:“space-between”,padding:“0 5%”,background:“rgba(255,255,255,0.92)”,backdropFilter:“blur(20px)”,borderBottom:“1px solid “+BRD}}>
+<span style={{fontWeight:800,fontSize:13,letterSpacing:”-0.03em”,color:BLK,lineHeight:1,background:BGA,border:“1px solid “+BRD,borderRadius:7,padding:“7px 12px”}}>Fund<span style={{color:ROSE}}>Flip</span></span>
+<button onClick={onDash} style={{background:BLK,border:“none”,borderRadius:7,padding:“7px 12px”,color:WHT,fontSize:13,fontWeight:700,cursor:“pointer”,lineHeight:1}}>Dashboard</button>
+</nav>
 
-      <section style={{paddingTop:48,background:WHT}}>
-        <div style={{padding:"20px 6% 0",opacity:vis?1:0,transform:vis?"none":"translateY(24px)",transition:"all 0.8s"}}>
-          <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:14}}>
-            <div style={{width:18,height:18,borderRadius:"50%",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontSize:8,color:WHT,fontWeight:800}}>AI</span></div>
-            <span style={{fontSize:11,color:BLK,fontWeight:700}}>Powered. Human Backed.</span>
-          </div>
-          <h1 style={{fontSize:"clamp(30px,6vw,68px)",fontWeight:900,lineHeight:1.05,letterSpacing:"-0.04em",color:BLK,marginBottom:16,maxWidth:820}}>
-            {"Don't Sell Your Inherited Home"}<br/>
-            <span style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{"for 60\u00A2 on the Dollar."}</span>
-          </h1>
-          <p style={{fontSize:"clamp(14px,1.8vw,17px)",color:TMU,lineHeight:1.7,maxWidth:480,marginBottom:20}}>
-            {"FundFlip\u2019s AI analyzes 200+ data points to match your property with the ideal investor. Even homes that need major work qualify. Most sell within 3 to 5 months."}
-          </p>
-          <div style={{display:"flex",gap:10,marginBottom:28,flexWrap:"wrap"}}>
-            <button style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:8,padding:"11px 20px",color:WHT,fontSize:13,fontWeight:700,cursor:"pointer",lineHeight:1}}>List My Property - Free</button>
-            <button onClick={onDash} style={{background:BLK,border:"none",borderRadius:8,padding:"11px 20px",color:WHT,fontSize:13,fontWeight:600,cursor:"pointer",lineHeight:1}}>Browse Live Deals</button>
-          </div>
-          <ListingForm/>
-          <div style={{background:WHT,borderRadius:16,border:"1px solid "+BRD,overflow:"hidden",marginBottom:16,boxShadow:"0 4px 24px rgba(0,0,0,0.06)"}}>
-            <div style={{padding:"16px 0 8px"}}><USMap/></div>
-          </div>
-          <div style={{marginBottom:24}}><MilestoneSlideshow/></div>
+```
+  <section style={{paddingTop:48,background:WHT}}>
+    <div style={{padding:"20px 6% 0",opacity:vis?1:0,transform:vis?"none":"translateY(24px)",transition:"all 0.8s"}}>
+      <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:14}}>
+        <div style={{width:18,height:18,borderRadius:"50%",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontSize:8,color:WHT,fontWeight:800}}>AI</span></div>
+        <span style={{fontSize:11,color:BLK,fontWeight:700}}>Powered. Human Backed.</span>
+      </div>
+      <h1 style={{fontSize:"clamp(30px,6vw,68px)",fontWeight:900,lineHeight:1.05,letterSpacing:"-0.04em",color:BLK,marginBottom:16,maxWidth:820}}>
+        {"Don't Sell Your Inherited Home"}<br/>
+        <span style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{"for 60\u00A2 on the Dollar."}</span>
+      </h1>
+      <p style={{fontSize:"clamp(14px,1.8vw,17px)",color:TMU,lineHeight:1.7,maxWidth:480,marginBottom:20}}>
+        {"FundFlip\u2019s AI analyzes 200+ data points to match your property with the ideal investor. Even homes that need major work qualify. Most sell within 3 to 5 months."}
+      </p>
+      <div style={{display:"flex",flexDirection:"row",gap:10,marginBottom:28,flexWrap:"nowrap"}}>
+        <button style={{flex:1,background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:8,padding:"11px 16px",color:WHT,fontSize:13,fontWeight:700,cursor:"pointer",lineHeight:1}}>List My Property - Free</button>
+        <button onClick={onDash} style={{flex:1,background:BLK,border:"none",borderRadius:8,padding:"11px 16px",color:WHT,fontSize:13,fontWeight:600,cursor:"pointer",lineHeight:1}}>Browse Live Deals</button>
+      </div>
+      <ListingForm/>
+      <div style={{background:WHT,borderRadius:16,border:"1px solid "+BRD,overflow:"hidden",marginBottom:16,boxShadow:"0 4px 24px rgba(0,0,0,0.06)"}}>
+        <div style={{padding:"16px 0 8px"}}><USMap/></div>
+      </div>
+      <div style={{marginBottom:24}}><MilestoneSlideshow/></div>
+    </div>
+  </section>
+
+  <section>
+    <div style={{background:BLK,padding:"40px 6%",display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:20}}>
+      {[["$2.4M+","Capital Deployed"],["34+","Deals Closed"],["38%","Avg Investor ROI"],["48 hrs","Avg AI Match"]].map(function(item){return(
+        <div key={item[1]} style={{textAlign:"center"}}>
+          <div style={{fontSize:"clamp(22px,3vw,30px)",fontWeight:800,background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",letterSpacing:"-0.02em"}}>{item[0]}</div>
+          <div style={{fontSize:11,color:"rgba(255,255,255,0.35)",marginTop:4,textTransform:"uppercase",letterSpacing:"0.08em"}}>{item[1]}</div>
         </div>
-      </section>
+      );})}
+    </div>
+  </section>
 
-      <section>
-        <div style={{background:BLK,padding:"40px 6%",display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:20}}>
-          {[["$2.4M+","Capital Deployed"],["34+","Deals Closed"],["38%","Avg Investor ROI"],["48 hrs","Avg AI Match"]].map(function(item){return(
-            <div key={item[1]} style={{textAlign:"center"}}>
-              <div style={{fontSize:"clamp(22px,3vw,30px)",fontWeight:800,background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",letterSpacing:"-0.02em"}}>{item[0]}</div>
-              <div style={{fontSize:11,color:"rgba(255,255,255,0.35)",marginTop:4,textTransform:"uppercase",letterSpacing:"0.08em"}}>{item[1]}</div>
+  <section style={{background:BG,borderTop:"1px solid "+BRD}}>
+    <div style={{padding:"32px 6% 16px"}}>
+      <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.14em",color:ROSE,textTransform:"uppercase",marginBottom:8}}>How It Works</div>
+      <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:800,letterSpacing:"-0.04em",lineHeight:1.1,color:BLK}}>Six steps.<br/><span style={{color:TMU}}>One clean deal.</span></h2>
+    </div>
+    <HowItWorks/>
+  </section>
+
+  <section style={{borderTop:"1px solid "+BRD,background:WHT}}>
+    <div style={{padding:"32px 6% 16px"}}>
+      <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.14em",color:ROSE,textTransform:"uppercase",marginBottom:8}}>{"Who It's For"}</div>
+      <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:800,letterSpacing:"-0.04em",lineHeight:1.1,color:BLK}}>Built for two people.<br/><span style={{color:TMU}}>One deal.</span></h2>
+    </div>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr"}}>
+      {[
+        {who:"For Inherited Homeowners",sub:"Your home funds itself. You keep the upside.",points:[["Submit your property","FundFlip orders a certified ARV appraisal and title check"],["AI matches your investor","our model finds the right investor in 48 hours"],["One investor funds the rehab","full cost goes into escrow, no debt on your end"],["You sign a JV contract","your ownership rights are protected on-platform"],["Rehab happens","you track progress live, contractor paid by milestone"],["Home sells at full value","you receive 50% of the net profit at closing"]]},
+        {who:"For Private Investors",sub:"Fund one rehab. Share the profit when it sells.",points:[["Browse AI-matched deals","every listing includes ARV, rehab scope, and pre-approved contractor"],["Pick one property","direct 1-on-1 deal, no pools, no shared risk"],["Fund the full rehab cost","deposited into milestone escrow, never held by the owner"],["Approve each milestone","contractor submits photos, you release funds when satisfied"],["Track everything live","budget, timeline, and progress in your dashboard"],["Home sells","you receive 40% of the net profit at closing"]]},
+      ].map(function(card,ci){return(
+        <div key={card.who} style={{background:WHT,borderRight:ci===0?"1px solid "+BRD:"none",borderTop:"1px solid "+BRD,padding:"28px 6% 32px",boxSizing:"border-box"}}>
+          <div style={{fontWeight:800,fontSize:18,color:BLK,marginBottom:4}}>{card.who}</div>
+          <div style={{fontSize:13,color:TMU,marginBottom:16,lineHeight:1.5}}>{card.sub}</div>
+          {card.points.map(function(p){return(
+            <div key={p[0]} style={{display:"flex",gap:10,alignItems:"flex-start",marginBottom:10}}>
+              <div style={{width:6,height:6,borderRadius:"50%",flexShrink:0,marginTop:6,background:TL}}/>
+              <span style={{fontSize:13,color:TM,lineHeight:1.6}}><strong style={{color:BLK,fontWeight:600}}>{p[0]}</strong>{" \u2014 "}{p[1]}</span>
             </div>
           );})}
         </div>
-      </section>
+      );})}
+    </div>
+  </section>
 
-      <section style={{background:BG,borderTop:"1px solid "+BRD}}>
-        <div style={{padding:"32px 6% 16px"}}>
-          <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.14em",color:ROSE,textTransform:"uppercase",marginBottom:8}}>How It Works</div>
-          <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:800,letterSpacing:"-0.04em",lineHeight:1.1,color:BLK}}>Six steps.<br/><span style={{color:TMU}}>One clean deal.</span></h2>
-        </div>
-        <HowItWorks/>
-      </section>
+  <section style={{borderTop:"1px solid "+BRD,background:WHT}}>
+    <div style={{padding:"32px 6% 16px"}}>
+      <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.14em",color:ROSE,textTransform:"uppercase",marginBottom:8}}>Why Trust FundFlip</div>
+      <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:800,letterSpacing:"-0.04em",lineHeight:1.1,color:BLK}}>Built on transparency.<br/><span style={{color:TMU}}>Protected at every step.</span></h2>
+    </div>
+    <TrustGrid/>
+  </section>
 
-      <section style={{borderTop:"1px solid "+BRD,background:WHT}}>
-        <div style={{padding:"32px 6% 16px"}}>
-          <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.14em",color:ROSE,textTransform:"uppercase",marginBottom:8}}>{"Who It's For"}</div>
-          <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:800,letterSpacing:"-0.04em",lineHeight:1.1,color:BLK}}>Built for two people.<br/><span style={{color:TMU}}>One deal.</span></h2>
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr"}}>
-          {[
-            {who:"For Inherited Homeowners",sub:"Your home funds itself. You keep the upside.",points:[["Submit your property","FundFlip orders a certified ARV appraisal and title check"],["AI matches your investor","our model finds the right investor in 48 hours"],["One investor funds the rehab","full cost goes into escrow, no debt on your end"],["You sign a JV contract","your ownership rights are protected on-platform"],["Rehab happens","you track progress live, contractor paid by milestone"],["Home sells at full value","you receive 50% of the net profit at closing"]]},
-            {who:"For Private Investors",sub:"Fund one rehab. Share the profit when it sells.",points:[["Browse AI-matched deals","every listing includes ARV, rehab scope, and pre-approved contractor"],["Pick one property","direct 1-on-1 deal, no pools, no shared risk"],["Fund the full rehab cost","deposited into milestone escrow, never held by the owner"],["Approve each milestone","contractor submits photos, you release funds when satisfied"],["Track everything live","budget, timeline, and progress in your dashboard"],["Home sells","you receive 40% of the net profit at closing"]]},
-          ].map(function(card,ci){return(
-            <div key={card.who} style={{background:WHT,borderRight:ci===0?"1px solid "+BRD:"none",borderTop:"1px solid "+BRD,padding:"28px 6% 32px",boxSizing:"border-box"}}>
-              <div style={{fontWeight:800,fontSize:18,color:BLK,marginBottom:4}}>{card.who}</div>
-              <div style={{fontSize:13,color:TMU,marginBottom:16,lineHeight:1.5}}>{card.sub}</div>
-              {card.points.map(function(p){return(
-                <div key={p[0]} style={{display:"flex",gap:10,alignItems:"flex-start",marginBottom:10}}>
-                  <div style={{width:6,height:6,borderRadius:"50%",flexShrink:0,marginTop:6,background:TL}}/>
-                  <span style={{fontSize:13,color:TM,lineHeight:1.6}}><strong style={{color:BLK,fontWeight:600}}>{p[0]}</strong>{" \u2014 "}{p[1]}</span>
+  <section style={{borderTop:"1px solid "+BRD,background:BG}}>
+    <div style={{padding:"32px 6% 16px"}}>
+      <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.14em",color:ROSE,textTransform:"uppercase",marginBottom:8}}>Real Results</div>
+      <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:800,letterSpacing:"-0.04em",lineHeight:1.1,color:BLK}}>Families who kept<br/><span style={{color:ROSE}}>their equity.</span></h2>
+    </div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))"}}>
+      {[
+        {name:"Maria J.",city:"Atlanta, GA",tag:"Inherited from mother",before:"$148K",rehab:"$52K",sold:"$265K",profit:"$31,500",roi:"42%",months:"4",quote:"I almost sold to a cash buyer for $140K. FundFlip got me $31,500 more and I didn't pay a dime upfront.",img:"https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500"},
+        {name:"David T.",city:"Tampa, FL",tag:"Estate, 3 siblings",before:"$192K",rehab:"$78K",sold:"$340K",profit:"$35,000",roi:"36%",months:"6",quote:"Three of us inherited it and we didn't want to give it away cheap. FundFlip handled everything.",img:"https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500"},
+        {name:"James W.",city:"Houston, TX",tag:"Grandfather home",before:"$121K",rehab:"$44K",sold:"$218K",profit:"$26,500",roi:"48%",months:"3",quote:"The investor knew the Houston market. He priced it perfectly and we sold in 11 days above asking.",img:"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500"},
+      ].map(function(cs){return(
+        <div key={cs.name} style={{borderRight:"1px solid "+BRD,borderTop:"1px solid "+BRD}}>
+          <div style={{position:"relative",height:180,overflow:"hidden"}}>
+            <img src={cs.img} alt={cs.city} style={{width:"100%",height:"100%",objectFit:"cover",filter:"brightness(0.85)"}}/>
+            <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(9,9,11,0.7) 0%,transparent 55%)"}}/>
+            <div style={{position:"absolute",bottom:12,left:16}}>
+              <div style={{fontSize:9,color:"rgba(255,255,255,0.6)",marginBottom:2,textTransform:"uppercase"}}>{cs.tag}</div>
+              <div style={{fontWeight:800,fontSize:14,color:WHT}}>{cs.city}</div>
+            </div>
+          </div>
+          <div style={{padding:"20px 20px 24px"}}>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6,marginBottom:14}}>
+              {[["Before",cs.before],["Rehab",cs.rehab],["Sold",cs.sold]].map(function(item){return(
+                <div key={item[0]} style={{background:WHT,borderRadius:8,padding:"8px 10px",border:"1px solid "+BRD}}>
+                  <div style={{fontSize:8,color:TL,textTransform:"uppercase",marginBottom:2}}>{item[0]}</div>
+                  <div style={{fontSize:12,fontWeight:800,color:BLK}}>{item[1]}</div>
                 </div>
               );})}
             </div>
-          );})}
-        </div>
-      </section>
-
-      <section style={{borderTop:"1px solid "+BRD,background:WHT}}>
-        <div style={{padding:"32px 6% 16px"}}>
-          <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.14em",color:ROSE,textTransform:"uppercase",marginBottom:8}}>Why Trust FundFlip</div>
-          <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:800,letterSpacing:"-0.04em",lineHeight:1.1,color:BLK}}>Built on transparency.<br/><span style={{color:TMU}}>Protected at every step.</span></h2>
-        </div>
-        <TrustGrid/>
-      </section>
-
-      <section style={{borderTop:"1px solid "+BRD,background:BG}}>
-        <div style={{padding:"32px 6% 16px"}}>
-          <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.14em",color:ROSE,textTransform:"uppercase",marginBottom:8}}>Real Results</div>
-          <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:800,letterSpacing:"-0.04em",lineHeight:1.1,color:BLK}}>Families who kept<br/><span style={{color:ROSE}}>their equity.</span></h2>
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))"}}>
-          {[
-            {name:"Maria J.",city:"Atlanta, GA",tag:"Inherited from mother",before:"$148K",rehab:"$52K",sold:"$265K",profit:"$31,500",roi:"42%",months:"4",quote:"I almost sold to a cash buyer for $140K. FundFlip got me $31,500 more and I didn't pay a dime upfront.",img:"https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500"},
-            {name:"David T.",city:"Tampa, FL",tag:"Estate, 3 siblings",before:"$192K",rehab:"$78K",sold:"$340K",profit:"$35,000",roi:"36%",months:"6",quote:"Three of us inherited it and we didn't want to give it away cheap. FundFlip handled everything.",img:"https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500"},
-            {name:"James W.",city:"Houston, TX",tag:"Grandfather home",before:"$121K",rehab:"$44K",sold:"$218K",profit:"$26,500",roi:"48%",months:"3",quote:"The investor knew the Houston market. He priced it perfectly and we sold in 11 days above asking.",img:"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500"},
-          ].map(function(cs){return(
-            <div key={cs.name} style={{borderRight:"1px solid "+BRD,borderTop:"1px solid "+BRD}}>
-              <div style={{position:"relative",height:180,overflow:"hidden"}}>
-                <img src={cs.img} alt={cs.city} style={{width:"100%",height:"100%",objectFit:"cover",filter:"brightness(0.85)"}}/>
-                <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(9,9,11,0.7) 0%,transparent 55%)"}}/>
-                <div style={{position:"absolute",bottom:12,left:16}}>
-                  <div style={{fontSize:9,color:"rgba(255,255,255,0.6)",marginBottom:2,textTransform:"uppercase"}}>{cs.tag}</div>
-                  <div style={{fontWeight:800,fontSize:14,color:WHT}}>{cs.city}</div>
-                </div>
+            <div style={{background:RF,border:"1px solid "+RB,borderRadius:10,padding:"10px 12px",marginBottom:14,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <div>
+                <div style={{fontSize:8,color:ROSE,textTransform:"uppercase",marginBottom:2}}>Owner Profit</div>
+                <div style={{fontSize:18,fontWeight:900,color:ROSE}}>{cs.profit}</div>
               </div>
-              <div style={{padding:"20px 20px 24px"}}>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6,marginBottom:14}}>
-                  {[["Before",cs.before],["Rehab",cs.rehab],["Sold",cs.sold]].map(function(item){return(
-                    <div key={item[0]} style={{background:WHT,borderRadius:8,padding:"8px 10px",border:"1px solid "+BRD}}>
-                      <div style={{fontSize:8,color:TL,textTransform:"uppercase",marginBottom:2}}>{item[0]}</div>
-                      <div style={{fontSize:12,fontWeight:800,color:BLK}}>{item[1]}</div>
-                    </div>
-                  );})}
-                </div>
-                <div style={{background:RF,border:"1px solid "+RB,borderRadius:10,padding:"10px 12px",marginBottom:14,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                  <div>
-                    <div style={{fontSize:8,color:ROSE,textTransform:"uppercase",marginBottom:2}}>Owner Profit</div>
-                    <div style={{fontSize:18,fontWeight:900,color:ROSE}}>{cs.profit}</div>
-                  </div>
-                  <div style={{textAlign:"right"}}>
-                    <div style={{fontSize:8,color:TL,textTransform:"uppercase",marginBottom:2}}>{"Inv. ROI "+cs.months+"mo"}</div>
-                    <div style={{fontSize:18,fontWeight:900,color:BLK}}>{cs.roi}</div>
-                  </div>
-                </div>
-                <div style={{fontSize:12,color:TM,lineHeight:1.7,fontStyle:"italic",borderLeft:"3px solid "+ROSE,paddingLeft:10,marginBottom:8}}>{'"'}{cs.quote}{'"'}</div>
-                <div style={{fontSize:11,color:TMU,fontWeight:600}}>{"\u2014 "}{cs.name}</div>
+              <div style={{textAlign:"right"}}>
+                <div style={{fontSize:8,color:TL,textTransform:"uppercase",marginBottom:2}}>{"Inv. ROI "+cs.months+"mo"}</div>
+                <div style={{fontSize:18,fontWeight:900,color:BLK}}>{cs.roi}</div>
               </div>
             </div>
-          );})}
-        </div>
-        <div style={{padding:"24px 6%",borderTop:"1px solid "+BRD,background:BG,textAlign:"center"}}>
-          <div style={{fontSize:14,color:TM,marginBottom:14}}>{"Ready to keep your equity? Get your free estimate today."}</div>
-          <button style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:10,padding:"13px 28px",color:WHT,fontSize:14,fontWeight:700,cursor:"pointer"}}>Get My Free ARV Estimate</button>
-        </div>
-      </section>
-
-      <section style={{borderTop:"1px solid "+BRD,background:WHT}}>
-        <div style={{padding:"32px 6% 16px"}}>
-          <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.14em",color:ROSE,textTransform:"uppercase",marginBottom:8}}>Common Questions</div>
-          <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:800,letterSpacing:"-0.04em",lineHeight:1.1,color:BLK}}>The questions your attorney would ask.<br/><span style={{color:TMU}}>Answered.</span></h2>
-        </div>
-        <div style={{borderTop:"1px solid "+BRD,marginTop:16}}>
-          {faqs.map(function(faq,i){return(
-            <div key={i} style={{borderBottom:"1px solid "+BRD}}>
-              <div onClick={function(){setFaqOpen(faqOpen===i?null:i);}} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"18px 6%",cursor:"pointer"}}>
-                <div style={{display:"flex",alignItems:"center",gap:10}}>
-                  <div style={{width:6,height:6,borderRadius:"50%",background:faqOpen===i?ROSE:TF,flexShrink:0}}/>
-                  <span style={{fontWeight:600,fontSize:15,color:BLK,paddingRight:24}}>{faq[0]}</span>
-                </div>
-                <div style={{width:24,height:24,borderRadius:"50%",flexShrink:0,background:faqOpen===i?ROSE:BGA,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:faqOpen===i?WHT:TMU}}>{faqOpen===i?"-":"+"}</div>
-              </div>
-              {faqOpen===i&&<div style={{padding:"0 6% 20px",fontSize:14,color:TM,lineHeight:1.75,background:BG}}><div style={{paddingTop:14}}>{faq[1]}</div></div>}
-            </div>
-          );})}
-        </div>
-      </section>
-
-      <section style={{borderTop:"1px solid "+BRD,background:BG,padding:"40px 6%"}}>
-        <div style={{maxWidth:520,margin:"0 auto",textAlign:"center"}}>
-          <div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:10}}>Coming Soon</div>
-          <h2 style={{fontSize:"clamp(22px,3.5vw,36px)",fontWeight:800,letterSpacing:"-0.03em",color:BLK,marginBottom:10}}>{"Not in CA, CO, or VA?"}</h2>
-          <p style={{fontSize:14,color:TMU,lineHeight:1.7,marginBottom:24}}>{"We're expanding to Texas, Florida, Georgia, Arizona, and Nevada. Join the waitlist and we'll notify you the moment FundFlip is live in your state."}</p>
-          <WaitlistForm/>
-        </div>
-      </section>
-
-      <section style={{background:BG,borderTop:"1px solid "+BRD,padding:"40px 6%"}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
-          <div style={{background:WHT,border:"1px solid "+BRD,borderTop:"3px solid "+ROSE,borderRadius:16,padding:"28px 20px"}}>
-            <div style={{fontSize:10,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:10}}>For Homeowners</div>
-            <div style={{fontWeight:800,fontSize:18,color:BLK,letterSpacing:"-0.02em",lineHeight:1.2,marginBottom:10}}>Stop leaving equity on the table.</div>
-            <div style={{fontSize:13,color:TMU,lineHeight:1.7,marginBottom:20}}>List your inherited property free. Get a certified ARV estimate in 24 hours. No upfront cost. Ever.</div>
-            <button style={{width:"100%",padding:"12px",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:10,color:WHT,fontSize:13,fontWeight:700,cursor:"pointer"}}>List My Property - Free</button>
-          </div>
-          <div style={{background:WHT,border:"1px solid "+BRD,borderTop:"3px solid "+BLK,borderRadius:16,padding:"28px 20px"}}>
-            <div style={{fontSize:10,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:10}}>For Investors</div>
-            <div style={{fontWeight:800,fontSize:18,color:ROSE,letterSpacing:"-0.02em",lineHeight:1.2,marginBottom:10}}>Fund one deal. Share the upside.</div>
-            <div style={{fontSize:13,color:TMU,lineHeight:1.7,marginBottom:20}}>Browse AI-matched deals with certified ARVs, vetted contractors, and full financial transparency.</div>
-            <button onClick={onDash} style={{width:"100%",padding:"12px",background:BLK,border:"none",borderRadius:10,color:WHT,fontSize:13,fontWeight:700,cursor:"pointer"}}>Browse Live Deals</button>
+            <div style={{fontSize:12,color:TM,lineHeight:1.7,fontStyle:"italic",borderLeft:"3px solid "+ROSE,paddingLeft:10,marginBottom:8}}>{'"'}{cs.quote}{'"'}</div>
+            <div style={{fontSize:11,color:TMU,fontWeight:600}}>{"\u2014 "}{cs.name}</div>
           </div>
         </div>
-      </section>
-
-      <footer style={{background:WHT,borderTop:"1px solid "+BRD,padding:"40px 6% 28px"}}>
-        <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:32,marginBottom:32}}>
-          <div>
-            <span style={{fontWeight:900,fontSize:16,letterSpacing:"-0.03em",color:BLK,display:"block",marginBottom:8}}>Fund<span style={{color:ROSE}}>Flip</span></span>
-            <div style={{fontSize:12,color:TMU,lineHeight:1.7,maxWidth:220}}>AI-powered inherited home investment platform. Connecting owners with trusted investors since 2024.</div>
-          </div>
-          <div>
-            <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>Platform</div>
-            {["How It Works","For Homeowners","For Investors","Dashboard"].map(function(l){return <div key={l} style={{fontSize:12,color:TMU,marginBottom:8,cursor:"pointer"}}>{l}</div>;})}
-          </div>
-          <div>
-            <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>Company</div>
-            {["About Us","How We Vet","Careers","Contact"].map(function(l){return <div key={l} style={{fontSize:12,color:TMU,marginBottom:8,cursor:"pointer"}}>{l}</div>;})}
-          </div>
-          <div>
-            <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>Legal</div>
-            {["Privacy Policy","Terms of Service","JV Agreement","Escrow Policy"].map(function(l){return <div key={l} style={{fontSize:12,color:TMU,marginBottom:8,cursor:"pointer"}}>{l}</div>;})}
-          </div>
-        </div>
-        <div style={{borderTop:"1px solid "+BRD,paddingTop:20,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
-          <span style={{fontSize:11,color:TL}}>{"© 2026 FundFlip Inc. All rights reserved."}</span>
-          <div style={{display:"flex",gap:16}}>
-            {["CA","CO","VA"].map(function(s){return <span key={s} style={{fontSize:11,color:TL}}>{s+" Licensed"}</span>;})}
-          </div>
-        </div>
-        <div style={{marginTop:16,fontSize:11,color:TL,lineHeight:1.6}}>Investment opportunities on FundFlip are available to accredited investors only as defined under SEC Rule 501 of Regulation D. Nothing on this platform constitutes financial or legal advice.</div>
-      </footer>
+      );})}
     </div>
-  );
+    <div style={{padding:"24px 6%",borderTop:"1px solid "+BRD,background:BG,textAlign:"center"}}>
+      <div style={{fontSize:14,color:TM,marginBottom:14}}>{"Ready to keep your equity? Get your free estimate today."}</div>
+      <button style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:10,padding:"13px 28px",color:WHT,fontSize:14,fontWeight:700,cursor:"pointer"}}>Get My Free ARV Estimate</button>
+    </div>
+  </section>
+
+  <section style={{borderTop:"1px solid "+BRD,background:WHT}}>
+    <div style={{padding:"32px 6% 16px"}}>
+      <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.14em",color:ROSE,textTransform:"uppercase",marginBottom:8}}>Common Questions</div>
+      <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:800,letterSpacing:"-0.04em",lineHeight:1.1,color:BLK}}>The questions your attorney would ask.<br/><span style={{color:TMU}}>Answered.</span></h2>
+    </div>
+    <div style={{borderTop:"1px solid "+BRD,marginTop:16}}>
+      {faqs.map(function(faq,i){return(
+        <div key={i} style={{borderBottom:"1px solid "+BRD}}>
+          <div onClick={function(){setFaqOpen(faqOpen===i?null:i);}} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"18px 6%",cursor:"pointer"}}>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <div style={{width:6,height:6,borderRadius:"50%",background:faqOpen===i?ROSE:TF,flexShrink:0}}/>
+              <span style={{fontWeight:600,fontSize:15,color:BLK,paddingRight:24}}>{faq[0]}</span>
+            </div>
+            <div style={{width:24,height:24,borderRadius:"50%",flexShrink:0,background:faqOpen===i?ROSE:BGA,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:faqOpen===i?WHT:TMU}}>{faqOpen===i?"-":"+"}</div>
+          </div>
+          {faqOpen===i&&<div style={{padding:"0 6% 20px",fontSize:14,color:TM,lineHeight:1.75,background:BG}}><div style={{paddingTop:14}}>{faq[1]}</div></div>}
+        </div>
+      );})}
+    </div>
+  </section>
+
+  <section style={{borderTop:"1px solid "+BRD,background:BG,padding:"40px 6%"}}>
+    <div style={{maxWidth:520,margin:"0 auto",textAlign:"center"}}>
+      <div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:10}}>Coming Soon</div>
+      <h2 style={{fontSize:"clamp(22px,3.5vw,36px)",fontWeight:800,letterSpacing:"-0.03em",color:BLK,marginBottom:10}}>{"Not in CA, CO, or VA?"}</h2>
+      <p style={{fontSize:14,color:TMU,lineHeight:1.7,marginBottom:24}}>{"We're expanding to Texas, Florida, Georgia, Arizona, and Nevada. Join the waitlist and we'll notify you the moment FundFlip is live in your state."}</p>
+      <WaitlistForm/>
+    </div>
+  </section>
+
+  <section style={{background:BG,borderTop:"1px solid "+BRD,padding:"40px 6%"}}>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+      <div style={{background:WHT,border:"1px solid "+BRD,borderTop:"3px solid "+ROSE,borderRadius:16,padding:"28px 20px"}}>
+        <div style={{fontSize:10,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:10}}>For Homeowners</div>
+        <div style={{fontWeight:800,fontSize:18,color:BLK,letterSpacing:"-0.02em",lineHeight:1.2,marginBottom:10}}>Stop leaving equity on the table.</div>
+        <div style={{fontSize:13,color:TMU,lineHeight:1.7,marginBottom:20}}>List your inherited property free. Get a certified ARV estimate in 24 hours. No upfront cost. Ever.</div>
+        <button style={{width:"100%",padding:"12px",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:10,color:WHT,fontSize:13,fontWeight:700,cursor:"pointer"}}>List My Property - Free</button>
+      </div>
+      <div style={{background:WHT,border:"1px solid "+BRD,borderTop:"3px solid "+BLK,borderRadius:16,padding:"28px 20px"}}>
+        <div style={{fontSize:10,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:10}}>For Investors</div>
+        <div style={{fontWeight:800,fontSize:18,color:ROSE,letterSpacing:"-0.02em",lineHeight:1.2,marginBottom:10}}>Fund one deal. Share the upside.</div>
+        <div style={{fontSize:13,color:TMU,lineHeight:1.7,marginBottom:20}}>Browse AI-matched deals with certified ARVs, vetted contractors, and full financial transparency.</div>
+        <button onClick={onDash} style={{width:"100%",padding:"12px",background:BLK,border:"none",borderRadius:10,color:WHT,fontSize:13,fontWeight:700,cursor:"pointer"}}>Browse Live Deals</button>
+      </div>
+    </div>
+  </section>
+
+  <footer style={{background:WHT,borderTop:"1px solid "+BRD,padding:"40px 6% 28px"}}>
+    <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:32,marginBottom:32}}>
+      <div>
+        <span style={{fontWeight:900,fontSize:16,letterSpacing:"-0.03em",color:BLK,display:"block",marginBottom:8}}>Fund<span style={{color:ROSE}}>Flip</span></span>
+        <div style={{fontSize:12,color:TMU,lineHeight:1.7,maxWidth:220}}>AI-powered inherited home investment platform. Connecting owners with trusted investors since 2024.</div>
+      </div>
+      <div>
+        <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>Platform</div>
+        {["How It Works","For Homeowners","For Investors","Dashboard"].map(function(l){return <div key={l} style={{fontSize:12,color:TMU,marginBottom:8,cursor:"pointer"}}>{l}</div>;})}
+      </div>
+      <div>
+        <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>Company</div>
+        {["About Us","How We Vet","Careers","Contact"].map(function(l){return <div key={l} style={{fontSize:12,color:TMU,marginBottom:8,cursor:"pointer"}}>{l}</div>;})}
+      </div>
+      <div>
+        <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>Legal</div>
+        {["Privacy Policy","Terms of Service","JV Agreement","Escrow Policy"].map(function(l){return <div key={l} style={{fontSize:12,color:TMU,marginBottom:8,cursor:"pointer"}}>{l}</div>;})}
+      </div>
+    </div>
+    <div style={{borderTop:"1px solid "+BRD,paddingTop:20,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
+      <span style={{fontSize:11,color:TL}}>{"© 2026 FundFlip Inc. All rights reserved."}</span>
+      <div style={{display:"flex",gap:16}}>
+        {["CA","CO","VA"].map(function(s){return <span key={s} style={{fontSize:11,color:TL}}>{s+" Licensed"}</span>;})}
+      </div>
+    </div>
+    <div style={{marginTop:16,fontSize:11,color:TL,lineHeight:1.6}}>Investment opportunities on FundFlip are available to accredited investors only as defined under SEC Rule 501 of Regulation D. Nothing on this platform constitutes financial or legal advice.</div>
+  </footer>
+</div>
+```
+
+);
 }
 
 function RoleSelector({onInvestor,onOwner,onBack}){
-  return(
-    <div style={{minHeight:"100vh",background:WHT,fontFamily:"Inter,sans-serif",color:BLK}}>
-      <nav style={{height:48,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 5%",borderBottom:"1px solid "+BRD}}>
-        <span style={{fontWeight:800,fontSize:13,letterSpacing:"-0.03em",color:BLK,background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 12px"}}>Fund<span style={{color:ROSE}}>Flip</span></span>
-        <button onClick={onBack} style={{background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 12px",color:TMU,fontSize:12,fontWeight:600,cursor:"pointer"}}>Back</button>
-      </nav>
-      <div style={{padding:"48px 6% 0"}}>
-        <div style={{marginBottom:32}}>
-          <div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:10}}>Get Started</div>
-          <h1 style={{fontSize:"clamp(28px,5vw,48px)",fontWeight:900,letterSpacing:"-0.04em",color:BLK,marginBottom:10,lineHeight:1.1}}>{"Who are\nyou?"}</h1>
-          <p style={{fontSize:14,color:TMU,lineHeight:1.7}}>Choose your path. You can always switch later.</p>
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-          <div onClick={onOwner} style={{background:WHT,border:"1px solid "+BRD,borderRadius:16,padding:"28px 20px",cursor:"pointer",boxSizing:"border-box",display:"flex",flexDirection:"column"}}>
-            <div style={{fontSize:32,marginBottom:14}}>{"🏠"}</div>
-            <div style={{fontWeight:800,fontSize:16,color:BLK,marginBottom:6}}>I inherited a home</div>
-            <div style={{fontSize:13,color:TMU,lineHeight:1.6,marginBottom:20,flex:1}}>Get a free ARV estimate and find an investor to fund your renovation.</div>
-            <div style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",borderRadius:10,padding:"12px",textAlign:"center",color:WHT,fontSize:13,fontWeight:700}}>Homeowner Dashboard</div>
-          </div>
-          <div onClick={onInvestor} style={{background:WHT,border:"1px solid "+BRD,borderRadius:16,padding:"28px 20px",cursor:"pointer",boxSizing:"border-box",display:"flex",flexDirection:"column"}}>
-            <div style={{fontSize:32,marginBottom:14}}>{"📈"}</div>
-            <div style={{fontWeight:800,fontSize:16,color:BLK,marginBottom:6}}>I want to invest</div>
-            <div style={{fontSize:13,color:TMU,lineHeight:1.6,marginBottom:20,flex:1}}>Browse AI-matched deals, fund a rehab, and earn 40% of the net profit.</div>
-            <div style={{background:BLK,borderRadius:10,padding:"12px",textAlign:"center",color:WHT,fontSize:13,fontWeight:700}}>Investor Dashboard</div>
-          </div>
-        </div>
-        <div style={{marginTop:24,padding:"16px",background:BG,borderRadius:12,border:"1px solid "+BRD,display:"flex",gap:12,alignItems:"flex-start"}}>
-          <div style={{width:18,height:18,borderRadius:"50%",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}><span style={{fontSize:8,color:WHT,fontWeight:800}}>AI</span></div>
-          <div style={{fontSize:12,color:TMU,lineHeight:1.6}}>{"FundFlip's AI will match your property with the right investor within 48 hours of listing. No upfront cost. Ever."}</div>
-        </div>
-      </div>
-    </div>
-  );
+return(
+<div style={{minHeight:“100vh”,background:WHT,fontFamily:“Inter,sans-serif”,color:BLK}}>
+<nav style={{height:48,display:“flex”,alignItems:“center”,justifyContent:“space-between”,padding:“0 5%”,borderBottom:“1px solid “+BRD}}>
+<span style={{fontWeight:800,fontSize:13,letterSpacing:”-0.03em”,color:BLK,background:BGA,border:“1px solid “+BRD,borderRadius:7,padding:“7px 12px”}}>Fund<span style={{color:ROSE}}>Flip</span></span>
+<button onClick={onBack} style={{background:BGA,border:“1px solid “+BRD,borderRadius:7,padding:“7px 12px”,color:TMU,fontSize:12,fontWeight:600,cursor:“pointer”}}>Back</button>
+</nav>
+<div style={{padding:“48px 6% 0”}}>
+<div style={{marginBottom:32}}>
+<div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:“uppercase”,letterSpacing:“0.1em”,marginBottom:10}}>Get Started</div>
+<h1 style={{fontSize:“clamp(28px,5vw,48px)”,fontWeight:900,letterSpacing:”-0.04em”,color:BLK,marginBottom:10,lineHeight:1.1}}>{“Who are\nyou?”}</h1>
+<p style={{fontSize:14,color:TMU,lineHeight:1.7}}>Choose your path. You can always switch later.</p>
+</div>
+<div style={{display:“grid”,gridTemplateColumns:“1fr 1fr”,gap:12}}>
+<div onClick={onOwner} style={{background:WHT,border:“1px solid “+BRD,borderRadius:16,padding:“28px 20px”,cursor:“pointer”,boxSizing:“border-box”,display:“flex”,flexDirection:“column”}}>
+<div style={{fontSize:32,marginBottom:14}}>{“🏠”}</div>
+<div style={{fontWeight:800,fontSize:16,color:BLK,marginBottom:6}}>I inherited a home</div>
+<div style={{fontSize:13,color:TMU,lineHeight:1.6,marginBottom:20,flex:1}}>Get a free ARV estimate and find an investor to fund your renovation.</div>
+<div style={{background:“linear-gradient(135deg,”+ROSE+”,”+ROSE2+”)”,borderRadius:10,padding:“12px”,textAlign:“center”,color:WHT,fontSize:13,fontWeight:700}}>Homeowner Dashboard</div>
+</div>
+<div onClick={onInvestor} style={{background:WHT,border:“1px solid “+BRD,borderRadius:16,padding:“28px 20px”,cursor:“pointer”,boxSizing:“border-box”,display:“flex”,flexDirection:“column”}}>
+<div style={{fontSize:32,marginBottom:14}}>{“📈”}</div>
+<div style={{fontWeight:800,fontSize:16,color:BLK,marginBottom:6}}>I want to invest</div>
+<div style={{fontSize:13,color:TMU,lineHeight:1.6,marginBottom:20,flex:1}}>Browse AI-matched deals, fund a rehab, and earn 40% of the net profit.</div>
+<div style={{background:BLK,borderRadius:10,padding:“12px”,textAlign:“center”,color:WHT,fontSize:13,fontWeight:700}}>Investor Dashboard</div>
+</div>
+</div>
+<div style={{marginTop:24,padding:“16px”,background:BG,borderRadius:12,border:“1px solid “+BRD,display:“flex”,gap:12,alignItems:“flex-start”}}>
+<div style={{width:18,height:18,borderRadius:“50%”,background:“linear-gradient(135deg,”+ROSE+”,”+ROSE2+”)”,display:“flex”,alignItems:“center”,justifyContent:“center”,flexShrink:0,marginTop:1}}><span style={{fontSize:8,color:WHT,fontWeight:800}}>AI</span></div>
+<div style={{fontSize:12,color:TMU,lineHeight:1.6}}>{“FundFlip’s AI will match your property with the right investor within 48 hours of listing. No upfront cost. Ever.”}</div>
+</div>
+</div>
+</div>
+);
 }
 
 function InvestorDash({onBack,onDeal}){
-  var [tab,setTab]=useState("overview");
-  var tabs=[{id:"overview",label:"Overview"},{id:"deals",label:"Deals"},{id:"escrow",label:"Escrow"},{id:"docs",label:"Docs"}];
-  var ms=[{label:"Demolition",done:true,date:"Mar 2"},{label:"Rough-In",done:true,date:"Mar 18"},{label:"Finishes",done:false,date:"Apr 8"},{label:"Final",done:false,date:"Apr 22"}];
-  return(
-    <div style={{minHeight:"100vh",background:BG,fontFamily:"Inter,sans-serif",color:BLK,display:"flex",flexDirection:"column"}}>
-      <div style={{background:WHT,borderBottom:"1px solid "+BRD,padding:"0 20px",height:54,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:200}}>
-        <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <button onClick={onBack} style={{background:BG,border:"1px solid "+BRD,borderRadius:6,padding:"5px 12px",color:TMU,fontSize:12,cursor:"pointer"}}>Back</button>
-          <span style={{fontWeight:900,fontSize:16,letterSpacing:"-0.04em",color:BLK}}>Fund<span style={{color:ROSE}}>Flip</span></span>
-        </div>
-        <div style={{background:RF,border:"1px solid "+RB,borderRadius:7,padding:"6px 14px",fontSize:12,color:ROSE}}>Portfolio: <span style={{fontWeight:700}}>$38,000</span></div>
-      </div>
-      <div style={{flex:1,overflowY:"auto",padding:"20px 20px 80px"}}>
-        <div style={{marginBottom:22}}>
-          <div style={{fontSize:11,color:TL,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:4}}>Investor Dashboard</div>
-          <div style={{fontSize:22,fontWeight:800,color:BLK}}>Good morning, James.</div>
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:18}}>
-          {[["Total Invested","$38,000",false],["Projected Return","$53,200",true],["Active Deals","1",false],["Open Deals","3",false]].map(function(item){return(
-            <div key={item[0]} style={{background:WHT,borderRadius:12,padding:"16px 14px",border:"1px solid "+(item[2]?RB:BRD),borderTop:"2px solid "+(item[2]?ROSE:"transparent")}}>
-              <div style={{fontSize:9,color:TL,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>{item[0]}</div>
-              <div style={{fontSize:20,fontWeight:800,color:item[2]?ROSE:BLK}}>{item[1]}</div>
-            </div>
-          );})}
-        </div>
-        <div style={{background:WHT,border:"1px solid "+BRD,borderRadius:14,marginBottom:18,overflow:"hidden"}}>
-          <div style={{height:3,background:"linear-gradient(90deg,"+ROSE+","+ROSE2+")"}}/>
-          <div style={{padding:"13px 18px",borderBottom:"1px solid "+BRD,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-            <div style={{fontWeight:700,fontSize:14,color:BLK}}>Active Deal - 1842 Peachtree Blvd</div>
-            <Chip label="Rehab Active" v="rose"/>
-          </div>
-          <div style={{padding:18}}>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:18}}>
-              {[["Deployed","$38,000",false],["Your Return","+$15,200",true],["Est. Close","Apr 22",false]].map(function(item){return(
-                <div key={item[0]} style={{borderLeft:"2px solid "+(item[2]?ROSE:BRD),paddingLeft:12}}>
-                  <div style={{fontSize:9,color:TL,textTransform:"uppercase",marginBottom:4}}>{item[0]}</div>
-                  <div style={{fontSize:18,fontWeight:800,color:item[2]?ROSE:BLK}}>{item[1]}</div>
-                </div>
-              );})}
-            </div>
-            {ms.map(function(m,i){return(
-              <div key={i} style={{display:"flex",gap:12,alignItems:"center",marginBottom:14}}>
-                <div style={{width:18,height:18,borderRadius:"50%",flexShrink:0,background:m.done?ROSE:BGA,border:m.done?"none":"2px solid "+BRD,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  {m.done&&<span style={{color:WHT,fontSize:10,fontWeight:800}}>{"✓"}</span>}
-                </div>
-                <div style={{flex:1,display:"flex",justifyContent:"space-between"}}>
-                  <span style={{fontSize:13,fontWeight:m.done?600:400,color:m.done?BLK:TMU}}>{m.label}</span>
-                  <span style={{fontSize:10,color:m.done?GRN:TL}}>{m.done?"Complete":m.date}</span>
-                </div>
-              </div>
-            );})}
-          </div>
-        </div>
-        <div style={{background:WHT,border:"1px solid "+BRD,borderRadius:14,overflow:"hidden"}}>
-          <div style={{padding:"13px 18px",borderBottom:"1px solid "+BRD,fontWeight:700,fontSize:14,color:BLK}}>Open Investment Opportunities</div>
-          <div style={{padding:16,display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",gap:14}}>
-            {DEALS.map(function(d){return(
-              <div key={d.id} onClick={function(){onDeal(d);}} style={{background:BG,border:"1px solid "+BRD,borderRadius:12,overflow:"hidden",cursor:"pointer"}}>
-                <div style={{position:"relative",height:130}}>
-                  <img src={d.img} alt="" style={{width:"100%",height:"100%",objectFit:"cover",filter:"brightness(0.85)"}}/>
-                  <div style={{position:"absolute",top:8,left:8}}><Chip label={d.tag} v={d.status==="funded"?"green":"gray"}/></div>
-                  <div style={{position:"absolute",top:8,right:8}}>
-                    {d.status==="funded"
-                      ?<span style={{background:GRN,color:WHT,fontSize:9,fontWeight:700,padding:"3px 10px",borderRadius:99}}>FUNDED</span>
-                      :<span style={{background:"rgba(255,255,255,0.2)",color:WHT,fontSize:9,fontWeight:600,padding:"3px 10px",borderRadius:99}}>IN PROGRESS</span>
-                    }
-                  </div>
-                </div>
-                <div style={{padding:"12px 14px"}}>
-                  <div style={{fontWeight:700,fontSize:13,color:BLK,marginBottom:2}}>{d.addr}</div>
-                  <div style={{fontSize:11,color:TMU,marginBottom:10}}>{d.city}</div>
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6}}>
-                    {[["Rehab",K(d.rehab)],["ARV",K(d.arv)],["ROI","~"+d.roi+"%"]].map(function(item){return(
-                      <div key={item[0]}>
-                        <div style={{fontSize:8,color:TL,textTransform:"uppercase",marginBottom:2}}>{item[0]}</div>
-                        <div style={{fontSize:12,fontWeight:700,color:item[0]==="ROI"?ROSE:BLK}}>{item[1]}</div>
-                      </div>
-                    );})}
-                  </div>
-                </div>
-              </div>
-            );})}
-          </div>
-        </div>
-      </div>
-      <div style={{position:"fixed",bottom:0,left:0,right:0,background:WHT,borderTop:"1px solid "+BRD,display:"flex",height:56,zIndex:200}}>
-        {tabs.map(function(t){return(
-          <div key={t.id} onClick={function(){setTab(t.id);}} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:11,fontWeight:tab===t.id?700:400,color:tab===t.id?ROSE:TL,borderTop:"2px solid "+(tab===t.id?ROSE:"transparent")}}>{t.label}</div>
-        );})}
-      </div>
-    </div>
-  );
+var [tab,setTab]=useState(“overview”);
+var tabs=[{id:“overview”,label:“Overview”},{id:“deals”,label:“Deals”},{id:“escrow”,label:“Escrow”},{id:“docs”,label:“Docs”}];
+var ms=[{label:“Demolition”,done:true,date:“Mar 2”},{label:“Rough-In”,done:true,date:“Mar 18”},{label:“Finishes”,done:false,date:“Apr 8”},{label:“Final”,done:false,date:“Apr 22”}];
+return(
+<div style={{minHeight:“100vh”,background:BG,fontFamily:“Inter,sans-serif”,color:BLK,display:“flex”,flexDirection:“column”}}>
+<div style={{background:WHT,borderBottom:“1px solid “+BRD,padding:“0 20px”,height:54,display:“flex”,alignItems:“center”,justifyContent:“space-between”,position:“sticky”,top:0,zIndex:200}}>
+<div style={{display:“flex”,alignItems:“center”,gap:10}}>
+<button onClick={onBack} style={{background:BG,border:“1px solid “+BRD,borderRadius:6,padding:“5px 12px”,color:TMU,fontSize:12,cursor:“pointer”}}>Back</button>
+<span style={{fontWeight:900,fontSize:16,letterSpacing:”-0.04em”,color:BLK}}>Fund<span style={{color:ROSE}}>Flip</span></span>
+</div>
+<div style={{background:RF,border:“1px solid “+RB,borderRadius:7,padding:“6px 14px”,fontSize:12,color:ROSE}}>Portfolio: <span style={{fontWeight:700}}>$38,000</span></div>
+</div>
+<div style={{flex:1,overflowY:“auto”,padding:“20px 20px 80px”}}>
+<div style={{marginBottom:22}}>
+<div style={{fontSize:11,color:TL,textTransform:“uppercase”,letterSpacing:“0.1em”,marginBottom:4}}>Investor Dashboard</div>
+<div style={{fontSize:22,fontWeight:800,color:BLK}}>Good morning, James.</div>
+</div>
+<div style={{display:“grid”,gridTemplateColumns:“repeat(4,1fr)”,gap:10,marginBottom:18}}>
+{[[“Total Invested”,”$38,000”,false],[“Projected Return”,”$53,200”,true],[“Active Deals”,“1”,false],[“Open Deals”,“3”,false]].map(function(item){return(
+<div key={item[0]} style={{background:WHT,borderRadius:12,padding:“16px 14px”,border:“1px solid “+(item[2]?RB:BRD),borderTop:“2px solid “+(item[2]?ROSE:“transparent”)}}>
+<div style={{fontSize:9,color:TL,textTransform:“uppercase”,letterSpacing:“0.1em”,marginBottom:8}}>{item[0]}</div>
+<div style={{fontSize:20,fontWeight:800,color:item[2]?ROSE:BLK}}>{item[1]}</div>
+</div>
+);})}
+</div>
+<div style={{background:WHT,border:“1px solid “+BRD,borderRadius:14,marginBottom:18,overflow:“hidden”}}>
+<div style={{height:3,background:“linear-gradient(90deg,”+ROSE+”,”+ROSE2+”)”}}/>
+<div style={{padding:“13px 18px”,borderBottom:“1px solid “+BRD,display:“flex”,justifyContent:“space-between”,alignItems:“center”}}>
+<div style={{fontWeight:700,fontSize:14,color:BLK}}>Active Deal - 1842 Peachtree Blvd</div>
+<Chip label="Rehab Active" v="rose"/>
+</div>
+<div style={{padding:18}}>
+<div style={{display:“grid”,gridTemplateColumns:“repeat(3,1fr)”,gap:12,marginBottom:18}}>
+{[[“Deployed”,”$38,000”,false],[“Your Return”,”+$15,200”,true],[“Est. Close”,“Apr 22”,false]].map(function(item){return(
+<div key={item[0]} style={{borderLeft:“2px solid “+(item[2]?ROSE:BRD),paddingLeft:12}}>
+<div style={{fontSize:9,color:TL,textTransform:“uppercase”,marginBottom:4}}>{item[0]}</div>
+<div style={{fontSize:18,fontWeight:800,color:item[2]?ROSE:BLK}}>{item[1]}</div>
+</div>
+);})}
+</div>
+{ms.map(function(m,i){return(
+<div key={i} style={{display:“flex”,gap:12,alignItems:“center”,marginBottom:14}}>
+<div style={{width:18,height:18,borderRadius:“50%”,flexShrink:0,background:m.done?ROSE:BGA,border:m.done?“none”:“2px solid “+BRD,display:“flex”,alignItems:“center”,justifyContent:“center”}}>
+{m.done&&<span style={{color:WHT,fontSize:10,fontWeight:800}}>{“✓”}</span>}
+</div>
+<div style={{flex:1,display:“flex”,justifyContent:“space-between”}}>
+<span style={{fontSize:13,fontWeight:m.done?600:400,color:m.done?BLK:TMU}}>{m.label}</span>
+<span style={{fontSize:10,color:m.done?GRN:TL}}>{m.done?“Complete”:m.date}</span>
+</div>
+</div>
+);})}
+</div>
+</div>
+<div style={{background:WHT,border:“1px solid “+BRD,borderRadius:14,overflow:“hidden”}}>
+<div style={{padding:“13px 18px”,borderBottom:“1px solid “+BRD,fontWeight:700,fontSize:14,color:BLK}}>Open Investment Opportunities</div>
+<div style={{padding:16,display:“grid”,gridTemplateColumns:“repeat(auto-fit,minmax(240px,1fr))”,gap:14}}>
+{DEALS.map(function(d){return(
+<div key={d.id} onClick={function(){onDeal(d);}} style={{background:BG,border:“1px solid “+BRD,borderRadius:12,overflow:“hidden”,cursor:“pointer”}}>
+<div style={{position:“relative”,height:130}}>
+<img src={d.img} alt=”” style={{width:“100%”,height:“100%”,objectFit:“cover”,filter:“brightness(0.85)”}}/>
+<div style={{position:“absolute”,top:8,left:8}}><Chip label={d.tag} v={d.status===“funded”?“green”:“gray”}/></div>
+<div style={{position:“absolute”,top:8,right:8}}>
+{d.status===“funded”
+?<span style={{background:GRN,color:WHT,fontSize:9,fontWeight:700,padding:“3px 10px”,borderRadius:99}}>FUNDED</span>
+:<span style={{background:“rgba(255,255,255,0.2)”,color:WHT,fontSize:9,fontWeight:600,padding:“3px 10px”,borderRadius:99}}>IN PROGRESS</span>
+}
+</div>
+</div>
+<div style={{padding:“12px 14px”}}>
+<div style={{fontWeight:700,fontSize:13,color:BLK,marginBottom:2}}>{d.addr}</div>
+<div style={{fontSize:11,color:TMU,marginBottom:10}}>{d.city}</div>
+<div style={{display:“grid”,gridTemplateColumns:“1fr 1fr 1fr”,gap:6}}>
+{[[“Rehab”,K(d.rehab)],[“ARV”,K(d.arv)],[“ROI”,”~”+d.roi+”%”]].map(function(item){return(
+<div key={item[0]}>
+<div style={{fontSize:8,color:TL,textTransform:“uppercase”,marginBottom:2}}>{item[0]}</div>
+<div style={{fontSize:12,fontWeight:700,color:item[0]===“ROI”?ROSE:BLK}}>{item[1]}</div>
+</div>
+);})}
+</div>
+</div>
+</div>
+);})}
+</div>
+</div>
+</div>
+<div style={{position:“fixed”,bottom:0,left:0,right:0,background:WHT,borderTop:“1px solid “+BRD,display:“flex”,height:56,zIndex:200}}>
+{tabs.map(function(t){return(
+<div key={t.id} onClick={function(){setTab(t.id);}} style={{flex:1,display:“flex”,alignItems:“center”,justifyContent:“center”,cursor:“pointer”,fontSize:11,fontWeight:tab===t.id?700:400,color:tab===t.id?ROSE:TL,borderTop:“2px solid “+(tab===t.id?ROSE:“transparent”)}}>{t.label}</div>
+);})}
+</div>
+</div>
+);
 }
 
 function OwnerDash({onBack}){
-  var [tab,setTab]=useState("overview");
-  var tabs=[{id:"overview",label:"Overview"},{id:"rehab",label:"Rehab"},{id:"docs",label:"Docs"},{id:"payout",label:"Payout"}];
-  var ms=[{label:"Demolition",done:true,date:"Mar 2"},{label:"Rough-In",done:true,date:"Mar 18"},{label:"Finishes",done:false,date:"Apr 8"},{label:"Inspection",done:false,date:"Apr 22"}];
-  return(
-    <div style={{minHeight:"100vh",background:BG,fontFamily:"Inter,sans-serif",color:BLK,display:"flex",flexDirection:"column"}}>
-      <div style={{background:WHT,borderBottom:"1px solid "+BRD,padding:"0 20px",height:54,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:200}}>
-        <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <button onClick={onBack} style={{background:BG,border:"1px solid "+BRD,borderRadius:6,padding:"5px 12px",color:TMU,fontSize:12,cursor:"pointer"}}>Back</button>
-          <span style={{fontWeight:900,fontSize:16,letterSpacing:"-0.04em",color:BLK}}>Fund<span style={{color:ROSE}}>Flip</span></span>
-        </div>
-        <div style={{background:RF,border:"1px solid "+RB,borderRadius:7,padding:"6px 14px",fontSize:12,color:ROSE}}>My Home: <span style={{fontWeight:700}}>Active</span></div>
-      </div>
-      <div style={{flex:1,overflowY:"auto",padding:"20px 20px 80px"}}>
-        <div style={{marginBottom:22}}>
-          <div style={{fontSize:11,color:TL,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:4}}>Homeowner Dashboard</div>
-          <div style={{fontSize:22,fontWeight:800,color:BLK}}>Good morning, Maria.</div>
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:18}}>
-          {[["Home Value","$148K",false],["After Repair","$265K",false],["My 50% Profit","~$32.5K",true],["Progress","50%",false]].map(function(item){return(
-            <div key={item[0]} style={{background:WHT,borderRadius:12,padding:"16px 14px",border:"1px solid "+(item[2]?RB:BRD),borderTop:"2px solid "+(item[2]?ROSE:"transparent")}}>
-              <div style={{fontSize:9,color:TL,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>{item[0]}</div>
-              <div style={{fontSize:20,fontWeight:800,color:item[2]?ROSE:BLK}}>{item[1]}</div>
-            </div>
-          );})}
-        </div>
-        <div style={{background:WHT,border:"1px solid "+BRD,borderRadius:14,marginBottom:18,overflow:"hidden"}}>
-          <div style={{height:3,background:"linear-gradient(90deg,"+ROSE+","+ROSE2+")"}}/>
-          <div style={{padding:"13px 18px",borderBottom:"1px solid "+BRD,display:"flex",justifyContent:"space-between"}}>
-            <div style={{fontWeight:700,fontSize:14,color:BLK}}>1842 Peachtree Blvd, Atlanta GA</div>
-            <Chip label="Rehab Active" v="rose"/>
-          </div>
-          <div style={{padding:18}}>
-            <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400" alt="home" style={{width:"100%",height:140,objectFit:"cover",borderRadius:10,marginBottom:14}}/>
-            {ms.map(function(m,i){return(
-              <div key={i} style={{display:"flex",gap:12,alignItems:"center",marginBottom:14}}>
-                <div style={{width:18,height:18,borderRadius:"50%",flexShrink:0,background:m.done?ROSE:BGA,border:m.done?"none":"2px solid "+BRD,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  {m.done&&<span style={{color:WHT,fontSize:10}}>{"✓"}</span>}
-                </div>
-                <div style={{flex:1,display:"flex",justifyContent:"space-between"}}>
-                  <span style={{fontSize:13,fontWeight:m.done?600:400,color:m.done?BLK:TMU}}>{m.label}</span>
-                  <span style={{fontSize:10,color:m.done?GRN:TL}}>{m.done?"Done":m.date}</span>
-                </div>
-              </div>
-            );})}
-          </div>
-        </div>
-        <div style={{background:BLK,borderRadius:14,padding:20}}>
-          <div style={{fontSize:10,color:"rgba(255,255,255,0.35)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:14}}>My Projected Payout</div>
-          <div style={{fontSize:32,fontWeight:900,background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",marginBottom:4}}>{"~$32,500"}</div>
-          <div style={{fontSize:11,color:"rgba(255,255,255,0.35)",marginBottom:18}}>50% of net profit - Est. Apr 2025</div>
-        </div>
-      </div>
-      <div style={{position:"fixed",bottom:0,left:0,right:0,background:WHT,borderTop:"1px solid "+BRD,display:"flex",height:56,zIndex:200}}>
-        {tabs.map(function(t){return(
-          <div key={t.id} onClick={function(){setTab(t.id);}} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:11,fontWeight:tab===t.id?700:400,color:tab===t.id?ROSE:TL,borderTop:"2px solid "+(tab===t.id?ROSE:"transparent")}}>{t.label}</div>
-        );})}
-      </div>
-    </div>
-  );
+var [tab,setTab]=useState(“overview”);
+var tabs=[{id:“overview”,label:“Overview”},{id:“rehab”,label:“Rehab”},{id:“docs”,label:“Docs”},{id:“payout”,label:“Payout”}];
+var ms=[{label:“Demolition”,done:true,date:“Mar 2”},{label:“Rough-In”,done:true,date:“Mar 18”},{label:“Finishes”,done:false,date:“Apr 8”},{label:“Inspection”,done:false,date:“Apr 22”}];
+return(
+<div style={{minHeight:“100vh”,background:BG,fontFamily:“Inter,sans-serif”,color:BLK,display:“flex”,flexDirection:“column”}}>
+<div style={{background:WHT,borderBottom:“1px solid “+BRD,padding:“0 20px”,height:54,display:“flex”,alignItems:“center”,justifyContent:“space-between”,position:“sticky”,top:0,zIndex:200}}>
+<div style={{display:“flex”,alignItems:“center”,gap:10}}>
+<button onClick={onBack} style={{background:BG,border:“1px solid “+BRD,borderRadius:6,padding:“5px 12px”,color:TMU,fontSize:12,cursor:“pointer”}}>Back</button>
+<span style={{fontWeight:900,fontSize:16,letterSpacing:”-0.04em”,color:BLK}}>Fund<span style={{color:ROSE}}>Flip</span></span>
+</div>
+<div style={{background:RF,border:“1px solid “+RB,borderRadius:7,padding:“6px 14px”,fontSize:12,color:ROSE}}>My Home: <span style={{fontWeight:700}}>Active</span></div>
+</div>
+<div style={{flex:1,overflowY:“auto”,padding:“20px 20px 80px”}}>
+<div style={{marginBottom:22}}>
+<div style={{fontSize:11,color:TL,textTransform:“uppercase”,letterSpacing:“0.1em”,marginBottom:4}}>Homeowner Dashboard</div>
+<div style={{fontSize:22,fontWeight:800,color:BLK}}>Good morning, Maria.</div>
+</div>
+<div style={{display:“grid”,gridTemplateColumns:“repeat(4,1fr)”,gap:10,marginBottom:18}}>
+{[[“Home Value”,”$148K”,false],[“After Repair”,”$265K”,false],[“My 50% Profit”,”~$32.5K”,true],[“Progress”,“50%”,false]].map(function(item){return(
+<div key={item[0]} style={{background:WHT,borderRadius:12,padding:“16px 14px”,border:“1px solid “+(item[2]?RB:BRD),borderTop:“2px solid “+(item[2]?ROSE:“transparent”)}}>
+<div style={{fontSize:9,color:TL,textTransform:“uppercase”,letterSpacing:“0.1em”,marginBottom:8}}>{item[0]}</div>
+<div style={{fontSize:20,fontWeight:800,color:item[2]?ROSE:BLK}}>{item[1]}</div>
+</div>
+);})}
+</div>
+<div style={{background:WHT,border:“1px solid “+BRD,borderRadius:14,marginBottom:18,overflow:“hidden”}}>
+<div style={{height:3,background:“linear-gradient(90deg,”+ROSE+”,”+ROSE2+”)”}}/>
+<div style={{padding:“13px 18px”,borderBottom:“1px solid “+BRD,display:“flex”,justifyContent:“space-between”}}>
+<div style={{fontWeight:700,fontSize:14,color:BLK}}>1842 Peachtree Blvd, Atlanta GA</div>
+<Chip label="Rehab Active" v="rose"/>
+</div>
+<div style={{padding:18}}>
+<img src=“https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400” alt=“home” style={{width:“100%”,height:140,objectFit:“cover”,borderRadius:10,marginBottom:14}}/>
+{ms.map(function(m,i){return(
+<div key={i} style={{display:“flex”,gap:12,alignItems:“center”,marginBottom:14}}>
+<div style={{width:18,height:18,borderRadius:“50%”,flexShrink:0,background:m.done?ROSE:BGA,border:m.done?“none”:“2px solid “+BRD,display:“flex”,alignItems:“center”,justifyContent:“center”}}>
+{m.done&&<span style={{color:WHT,fontSize:10}}>{“✓”}</span>}
+</div>
+<div style={{flex:1,display:“flex”,justifyContent:“space-between”}}>
+<span style={{fontSize:13,fontWeight:m.done?600:400,color:m.done?BLK:TMU}}>{m.label}</span>
+<span style={{fontSize:10,color:m.done?GRN:TL}}>{m.done?“Done”:m.date}</span>
+</div>
+</div>
+);})}
+</div>
+</div>
+<div style={{background:BLK,borderRadius:14,padding:20}}>
+<div style={{fontSize:10,color:“rgba(255,255,255,0.35)”,textTransform:“uppercase”,letterSpacing:“0.1em”,marginBottom:14}}>My Projected Payout</div>
+<div style={{fontSize:32,fontWeight:900,background:“linear-gradient(135deg,”+ROSE+”,”+ROSE2+”)”,WebkitBackgroundClip:“text”,WebkitTextFillColor:“transparent”,marginBottom:4}}>{”~$32,500”}</div>
+<div style={{fontSize:11,color:“rgba(255,255,255,0.35)”,marginBottom:18}}>50% of net profit - Est. Apr 2025</div>
+</div>
+</div>
+<div style={{position:“fixed”,bottom:0,left:0,right:0,background:WHT,borderTop:“1px solid “+BRD,display:“flex”,height:56,zIndex:200}}>
+{tabs.map(function(t){return(
+<div key={t.id} onClick={function(){setTab(t.id);}} style={{flex:1,display:“flex”,alignItems:“center”,justifyContent:“center”,cursor:“pointer”,fontSize:11,fontWeight:tab===t.id?700:400,color:tab===t.id?ROSE:TL,borderTop:“2px solid “+(tab===t.id?ROSE:“transparent”)}}>{t.label}</div>
+);})}
+</div>
+</div>
+);
 }
 
 function DealRoom({d,onBack}){
-  var [amt,setAmt]=useState(5000);
-  var [funded,setFunded]=useState(false);
-  var scope=[["Kitchen full gut + remodel","$18,500"],["2 bathrooms","$9,200"],["Flooring throughout","$7,800"],["Roof repair","$4,500"],["Exterior paint","$3,200"],["HVAC service","$2,800"],["Contingency 5%","$2,400"]];
-  var milestones=[{n:"M1",label:"Demolition",pct:"20%",done:true},{n:"M2",label:"Rough-In",pct:"25%",done:true},{n:"M3",label:"Finishes",pct:"35%",done:false},{n:"M4",label:"Final Inspection",pct:"20%",done:false}];
-  return(
-    <div style={{minHeight:"100vh",background:BG,fontFamily:"Inter,sans-serif",color:BLK}}>
-      <div style={{background:WHT,borderBottom:"1px solid "+BRD,padding:"0 5%",height:48,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:200}}>
-        <button onClick={onBack} style={{background:BG,border:"1px solid "+BRD,borderRadius:6,padding:"5px 12px",color:TMU,fontSize:12,cursor:"pointer"}}>{"← Back"}</button>
-        <span style={{fontWeight:900,fontSize:14,letterSpacing:"-0.03em",color:BLK}}>Fund<span style={{color:ROSE}}>Flip</span></span>
-        <div style={{width:60}}/>
-      </div>
-      <div style={{maxWidth:680,margin:"0 auto",padding:"24px 5% 60px"}}>
-        <div style={{position:"relative",height:200,borderRadius:16,overflow:"hidden",marginBottom:20}}>
-          <img src={d.img} alt="" style={{width:"100%",height:"100%",objectFit:"cover",filter:"brightness(0.8)"}}/>
-          <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(9,9,11,0.8) 0%,transparent 50%)"}}/>
-          <div style={{position:"absolute",bottom:16,left:20}}>
-            <Chip label={d.tag} v="gray"/>
-            <div style={{fontWeight:900,fontSize:20,color:WHT,marginTop:6}}>{d.addr}</div>
-            <div style={{fontSize:13,color:"rgba(255,255,255,0.6)"}}>{d.city}</div>
-          </div>
-          <div style={{position:"absolute",top:12,right:12,background:d.status==="funded"?GRN:ROSE,color:WHT,fontSize:10,fontWeight:700,padding:"4px 12px",borderRadius:99}}>{d.status==="funded"?"FUNDED":"OPEN"}</div>
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:16}}>
-          {[["Current Value",K(d.arv-d.profit)],["After Repair",K(d.arv)],["Rehab Cost",K(d.rehab)],["Net Profit",K(d.profit)]].map(function(item){return(
-            <div key={item[0]} style={{background:WHT,border:"1px solid "+BRD,borderRadius:12,padding:"14px 12px",textAlign:"center"}}>
-              <div style={{fontSize:9,color:TL,textTransform:"uppercase",marginBottom:6}}>{item[0]}</div>
-              <div style={{fontSize:15,fontWeight:800,color:item[0]==="Net Profit"?ROSE:BLK}}>{item[1]}</div>
-            </div>
-          );})}
-        </div>
-        <div style={{background:WHT,border:"1px solid "+BRD,borderRadius:14,marginBottom:14,overflow:"hidden"}}>
-          <div style={{padding:"14px 18px",borderBottom:"1px solid "+BRD,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-            <div style={{fontWeight:700,fontSize:14,color:BLK}}>ARV Report</div>
-            <span style={{fontSize:10,color:GRN,fontWeight:700,background:"rgba(16,185,129,0.08)",border:"1px solid rgba(16,185,129,0.2)",borderRadius:99,padding:"3px 10px"}}>Certified</span>
-          </div>
-          <div style={{padding:"14px 18px"}}>
-            {[["Appraiser","Marcus Reid, MAI Certified"],["Method","Sales comparison + income approach"],["Comparable Sales","3 comps within 0.5 miles"],["Final ARV",K(d.arv)+" confirmed"],["Ordered By","FundFlip, independent of investor"]].map(function(row){return(
-              <div key={row[0]} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid "+BRD}}>
-                <span style={{fontSize:12,color:TMU}}>{row[0]}</span>
-                <span style={{fontSize:12,fontWeight:600,color:BLK,textAlign:"right",maxWidth:"55%"}}>{row[1]}</span>
-              </div>
-            );})}
-          </div>
-        </div>
-        <div style={{background:WHT,border:"1px solid "+BRD,borderRadius:14,marginBottom:14,overflow:"hidden"}}>
-          <div style={{padding:"14px 18px",borderBottom:"1px solid "+BRD,fontWeight:700,fontSize:14,color:BLK}}>Contractor Profile</div>
-          <div style={{padding:"14px 18px"}}>
-            {[["Company","Rodriguez Construction LLC"],["License","CA 891234, Active"],["Insurance","$2M General Liability, Verified"],["FundFlip Deals","4 completed, avg 97% on-budget"],["Bids Received","3 competitive bids"]].map(function(row){return(
-              <div key={row[0]} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid "+BRD}}>
-                <span style={{fontSize:12,color:TMU}}>{row[0]}</span>
-                <span style={{fontSize:12,fontWeight:600,color:BLK,textAlign:"right",maxWidth:"55%"}}>{row[1]}</span>
-              </div>
-            );})}
-          </div>
-        </div>
-        <div style={{background:WHT,border:"1px solid "+BRD,borderRadius:14,marginBottom:14,overflow:"hidden"}}>
-          <div style={{padding:"14px 18px",borderBottom:"1px solid "+BRD,fontWeight:700,fontSize:14,color:BLK}}>Scope of Work</div>
-          <div style={{padding:"14px 18px"}}>
-            {scope.map(function(row){return(
-              <div key={row[0]} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid "+BRD}}>
-                <span style={{fontSize:12,color:TM}}>{row[0]}</span>
-                <span style={{fontSize:12,fontWeight:600,color:BLK}}>{row[1]}</span>
-              </div>
-            );})}
-            <div style={{display:"flex",justifyContent:"space-between",padding:"12px 0 0"}}>
-              <span style={{fontSize:13,fontWeight:700,color:BLK}}>Total Locked Budget</span>
-              <span style={{fontSize:13,fontWeight:800,color:ROSE}}>{K(d.rehab)}</span>
-            </div>
-          </div>
-        </div>
-        <div style={{background:WHT,border:"1px solid "+BRD,borderRadius:14,marginBottom:14,overflow:"hidden"}}>
-          <div style={{padding:"14px 18px",borderBottom:"1px solid "+BRD,fontWeight:700,fontSize:14,color:BLK}}>Milestone Timeline</div>
-          <div style={{padding:"14px 18px"}}>
-            {milestones.map(function(m,i){return(
-              <div key={i} style={{display:"flex",gap:14,alignItems:"flex-start",marginBottom:i<milestones.length-1?16:0}}>
-                <div style={{width:32,height:32,borderRadius:"50%",flexShrink:0,background:m.done?ROSE:BGA,border:m.done?"none":"2px solid "+BRD,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  {m.done?<span style={{color:WHT,fontSize:11,fontWeight:800}}>{"✓"}</span>:<span style={{fontSize:10,fontWeight:700,color:TL}}>{m.n}</span>}
-                </div>
-                <div style={{flex:1}}>
-                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:2}}>
-                    <span style={{fontSize:13,fontWeight:600,color:BLK}}>{m.label}</span>
-                    <span style={{fontSize:11,color:m.done?GRN:TL,fontWeight:600,textTransform:"uppercase"}}>{m.done?"Complete":"Pending"}</span>
-                  </div>
-                  <div style={{fontSize:11,color:TL}}>{m.pct+" of budget"}</div>
-                </div>
-              </div>
-            );})}
-          </div>
-        </div>
-        {!funded?(
-          <div style={{background:RF,border:"1px solid "+RB,borderRadius:14,padding:20}}>
-            <div style={{fontWeight:800,fontSize:18,color:BLK,marginBottom:4}}>Fund This Deal</div>
-            <div style={{fontSize:13,color:TMU,marginBottom:16}}>Your funds go directly into milestone escrow. Released in 4 stages only after you approve completed work.</div>
-            <div style={{marginBottom:14}}>
-              <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-                <span style={{fontSize:12,color:TM,fontWeight:600}}>Your investment</span>
-                <span style={{fontSize:14,fontWeight:800,color:BLK}}>{"$"+amt.toLocaleString()}</span>
-              </div>
-              <input type="range" min="1000" max={d.rehab} step="500" value={amt} onChange={function(e){setAmt(Number(e.target.value));}} style={{width:"100%",accentColor:ROSE,cursor:"pointer"}}/>
-            </div>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:16}}>
-              {[["Your Share",(amt/d.rehab*100).toFixed(1)+"%"],["Est. Return","$"+Math.round(amt*(d.roi/100)).toLocaleString()],["ROI","~"+d.roi+"%"],["Timeline","~4 months"]].map(function(item){return(
-                <div key={item[0]} style={{background:WHT,borderRadius:10,padding:"10px 12px",border:"1px solid "+RB}}>
-                  <div style={{fontSize:9,color:ROSE,textTransform:"uppercase",marginBottom:3}}>{item[0]}</div>
-                  <div style={{fontSize:15,fontWeight:800,color:BLK}}>{item[1]}</div>
-                </div>
-              );})}
-            </div>
-            <button onClick={function(){setFunded(true);}} style={{width:"100%",padding:"15px",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:12,color:WHT,fontSize:15,fontWeight:800,cursor:"pointer"}}>
-              {"Fund $"+amt.toLocaleString()+" \u2014 Escrow Protected"}
-            </button>
-          </div>
-        ):(
-          <div style={{background:BLK,borderRadius:14,padding:28,textAlign:"center"}}>
-            <div style={{fontSize:40,marginBottom:12}}>{"🎉"}</div>
-            <div style={{fontWeight:800,fontSize:20,color:WHT,marginBottom:8}}>{"You're in!"}</div>
-            <div style={{fontSize:13,color:"rgba(255,255,255,0.5)",lineHeight:1.7,marginBottom:20}}>{"$"+amt.toLocaleString()+" has been reserved in escrow. The JV contract will be generated within 24 hours."}</div>
-            <button onClick={onBack} style={{width:"100%",padding:"12px",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:10,color:WHT,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:10}}>Go to Dashboard</button>
-            <button onClick={function(){
-              if(navigator.share){navigator.share({title:"FundFlip",text:"I just funded a real estate deal on FundFlip. AI-matched, escrow-protected, 40% of the profit.",url:"https://fundflip.com"});}
-              else{navigator.clipboard&&navigator.clipboard.writeText("https://fundflip.com");}
-            }} style={{width:"100%",padding:"12px",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:10,color:"rgba(255,255,255,0.8)",fontSize:13,fontWeight:600,cursor:"pointer"}}>{"Share FundFlip with another investor \u2197"}</button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+var [amt,setAmt]=useState(5000);
+var [funded,setFunded]=useState(false);
+var scope=[[“Kitchen full gut + remodel”,”$18,500”],[“2 bathrooms”,”$9,200”],[“Flooring throughout”,”$7,800”],[“Roof repair”,”$4,500”],[“Exterior paint”,”$3,200”],[“HVAC service”,”$2,800”],[“Contingency 5%”,”$2,400”]];
+var milestones=[{n:“M1”,label:“Demolition”,pct:“20%”,done:true},{n:“M2”,label:“Rough-In”,pct:“25%”,done:true},{n:“M3”,label:“Finishes”,pct:“35%”,done:false},{n:“M4”,label:“Final Inspection”,pct:“20%”,done:false}];
+return(
+<div style={{minHeight:“100vh”,background:BG,fontFamily:“Inter,sans-serif”,color:BLK}}>
+<div style={{background:WHT,borderBottom:“1px solid “+BRD,padding:“0 5%”,height:48,display:“flex”,alignItems:“center”,justifyContent:“space-between”,position:“sticky”,top:0,zIndex:200}}>
+<button onClick={onBack} style={{background:BG,border:“1px solid “+BRD,borderRadius:6,padding:“5px 12px”,color:TMU,fontSize:12,cursor:“pointer”}}>{“← Back”}</button>
+<span style={{fontWeight:900,fontSize:14,letterSpacing:”-0.03em”,color:BLK}}>Fund<span style={{color:ROSE}}>Flip</span></span>
+<div style={{width:60}}/>
+</div>
+<div style={{maxWidth:680,margin:“0 auto”,padding:“24px 5% 60px”}}>
+<div style={{position:“relative”,height:200,borderRadius:16,overflow:“hidden”,marginBottom:20}}>
+<img src={d.img} alt=”” style={{width:“100%”,height:“100%”,objectFit:“cover”,filter:“brightness(0.8)”}}/>
+<div style={{position:“absolute”,inset:0,background:“linear-gradient(to top,rgba(9,9,11,0.8) 0%,transparent 50%)”}}/>
+<div style={{position:“absolute”,bottom:16,left:20}}>
+<Chip label={d.tag} v="gray"/>
+<div style={{fontWeight:900,fontSize:20,color:WHT,marginTop:6}}>{d.addr}</div>
+<div style={{fontSize:13,color:“rgba(255,255,255,0.6)”}}>{d.city}</div>
+</div>
+<div style={{position:“absolute”,top:12,right:12,background:d.status===“funded”?GRN:ROSE,color:WHT,fontSize:10,fontWeight:700,padding:“4px 12px”,borderRadius:99}}>{d.status===“funded”?“FUNDED”:“OPEN”}</div>
+</div>
+<div style={{display:“grid”,gridTemplateColumns:“repeat(4,1fr)”,gap:10,marginBottom:16}}>
+{[[“Current Value”,K(d.arv-d.profit)],[“After Repair”,K(d.arv)],[“Rehab Cost”,K(d.rehab)],[“Net Profit”,K(d.profit)]].map(function(item){return(
+<div key={item[0]} style={{background:WHT,border:“1px solid “+BRD,borderRadius:12,padding:“14px 12px”,textAlign:“center”}}>
+<div style={{fontSize:9,color:TL,textTransform:“uppercase”,marginBottom:6}}>{item[0]}</div>
+<div style={{fontSize:15,fontWeight:800,color:item[0]===“Net Profit”?ROSE:BLK}}>{item[1]}</div>
+</div>
+);})}
+</div>
+<div style={{background:WHT,border:“1px solid “+BRD,borderRadius:14,marginBottom:14,overflow:“hidden”}}>
+<div style={{padding:“14px 18px”,borderBottom:“1px solid “+BRD,display:“flex”,justifyContent:“space-between”,alignItems:“center”}}>
+<div style={{fontWeight:700,fontSize:14,color:BLK}}>ARV Report</div>
+<span style={{fontSize:10,color:GRN,fontWeight:700,background:“rgba(16,185,129,0.08)”,border:“1px solid rgba(16,185,129,0.2)”,borderRadius:99,padding:“3px 10px”}}>Certified</span>
+</div>
+<div style={{padding:“14px 18px”}}>
+{[[“Appraiser”,“Marcus Reid, MAI Certified”],[“Method”,“Sales comparison + income approach”],[“Comparable Sales”,“3 comps within 0.5 miles”],[“Final ARV”,K(d.arv)+” confirmed”],[“Ordered By”,“FundFlip, independent of investor”]].map(function(row){return(
+<div key={row[0]} style={{display:“flex”,justifyContent:“space-between”,padding:“7px 0”,borderBottom:“1px solid “+BRD}}>
+<span style={{fontSize:12,color:TMU}}>{row[0]}</span>
+<span style={{fontSize:12,fontWeight:600,color:BLK,textAlign:“right”,maxWidth:“55%”}}>{row[1]}</span>
+</div>
+);})}
+</div>
+</div>
+<div style={{background:WHT,border:“1px solid “+BRD,borderRadius:14,marginBottom:14,overflow:“hidden”}}>
+<div style={{padding:“14px 18px”,borderBottom:“1px solid “+BRD,fontWeight:700,fontSize:14,color:BLK}}>Contractor Profile</div>
+<div style={{padding:“14px 18px”}}>
+{[[“Company”,“Rodriguez Construction LLC”],[“License”,“CA 891234, Active”],[“Insurance”,”$2M General Liability, Verified”],[“FundFlip Deals”,“4 completed, avg 97% on-budget”],[“Bids Received”,“3 competitive bids”]].map(function(row){return(
+<div key={row[0]} style={{display:“flex”,justifyContent:“space-between”,padding:“7px 0”,borderBottom:“1px solid “+BRD}}>
+<span style={{fontSize:12,color:TMU}}>{row[0]}</span>
+<span style={{fontSize:12,fontWeight:600,color:BLK,textAlign:“right”,maxWidth:“55%”}}>{row[1]}</span>
+</div>
+);})}
+</div>
+</div>
+<div style={{background:WHT,border:“1px solid “+BRD,borderRadius:14,marginBottom:14,overflow:“hidden”}}>
+<div style={{padding:“14px 18px”,borderBottom:“1px solid “+BRD,fontWeight:700,fontSize:14,color:BLK}}>Scope of Work</div>
+<div style={{padding:“14px 18px”}}>
+{scope.map(function(row){return(
+<div key={row[0]} style={{display:“flex”,justifyContent:“space-between”,padding:“7px 0”,borderBottom:“1px solid “+BRD}}>
+<span style={{fontSize:12,color:TM}}>{row[0]}</span>
+<span style={{fontSize:12,fontWeight:600,color:BLK}}>{row[1]}</span>
+</div>
+);})}
+<div style={{display:“flex”,justifyContent:“space-between”,padding:“12px 0 0”}}>
+<span style={{fontSize:13,fontWeight:700,color:BLK}}>Total Locked Budget</span>
+<span style={{fontSize:13,fontWeight:800,color:ROSE}}>{K(d.rehab)}</span>
+</div>
+</div>
+</div>
+<div style={{background:WHT,border:“1px solid “+BRD,borderRadius:14,marginBottom:14,overflow:“hidden”}}>
+<div style={{padding:“14px 18px”,borderBottom:“1px solid “+BRD,fontWeight:700,fontSize:14,color:BLK}}>Milestone Timeline</div>
+<div style={{padding:“14px 18px”}}>
+{milestones.map(function(m,i){return(
+<div key={i} style={{display:“flex”,gap:14,alignItems:“flex-start”,marginBottom:i<milestones.length-1?16:0}}>
+<div style={{width:32,height:32,borderRadius:“50%”,flexShrink:0,background:m.done?ROSE:BGA,border:m.done?“none”:“2px solid “+BRD,display:“flex”,alignItems:“center”,justifyContent:“center”}}>
+{m.done?<span style={{color:WHT,fontSize:11,fontWeight:800}}>{“✓”}</span>:<span style={{fontSize:10,fontWeight:700,color:TL}}>{m.n}</span>}
+</div>
+<div style={{flex:1}}>
+<div style={{display:“flex”,justifyContent:“space-between”,marginBottom:2}}>
+<span style={{fontSize:13,fontWeight:600,color:BLK}}>{m.label}</span>
+<span style={{fontSize:11,color:m.done?GRN:TL,fontWeight:600,textTransform:“uppercase”}}>{m.done?“Complete”:“Pending”}</span>
+</div>
+<div style={{fontSize:11,color:TL}}>{m.pct+” of budget”}</div>
+</div>
+</div>
+);})}
+</div>
+</div>
+{!funded?(
+<div style={{background:RF,border:“1px solid “+RB,borderRadius:14,padding:20}}>
+<div style={{fontWeight:800,fontSize:18,color:BLK,marginBottom:4}}>Fund This Deal</div>
+<div style={{fontSize:13,color:TMU,marginBottom:16}}>Your funds go directly into milestone escrow. Released in 4 stages only after you approve completed work.</div>
+<div style={{marginBottom:14}}>
+<div style={{display:“flex”,justifyContent:“space-between”,marginBottom:8}}>
+<span style={{fontSize:12,color:TM,fontWeight:600}}>Your investment</span>
+<span style={{fontSize:14,fontWeight:800,color:BLK}}>{”$”+amt.toLocaleString()}</span>
+</div>
+<input type=“range” min=“1000” max={d.rehab} step=“500” value={amt} onChange={function(e){setAmt(Number(e.target.value));}} style={{width:“100%”,accentColor:ROSE,cursor:“pointer”}}/>
+</div>
+<div style={{display:“grid”,gridTemplateColumns:“1fr 1fr”,gap:8,marginBottom:16}}>
+{[[“Your Share”,(amt/d.rehab*100).toFixed(1)+”%”],[“Est. Return”,”$”+Math.round(amt*(d.roi/100)).toLocaleString()],[“ROI”,”~”+d.roi+”%”],[“Timeline”,“~4 months”]].map(function(item){return(
+<div key={item[0]} style={{background:WHT,borderRadius:10,padding:“10px 12px”,border:“1px solid “+RB}}>
+<div style={{fontSize:9,color:ROSE,textTransform:“uppercase”,marginBottom:3}}>{item[0]}</div>
+<div style={{fontSize:15,fontWeight:800,color:BLK}}>{item[1]}</div>
+</div>
+);})}
+</div>
+<button onClick={function(){setFunded(true);}} style={{width:“100%”,padding:“15px”,background:“linear-gradient(135deg,”+ROSE+”,”+ROSE2+”)”,border:“none”,borderRadius:12,color:WHT,fontSize:15,fontWeight:800,cursor:“pointer”}}>
+{“Fund $”+amt.toLocaleString()+” \u2014 Escrow Protected”}
+</button>
+</div>
+):(
+<div style={{background:BLK,borderRadius:14,padding:28,textAlign:“center”}}>
+<div style={{fontSize:40,marginBottom:12}}>{“🎉”}</div>
+<div style={{fontWeight:800,fontSize:20,color:WHT,marginBottom:8}}>{“You’re in!”}</div>
+<div style={{fontSize:13,color:“rgba(255,255,255,0.5)”,lineHeight:1.7,marginBottom:20}}>{”$”+amt.toLocaleString()+” has been reserved in escrow. The JV contract will be generated within 24 hours.”}</div>
+<button onClick={onBack} style={{width:“100%”,padding:“12px”,background:“linear-gradient(135deg,”+ROSE+”,”+ROSE2+”)”,border:“none”,borderRadius:10,color:WHT,fontSize:13,fontWeight:700,cursor:“pointer”,marginBottom:10}}>Go to Dashboard</button>
+<button onClick={function(){
+if(navigator.share){navigator.share({title:“FundFlip”,text:“I just funded a real estate deal on FundFlip. AI-matched, escrow-protected, 40% of the profit.”,url:“https://fundflip.com”});}
+else{navigator.clipboard&&navigator.clipboard.writeText(“https://fundflip.com”);}
+}} style={{width:“100%”,padding:“12px”,background:“rgba(255,255,255,0.08)”,border:“1px solid rgba(255,255,255,0.15)”,borderRadius:10,color:“rgba(255,255,255,0.8)”,fontSize:13,fontWeight:600,cursor:“pointer”}}>{“Share FundFlip with another investor \u2197”}</button>
+</div>
+)}
+</div>
+</div>
+);
 }
 
 function App(){
-  var [view,setView]=useState("landing");
-  var [splash,setSplash]=useState(true);
-  var [fadeOut,setFadeOut]=useState(false);
-  var [landingVis,setLandingVis]=useState(false);
-  var [selectedDeal,setSelectedDeal]=useState(null);
-  useEffect(function(){
-    document.title="FundFlip \u2014 AI-Powered Inherited Home Investment";
-    setTimeout(function(){setFadeOut(true);},1700);
-    setTimeout(function(){setSplash(false);setTimeout(function(){setLandingVis(true);},50);},2000);
-  },[]);
-  if(splash) return(
-    <div style={{minHeight:"100vh",background:BLK,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"Inter,sans-serif",opacity:fadeOut?0:1,transition:"opacity 0.5s ease"}}>
-      <div style={{width:56,height:56,borderRadius:"50%",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:16}}>
-        <span style={{fontSize:20,color:WHT,fontWeight:900}}>FF</span>
-      </div>
-      <span style={{fontWeight:900,fontSize:24,letterSpacing:"-0.04em",color:WHT}}>Fund<span style={{color:ROSE}}>Flip</span></span>
-      <span style={{fontSize:11,color:"rgba(255,255,255,0.4)",marginTop:6,fontWeight:500}}>AI Powered. Human Backed.</span>
-    </div>
-  );
-  return(
-    <div style={{opacity:landingVis?1:0,transform:landingVis?"none":"translateY(12px)",transition:"opacity 0.7s ease, transform 0.7s ease"}}>
-      {view==="landing"&&<Landing onDash={function(){setView("role");}}/>}
-      {view==="role"&&<RoleSelector onInvestor={function(){setView("investor");}} onOwner={function(){setView("owner");}} onBack={function(){setView("landing");}}/>}
-      {view==="investor"&&<InvestorDash onBack={function(){setView("role");}} onDeal={function(d){setSelectedDeal(d);setView("dealroom");}}/>}
-      {view==="owner"&&<OwnerDash onBack={function(){setView("role");}}/>}
-      {view==="dealroom"&&selectedDeal&&<DealRoom d={selectedDeal} onBack={function(){setView("investor");}}/>}
-    </div>
-  );
+var [view,setView]=useState(“landing”);
+var [splash,setSplash]=useState(true);
+var [fadeOut,setFadeOut]=useState(false);
+var [landingVis,setLandingVis]=useState(false);
+var [selectedDeal,setSelectedDeal]=useState(null);
+useEffect(function(){
+document.title=“FundFlip \u2014 AI-Powered Inherited Home Investment”;
+setTimeout(function(){setFadeOut(true);},1700);
+setTimeout(function(){setSplash(false);setTimeout(function(){setLandingVis(true);},50);},2000);
+},[]);
+if(splash) return(
+<div style={{minHeight:“100vh”,background:BLK,display:“flex”,flexDirection:“column”,alignItems:“center”,justifyContent:“center”,fontFamily:“Inter,sans-serif”,opacity:fadeOut?0:1,transition:“opacity 0.5s ease”}}>
+<div style={{width:56,height:56,borderRadius:“50%”,background:“linear-gradient(135deg,”+ROSE+”,”+ROSE2+”)”,display:“flex”,alignItems:“center”,justifyContent:“center”,marginBottom:16}}>
+<span style={{fontSize:20,color:WHT,fontWeight:900}}>FF</span>
+</div>
+<span style={{fontWeight:900,fontSize:24,letterSpacing:”-0.04em”,color:WHT}}>Fund<span style={{color:ROSE}}>Flip</span></span>
+<span style={{fontSize:11,color:“rgba(255,255,255,0.4)”,marginTop:6,fontWeight:500}}>AI Powered. Human Backed.</span>
+</div>
+);
+return(
+<div style={{opacity:landingVis?1:0,transform:landingVis?“none”:“translateY(12px)”,transition:“opacity 0.7s ease, transform 0.7s ease”}}>
+{view===“landing”&&<Landing onDash={function(){setView(“role”);}}/>}
+{view===“role”&&<RoleSelector onInvestor={function(){setView(“investor”);}} onOwner={function(){setView(“owner”);}} onBack={function(){setView(“landing”);}}/>}
+{view===“investor”&&<InvestorDash onBack={function(){setView(“role”);}} onDeal={function(d){setSelectedDeal(d);setView(“dealroom”);}}/>}
+{view===“owner”&&<OwnerDash onBack={function(){setView(“role”);}}/>}
+{view===“dealroom”&&selectedDeal&&<DealRoom d={selectedDeal} onBack={function(){setView(“investor”);}}/>}
+</div>
+);
 }
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(React.createElement(App));
+```
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(App));
+```
+
   </script>
 </body>
 </html>
