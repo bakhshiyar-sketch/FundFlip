@@ -467,10 +467,12 @@ function Landing({onDash}){
             {"FundFlip\u2019s AI analyzes 200+ data points to match your property with the ideal investor. Even homes that need major work qualify. Most sell within 3 to 5 months."}
           </p>
           <div style={{display:"flex",flexDirection:"row",gap:10,marginBottom:28,flexWrap:"nowrap"}}>
-            <button style={{flex:1,background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:8,padding:"11px 16px",color:WHT,fontSize:13,fontWeight:700,cursor:"pointer",lineHeight:1}}>List My Property - Free</button>
+            <button onClick={function(){document.getElementById("listing-form").scrollIntoView({behavior:"smooth"});}} style={{flex:1,background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:8,padding:"11px 16px",color:WHT,fontSize:13,fontWeight:700,cursor:"pointer",lineHeight:1}}>List My Property - Free</button>
             <button onClick={onDash} style={{flex:1,background:BLK,border:"none",borderRadius:8,padding:"11px 16px",color:WHT,fontSize:13,fontWeight:600,cursor:"pointer",lineHeight:1}}>Browse Live Deals</button>
           </div>
-          <ListingForm/>
+          <div id="listing-form">
+            <ListingForm/>
+          </div>
           <div style={{background:WHT,borderRadius:16,border:"1px solid "+BRD,overflow:"hidden",marginBottom:16,boxShadow:"0 4px 24px rgba(0,0,0,0.06)"}}>
             <div style={{padding:"16px 0 8px"}}><USMap/></div>
           </div>
