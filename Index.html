@@ -745,36 +745,47 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
 
       <section><LiveTracker/></section>
 
+      <section style={{borderTop:"1px solid "+BRD,background:WHT}}>
+        <div style={{padding:"32px 6% 20px"}}>
+          <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.14em",color:ROSE,textTransform:"uppercase",marginBottom:8}}>{"Who It's For"}</div>
+          <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:800,letterSpacing:"-0.04em",lineHeight:1.1,color:BLK}}>{"Two roles."}<br/><span style={{color:TMU}}>{"One deal."}</span></h2>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",borderTop:"1px solid "+BRD}}>
+          <div style={{padding:"24px 6%",borderRight:"1px solid "+BRD,display:"flex",flexDirection:"column"}}>
+            <div style={{fontWeight:900,fontSize:15,color:BLK,marginBottom:4}}>Homeowner</div>
+            <div style={{fontSize:12,color:TMU,marginBottom:20,lineHeight:1.5}}>You own the home. We find the investor.</div>
+            <div style={{flex:1}}>
+            {[["50%","of net profit at closing"],["$0","upfront cost to you"],["48hrs","AI investor match"],["100%","your ownership rights protected"]].map(function(item){return(
+              <div key={item[0]} style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
+                <div style={{fontWeight:900,fontSize:18,color:ROSE,minWidth:52,lineHeight:1}}>{item[0]}</div>
+                <div style={{fontSize:12,color:TMU,lineHeight:1.4}}>{item[1]}</div>
+              </div>
+            );})}
+            </div>
+            <button onClick={onOwner} style={{marginTop:16,width:"100%",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",border:"none",borderRadius:8,padding:"12px",color:WHT,fontSize:12,fontWeight:700,cursor:"pointer"}}>List My Property</button>
+          </div>
+          <div style={{padding:"24px 6%",display:"flex",flexDirection:"column"}}>
+            <div style={{fontWeight:900,fontSize:15,color:BLK,marginBottom:4}}>Investor</div>
+            <div style={{fontSize:12,color:TMU,marginBottom:20,lineHeight:1.5}}>You fund the rehab. We handle everything else.</div>
+            <div style={{flex:1}}>
+            {[["40%","of net profit at closing"],["38-44%","average ROI per deal"],["3-6mo","average deal timeline"],["100%","escrow protected funds"]].map(function(item){return(
+              <div key={item[0]} style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
+                <div style={{fontWeight:900,fontSize:18,color:BLK,minWidth:52,lineHeight:1}}>{item[0]}</div>
+                <div style={{fontSize:12,color:TMU,lineHeight:1.4}}>{item[1]}</div>
+              </div>
+            );})}
+            </div>
+            <button onClick={function(){onSignUp("investor");}} style={{marginTop:16,width:"100%",background:BLK,border:"none",borderRadius:8,padding:"12px",color:WHT,fontSize:12,fontWeight:700,cursor:"pointer"}}>Create Investor Account</button>
+          </div>
+        </div>
+      </section>
+
       <section id="how-it-works" style={{background:BG,borderTop:"1px solid "+BRD}}>
         <div style={{padding:"32px 6% 16px"}}>
           <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.14em",color:ROSE,textTransform:"uppercase",marginBottom:8}}>How It Works</div>
           <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:800,letterSpacing:"-0.04em",lineHeight:1.1,color:BLK}}>Six steps.<br/><span style={{color:TMU}}>One clean deal.</span></h2>
         </div>
         <HowItWorks/>
-      </section>
-
-      <section style={{borderTop:"1px solid "+BRD,background:WHT}}>
-        <div style={{padding:"32px 6% 16px"}}>
-          <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.14em",color:ROSE,textTransform:"uppercase",marginBottom:8}}>{"Who It's For"}</div>
-          <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:800,letterSpacing:"-0.04em",lineHeight:1.1,color:BLK}}>Built for two people.<br/><span style={{color:TMU}}>One deal.</span></h2>
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr"}}>
-          {[
-            {who:"For Inherited Homeowners",sub:"Your home funds itself. You keep the upside.",points:[["Submit your property","FundFlip orders a certified ARV appraisal and title check"],["AI matches your investor","our model finds the right investor in 48 hours"],["One investor funds the rehab","full cost goes into escrow, no debt on your end"],["You sign a JV contract","your ownership rights are protected on-platform"],["Rehab happens","you track progress live, contractor paid by milestone"],["Home sells at full value","you receive 50% of the net profit at closing"]]},
-            {who:"For Private Investors",sub:"Fund one rehab. Share the profit when it sells.",points:[["Browse AI-matched deals","every listing includes ARV, rehab scope, and pre-approved contractor"],["Pick one property","direct 1-on-1 deal, no pools, no shared risk"],["Fund the full rehab cost","deposited into milestone escrow, never held by the owner"],["Approve each milestone","contractor submits photos, you release funds when satisfied"],["Track everything live","budget, timeline, and progress in your dashboard"],["Home sells","you receive 40% of the net profit at closing"]]},
-          ].map(function(card,ci){return(
-            <div key={card.who} style={{background:WHT,borderRight:ci===0?"1px solid "+BRD:"none",borderTop:"1px solid "+BRD,padding:"28px 6% 32px",boxSizing:"border-box"}}>
-              <div style={{fontWeight:800,fontSize:18,color:BLK,marginBottom:4}}>{card.who}</div>
-              <div style={{fontSize:13,color:TMU,marginBottom:16,lineHeight:1.5}}>{card.sub}</div>
-              {card.points.map(function(p){return(
-                <div key={p[0]} style={{display:"flex",gap:10,alignItems:"flex-start",marginBottom:10}}>
-                  <div style={{width:6,height:6,borderRadius:"50%",flexShrink:0,marginTop:6,background:TL}}/>
-                  <span style={{fontSize:13,color:TM,lineHeight:1.6}}><strong style={{color:BLK,fontWeight:600}}>{p[0]}</strong>{" \u2014 "}{p[1]}</span>
-                </div>
-              );})}
-            </div>
-          );})}
-        </div>
       </section>
 
       <section style={{background:BLK,padding:"32px 6%",textAlign:"center"}}>
