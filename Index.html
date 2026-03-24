@@ -406,6 +406,31 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin}){
   var [vis,setVis]=useState(false);
   var [faqOpen,setFaqOpen]=useState(null);
   var [showWho,setShowWho]=useState(false);
+  var [activePopupTab,setActivePopupTab]=useState("owner");
+  var [showSpecialist,setShowSpecialist]=useState(false);
+  var [specialistDone,setSpecialistDone]=useState(false);
+  var [specName,setSpecName]=useState("");
+  var [specPhone,setSpecPhone]=useState("");
+  var [specEmail,setSpecEmail]=useState("");
+  var [specSaving,setSpecSaving]=useState(false);
+
+  async function submitSpecialist(){
+    setSpecSaving(true);
+    try{
+      await fetch("https://rgmuqduzunbpfdmuktdr.supabase.co/rest/v1/specialist_requests",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","apikey":"sb_publishable_A6wN98bBlt5v31o1ucy9xQ_s_aIkSqz","Authorization":"Bearer sb_publishable_A6wN98bBlt5v31o1ucy9xQ_s_aIkSqz","Prefer":"return=minimal"},
+        body:JSON.stringify({name:specName,phone:specPhone,email:specEmail,role:heroTab,status:"pending"})
+      });
+      await fetch("https://api.resend.com/emails",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","Authorization":"Bearer re_EkD2DbHU_4EjXN4DuAAAFq1c54qhcBfF3"},
+        body:JSON.stringify({from:"FundFlip <onboarding@resend.dev>",to:["bakhshiyar@gmail.com"],subject:"🔥 Specialist Request: "+specName,html:"<div style='font-family:Inter,sans-serif;padding:32px;'><h2 style='color:#F43F5E;'>Specialist Callback Request</h2><p><strong>Name:</strong> "+specName+"</p><p><strong>Phone:</strong> "+specPhone+"</p><p><strong>Email:</strong> "+specEmail+"</p><p><strong>Role:</strong> "+heroTab+"</p><p style='color:#F43F5E;font-weight:700;'>Contact within 20 minutes!</p></div>"})
+      });
+    }catch(e){console.log(e);}
+    setSpecSaving(false);
+    setSpecialistDone(true);
+  }
   var [showLogin,setShowLogin]=useState(false);
   var [heroTab,setHeroTab]=useState("owner");
   var [showWhy,setShowWhy]=useState(false);
@@ -456,7 +481,35 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin}){
                 </div>
                 <button onClick={function(){setShowWho(false);setShowContractorInfo(false);onContractor();}} style={{width:"100%",padding:"14px",background:BLK,border:"none",borderRadius:12,color:WHT,fontSize:14,fontWeight:700,cursor:"pointer"}}>Apply to Join Our Network</button>
               </div>
-            ):heroTab==="owner"?(
+            ):activePopupTab==="contractor"?(
+              <div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+                  <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.1em"}}>For Contractors</div>
+                  <button onClick={function(){setShowWho(false);}} style={{background:BGA,border:"none",borderRadius:8,width:28,height:28,cursor:"pointer",fontSize:14,color:TMU}}>{"×"}</button>
+                </div>
+                <div style={{fontWeight:900,fontSize:22,color:BLK,marginBottom:4,letterSpacing:"-0.03em"}}>{"Why join FundFlip?"}</div>
+                <div style={{fontSize:13,color:TMU,marginBottom:20,lineHeight:1.6}}>Consistent work. Guaranteed pay. No chasing clients.</div>
+                <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:24}}>
+                  {[
+                    ["01","Escrow-guaranteed payments","Every dollar is secured in escrow before work starts. You get paid on every milestone — automatically. No invoice chasing. No excuses."],
+                    ["02","Consistent deal flow","FundFlip brings you a steady pipeline of rehab projects. No slow seasons. No marketing. Just work."],
+                    ["03","Clear scope, locked budget","Every job comes with a locked scope and budget. No surprise change orders. No disputes mid-rehab."],
+                    ["04","Build your reputation","Every deal you complete earns you a rating. Top-rated contractors get first access to every new deal on the platform."],
+                    ["05","Work with serious investors","Every investor on FundFlip is vetted and funded. No flaky clients. No deals that fall through."],
+                  ].map(function(item){return(
+                    <div key={item[0]} style={{display:"flex",gap:12,alignItems:"flex-start"}}>
+                      <div style={{fontSize:11,fontWeight:800,color:BLK,minWidth:24,paddingTop:2}}>{item[0]}</div>
+                      <div>
+                        <div style={{fontWeight:700,fontSize:14,color:BLK,marginBottom:3}}>{item[1]}</div>
+                        <div style={{fontSize:12,color:TMU,lineHeight:1.6}}>{item[2]}</div>
+                      </div>
+                    </div>
+                  );})}
+                </div>
+                <button onClick={function(){setShowWho(false);onContractor();}} style={{width:"100%",padding:"14px",background:BLK,border:"none",borderRadius:12,color:WHT,fontSize:14,fontWeight:700,cursor:"pointer",marginBottom:10}}>Apply to Join Our Network</button>
+                <div style={{textAlign:"center"}}><span onClick={function(){setShowContractorInfo(true);}} style={{fontSize:12,color:TMU,cursor:"pointer",textDecoration:"underline"}}>{"How does FundFlip vet contractors? →"}</span></div>
+              </div>
+            ):activePopupTab==="owner"?(
               <div>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
                   <div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.1em"}}>For Homeowners</div>
@@ -559,6 +612,45 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin}){
           </div>
         </div>
       )}
+      {showSpecialist&&(
+        <div onClick={function(){setShowSpecialist(false);}} style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(8px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+          <div onClick={function(e){e.stopPropagation();}} style={{background:WHT,width:"100%",maxWidth:480,borderRadius:"24px 24px 0 0",padding:"12px 24px 48px",boxShadow:"0 -8px 40px rgba(0,0,0,0.15)"}}>
+            <div style={{width:36,height:4,borderRadius:99,background:BGA,margin:"0 auto 20px"}}/>
+            {specialistDone?(
+              <div style={{textAlign:"center",padding:"20px 0"}}>
+                <div style={{fontSize:36,marginBottom:12}}>{"📞"}</div>
+                <div style={{fontWeight:900,fontSize:20,color:BLK,marginBottom:8}}>{"We'll call you shortly."}</div>
+                <div style={{fontSize:13,color:TMU,lineHeight:1.7}}>{"One of our specialists will contact you in under 20 minutes. Keep your phone nearby."}</div>
+              </div>
+            ):(
+              <div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+                  <div style={{fontWeight:900,fontSize:20,color:BLK,letterSpacing:"-0.03em"}}>Talk to a Specialist</div>
+                  <button onClick={function(){setShowSpecialist(false);}} style={{background:BGA,border:"none",borderRadius:8,width:28,height:28,cursor:"pointer",fontSize:14,color:TMU}}>{"×"}</button>
+                </div>
+                <div style={{fontSize:13,color:TMU,marginBottom:20,lineHeight:1.6}}>{"One of our specialists will contact you in under 20 minutes."}</div>
+                <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:6}}>Full Name</div>
+                    <input style={{width:"100%",padding:"12px 14px",borderRadius:9,fontSize:14,border:"1.5px solid "+BRD,background:BG,color:BLK,outline:"none",boxSizing:"border-box"}} placeholder="Maria Johnson" value={specName} onChange={function(e){setSpecName(e.target.value);}}/>
+                  </div>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:6}}>Phone Number</div>
+                    <input style={{width:"100%",padding:"12px 14px",borderRadius:9,fontSize:14,border:"1.5px solid "+BRD,background:BG,color:BLK,outline:"none",boxSizing:"border-box"}} placeholder="(555) 000-0000" value={specPhone} onChange={function(e){setSpecPhone(e.target.value);}}/>
+                  </div>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:6}}>Email</div>
+                    <input style={{width:"100%",padding:"12px 14px",borderRadius:9,fontSize:14,border:"1.5px solid "+BRD,background:BG,color:BLK,outline:"none",boxSizing:"border-box"}} placeholder="you@email.com" value={specEmail} onChange={function(e){setSpecEmail(e.target.value);}}/>
+                  </div>
+                  <button onClick={function(){if(specName&&specPhone&&specEmail)submitSpecialist();}} style={{width:"100%",padding:"13px",background:specName&&specPhone&&specEmail?"linear-gradient(135deg,"+ROSE+","+ROSE2+")":BGA,border:"none",borderRadius:10,color:specName&&specPhone&&specEmail?WHT:TL,fontSize:14,fontWeight:700,cursor:specName&&specPhone&&specEmail?"pointer":"default"}}>
+                    {specSaving?"Sending...":"Request a Callback"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:200,height:48,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 5%",background:"rgba(255,255,255,0.92)",backdropFilter:"blur(20px)",borderBottom:"1px solid "+BRD}}>
         <span style={{fontWeight:800,fontSize:13,letterSpacing:"-0.03em",color:BLK,lineHeight:1,background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 12px"}}>Fund<span style={{color:ROSE}}>Flip</span></span>
         <div style={{display:"flex",gap:8,alignItems:"center"}}>
@@ -574,9 +666,9 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin}){
           </div>
 
           <div style={{display:"flex",gap:6,marginBottom:24,flexWrap:"nowrap"}}>
-            <button onClick={function(){setHeroTab("owner");setShowWho(true);}} style={{padding:"7px 14px",borderRadius:99,fontSize:11,fontWeight:700,border:"1.5px solid "+(heroTab==="owner"?BLK:BRD),background:heroTab==="owner"?BLK:WHT,color:heroTab==="owner"?WHT:TMU,cursor:"pointer",whiteSpace:"nowrap"}}>I own a home</button>
-            <button onClick={function(){setHeroTab("investor");setShowWho(true);}} style={{padding:"7px 14px",borderRadius:99,fontSize:11,fontWeight:700,border:"1.5px solid "+(heroTab==="investor"?BLK:BRD),background:heroTab==="investor"?BLK:WHT,color:heroTab==="investor"?WHT:TMU,cursor:"pointer",whiteSpace:"nowrap"}}>I want to invest</button>
-            <button onClick={function(){setHeroTab("contractor");onContractor();}} style={{padding:"7px 14px",borderRadius:99,fontSize:11,fontWeight:700,border:"1.5px solid "+(heroTab==="contractor"?BLK:BRD),background:heroTab==="contractor"?BLK:WHT,color:heroTab==="contractor"?WHT:TMU,cursor:"pointer",whiteSpace:"nowrap"}}>{"I'm a Contractor"}</button>
+            <button onClick={function(){setHeroTab("owner");setActivePopupTab("owner");setShowContractorInfo(false);}} style={{padding:"7px 14px",borderRadius:99,fontSize:11,fontWeight:700,border:"1.5px solid "+(heroTab==="owner"?BLK:BRD),background:heroTab==="owner"?BLK:WHT,color:heroTab==="owner"?WHT:TMU,cursor:"pointer",whiteSpace:"nowrap"}}>I own a home</button>
+            <button onClick={function(){setHeroTab("investor");setActivePopupTab("investor");setShowContractorInfo(false);}} style={{padding:"7px 14px",borderRadius:99,fontSize:11,fontWeight:700,border:"1.5px solid "+(heroTab==="investor"?BLK:BRD),background:heroTab==="investor"?BLK:WHT,color:heroTab==="investor"?WHT:TMU,cursor:"pointer",whiteSpace:"nowrap"}}>I want to invest</button>
+            <button onClick={function(){setHeroTab("contractor");setActivePopupTab("contractor");setShowContractorInfo(false);setShowWho(true);}} style={{padding:"7px 14px",borderRadius:99,fontSize:11,fontWeight:700,border:"1.5px solid "+(heroTab==="contractor"?BLK:BRD),background:heroTab==="contractor"?BLK:WHT,color:heroTab==="contractor"?WHT:TMU,cursor:"pointer",whiteSpace:"nowrap"}}>{"I'm a Contractor"}</button>
           </div>
 
           {heroTab==="owner"?(
@@ -632,8 +724,8 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin}){
             </div>
           )}
 
-          <div style={{display:"flex",justifyContent:"flex-start",marginBottom:28}}>
-            <button onClick={function(){setShowWhy(true);}} style={{display:"flex",alignItems:"center",gap:0,background:"transparent",border:"1.5px solid "+BLK,borderRadius:99,padding:"0 3px 0 16px",cursor:"pointer",overflow:"hidden",height:32}}>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:28,alignItems:"center",width:"100%"}}>
+            <button onClick={function(){setShowWhy(true);}} style={{display:"flex",alignItems:"center",gap:0,background:"transparent",border:"1.5px solid "+BLK,borderRadius:99,padding:"0 3px 0 16px",cursor:"pointer",overflow:"hidden",height:32,flexShrink:0}}>
               <span style={{fontSize:11,fontWeight:800,letterSpacing:"0.12em",textTransform:"uppercase",color:BLK}}>Why FundFlip</span>
               <div style={{width:26,height:26,borderRadius:"50%",background:BLK,display:"flex",alignItems:"center",justifyContent:"center",marginLeft:12,flexShrink:0}}>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -641,6 +733,7 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin}){
                 </svg>
               </div>
             </button>
+            <button onClick={function(){setShowSpecialist(true);}} style={{fontSize:11,fontWeight:700,color:ROSE,background:"none",border:"none",cursor:"pointer",padding:0,whiteSpace:"nowrap"}}>{"Talk to a Specialist →"}</button>
           </div>
 
           <div style={{marginBottom:16}}><MilestoneSlideshow/></div>
