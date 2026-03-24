@@ -71,9 +71,9 @@ function Chip({label,v}){
 }
 
 const DEALS=[
-  {id:1,addr:"••••• Van Ness Ave",city:"Fresno, CA 93722",img:"https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600",arv:468000,rehab:72000,profit:111000,funded:72000,roi:44,tag:"Inherited",status:"funding"},
-  {id:2,addr:"••••• Capitol Ave",city:"Sacramento, CA 95814",img:"https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600",arv:598000,rehab:95000,profit:123000,funded:95000,roi:40,tag:"Estate",status:"funded"},
-  {id:3,addr:"••••• Oak Street",city:"Bakersfield, CA 93301",img:"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600",arv:385000,rehab:58000,profit:99000,funded:28000,roi:42,tag:"Inherited",status:"funding"},
+  {id:1,addr:"••••• Van Ness Ave",city:"Fresno, CA 93722",img:"https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600",arv:468000,rehab:72000,profit:111000,funded:72000,roi:44,tag:"Inherited",status:"funding"},
+  {id:2,addr:"••••• Capitol Ave",city:"Sacramento, CA 95814",img:"https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=600",arv:598000,rehab:95000,profit:123000,funded:95000,roi:40,tag:"Estate",status:"funded"},
+  {id:3,addr:"••••• Oak Street",city:"Bakersfield, CA 93301",img:"https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600",arv:385000,rehab:58000,profit:99000,funded:28000,roi:42,tag:"Inherited",status:"funding"},
 ];
 
 function USMap(){
@@ -430,7 +430,10 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin}){
             <div style={{width:36,height:4,borderRadius:99,background:BGA,margin:"0 auto 20px"}}/>
             {showContractorInfo?(
               <div>
-                <button onClick={function(){setShowContractorInfo(false);}} style={{background:"none",border:"none",color:TMU,fontSize:12,cursor:"pointer",marginBottom:16,padding:0}}>{"← Back"}</button>
+                <button onClick={function(){setShowContractorInfo(false);}} style={{background:"none",border:"none",color:TMU,fontSize:12,cursor:"pointer",marginBottom:12,padding:0,display:"flex",alignItems:"center",gap:4}}>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="#71717A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  Back
+                </button>
                 <div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:6}}>Contractor Vetting</div>
                 <div style={{fontWeight:900,fontSize:22,color:BLK,marginBottom:4,letterSpacing:"-0.03em"}}>How we vet every contractor.</div>
                 <div style={{fontSize:13,color:TMU,marginBottom:20,lineHeight:1.6}}>Only licensed, insured, and interviewed contractors work on FundFlip deals.</div>
@@ -455,7 +458,10 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin}){
               </div>
             ):heroTab==="owner"?(
               <div>
-                <div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:6}}>For Homeowners</div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+                  <div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.1em"}}>For Homeowners</div>
+                  <button onClick={function(){setShowWho(false);}} style={{background:BGA,border:"none",borderRadius:8,width:28,height:28,cursor:"pointer",fontSize:14,color:TMU}}>{"×"}</button>
+                </div>
                 <div style={{fontWeight:900,fontSize:22,color:BLK,marginBottom:4,letterSpacing:"-0.03em"}}>{"Here's exactly how it works."}</div>
                 <div style={{fontSize:13,color:TMU,marginBottom:20,lineHeight:1.6}}>No upfront cost. No risk. Your home sells at full market value.</div>
                 <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:24}}>
@@ -481,7 +487,10 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin}){
               </div>
             ):(
               <div>
-                <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:6}}>For Investors</div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+                  <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.1em"}}>For Investors</div>
+                  <button onClick={function(){setShowWho(false);}} style={{background:BGA,border:"none",borderRadius:8,width:28,height:28,cursor:"pointer",fontSize:14,color:TMU}}>{"×"}</button>
+                </div>
                 <div style={{fontWeight:900,fontSize:22,color:BLK,marginBottom:4,letterSpacing:"-0.03em"}}>{"Here's exactly how it works."}</div>
                 <div style={{fontSize:13,color:TMU,marginBottom:20,lineHeight:1.6}}>Vetted deals. Escrow-protected funds. Average 40% ROI.</div>
                 <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:24}}>
@@ -669,9 +678,9 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin}){
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))"}}>
           {[
-            {name:"Maria J.",city:"Fresno, CA 93722",tag:"Inherited from mother",before:"$285K",rehab:"$72K",sold:"$468K",profit:"$55,500",roi:"44%",months:"5",quote:"I almost sold to a cash buyer for $270K. FundFlip got me $55,000 more and I paid nothing upfront.",img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"},
-            {name:"David T.",city:"Sacramento, CA 95814",tag:"Estate, 3 siblings",before:"$380K",rehab:"$95K",sold:"$598K",profit:"$68,500",roi:"40%",months:"6",quote:"Three of us inherited it and we didn't want to give it away cheap. FundFlip handled everything.",img:"https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500"},
-            {name:"James W.",city:"Bakersfield, CA 93301",tag:"Grandfather home",before:"$228K",rehab:"$58K",sold:"$385K",profit:"$49,500",roi:"42%",months:"4",quote:"The investor knew the Bakersfield market. He priced it perfectly and we sold in 9 days above asking.",img:"https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=500"},
+            {name:"Maria J.",city:"Fresno, CA 93722",tag:"Inherited from mother",before:"$285K",rehab:"$72K",sold:"$468K",profit:"$55,500",roi:"44%",months:"5",quote:"I almost sold to a cash buyer for $270K. FundFlip got me $55,000 more and I paid nothing upfront.",img:"https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=500"},
+            {name:"David T.",city:"Sacramento, CA 95814",tag:"Estate, 3 siblings",before:"$380K",rehab:"$95K",sold:"$598K",profit:"$68,500",roi:"40%",months:"6",quote:"Three of us inherited it and we didn't want to give it away cheap. FundFlip handled everything.",img:"https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=500"},
+            {name:"James W.",city:"Bakersfield, CA 93301",tag:"Grandfather home",before:"$228K",rehab:"$58K",sold:"$385K",profit:"$49,500",roi:"42%",months:"4",quote:"The investor knew the Bakersfield market. He priced it perfectly and we sold in 9 days above asking.",img:"https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500"},
           ].map(function(cs){return(
             <div key={cs.name} style={{borderRight:"1px solid "+BRD,borderTop:"1px solid "+BRD}}>
               <div style={{position:"relative",height:180,overflow:"hidden"}}>
