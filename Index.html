@@ -1474,54 +1474,75 @@ function AuthPage({onSuccess,initMode,initRole,onBack}){
       var res=await fetch(SUPA_URL+"/auth/v1/token?grant_type=password",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPA_KEY},body:JSON.stringify({email:email,password:password})});
       var data=await res.json();
       if(data.error){setError(data.error_description||"Invalid email or password.");setLoading(false);return;}
-      var token=data.access_token;var uid=data.user.id;
-      var profRes=await fetch(SUPA_URL+"/rest/v1/profiles?id=eq."+uid,{headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+token}});
-      var prof=await profRes.json();
-      var userRole=prof&&prof[0]?prof[0].role:"investor";
-      onSuccess({token,uid,role:userRole,name:prof&&prof[0]?prof[0].name:email,demo:false});
-    }catch(e){setError("Something went wrong. Try again.");}
+      var token=data.access_token;
+      var uid=data.user.id;
+      var userRole="investor";
+      var userName=email;
+      try{
+        var profRes=await fetch(SUPA_URL+"/rest/v1/profiles?id=eq."+uid,{headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+token}});
+        var prof=await profRes.json();
+        if(prof&&prof[0]){userRole=prof[0].role;userName=prof[0].name||email;}
+      }catch(e){console.log("Profile fetch error:",e);}
+      onSuccess({token,uid,role:userRole,name:userName,demo:false});
+    }catch(e){setError("Login failed: "+e.message);}
     setLoading(false);
   }
 
   async function handleRegister(){
     if(!role){setError("Please select your role.");return;}
+    if(!name){setError("Please enter your name.");return;}
+    if(password.length<6){setError("Password must be at least 6 characters.");return;}
     setLoading(true);setError("");
     try{
       var res=await fetch(SUPA_URL+"/auth/v1/signup",{
         method:"POST",
         headers:{"Content-Type":"application/json","apikey":SUPA_KEY},
-        body:JSON.stringify({email:email,password:password})
+        body:JSON.stringify({email:email,password:password,data:{name:name,role:role}})
       });
       var data=await res.json();
-      console.log("Signup response:", JSON.stringify(data));
       if(data.error){setError(data.error_description||data.error||"Could not create account.");setLoading(false);return;}
       var token=data.access_token;
-      var uid=data.user?.id||data.id;
+      var uid=data.user?.id;
       if(token&&uid){
-        await fetch(SUPA_URL+"/rest/v1/profiles",{
-          method:"POST",
-          headers:{"Content-Type":"application/json","apikey":SUPA_KEY,"Authorization":"Bearer "+token,"Prefer":"return=minimal"},
-          body:JSON.stringify({id:uid,role:role,name:name})
-        });
-        if(role==="investor"){
-          await fetch(SUPA_URL+"/rest/v1/investors",{
+        try{
+          await fetch(SUPA_URL+"/rest/v1/profiles",{
             method:"POST",
             headers:{"Content-Type":"application/json","apikey":SUPA_KEY,"Authorization":"Bearer "+token,"Prefer":"return=minimal"},
-            body:JSON.stringify({name:name,email:email,status:"new"})
+            body:JSON.stringify({id:uid,role:role,name:name})
           });
-        }
+          if(role==="investor"){
+            await fetch(SUPA_URL+"/rest/v1/investors",{
+              method:"POST",
+              headers:{"Content-Type":"application/json","apikey":SUPA_KEY,"Authorization":"Bearer "+token,"Prefer":"return=minimal"},
+              body:JSON.stringify({name:name,email:email,status:"new"})
+            });
+          }
+          if(role==="homeowner"){
+            await fetch(SUPA_URL+"/rest/v1/listings",{
+              method:"POST",
+              headers:{"Content-Type":"application/json","apikey":SUPA_KEY,"Authorization":"Bearer "+token,"Prefer":"return=minimal"},
+              body:JSON.stringify({name:name,email:email,status:"pending"})
+            });
+          }
+        }catch(e){console.log("Profile save error:",e);}
       }
-      await fetch("https://api.resend.com/emails",{
-        method:"POST",
-        headers:{"Content-Type":"application/json","Authorization":"Bearer re_EkD2DbHU_4EjXN4DuAAAFq1c54qhcBfF3"},
-        body:JSON.stringify({
-          from:"FundFlip <onboarding@resend.dev>",
-          to:["bakhshiyar@gmail.com"],
-          subject:"New FundFlip signup: "+name+" ("+role+")",
-          html:"<div style='font-family:Inter,sans-serif;padding:32px;'><h2 style='color:#09090B;'>New signup on FundFlip</h2><p><strong>Name:</strong> "+name+"</p><p><strong>Email:</strong> "+email+"</p><p><strong>Role:</strong> "+role+"</p><p><strong>Time:</strong> "+new Date().toLocaleString()+"</p>"+(role==="investor"?"<p style='color:#F43F5E;font-weight:700;font-size:16px;'>⚡ INVESTOR — Call within 20 minutes to complete their profile!</p>":"")+"</div>"
-        })
-      });
-      onSuccess({token:token||"pending",uid:uid,role:role,name:name,demo:false});
+      try{
+        await fetch("https://api.resend.com/emails",{
+          method:"POST",
+          headers:{"Content-Type":"application/json","Authorization":"Bearer re_EkD2DbHU_4EjXN4DuAAAFq1c54qhcBfF3"},
+          body:JSON.stringify({
+            from:"FundFlip <onboarding@resend.dev>",
+            to:["bakhshiyar@gmail.com"],
+            subject:"New FundFlip signup: "+name+" ("+role+")",
+            html:"<div style='font-family:Inter,sans-serif;padding:32px;'><h2 style='color:#09090B;'>New signup on FundFlip</h2><p><strong>Name:</strong> "+name+"</p><p><strong>Email:</strong> "+email+"</p><p><strong>Role:</strong> "+role+"</p><p><strong>Time:</strong> "+new Date().toLocaleString()+"</p>"+(role==="investor"?"<p style='color:#F43F5E;font-weight:700;font-size:16px;'>⚡ INVESTOR — Call within 20 minutes to complete their profile!</p>":"")+"</div>"
+          })
+        });
+      }catch(e){console.log("Email error:",e);}
+      if(token&&uid){
+        onSuccess({token:token,uid:uid,role:role,name:name,demo:false});
+      } else {
+        setError("Account created! Please check your email to confirm, then sign in.");
+      }
     }catch(e){setError("Error: "+e.message);}
     setLoading(false);
   }
