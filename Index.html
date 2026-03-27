@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FundFlip — AI-Powered Inherited Home Investment</title>
+  <title>FundFlip — We Find It. You Fund It. We Sell It.</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
@@ -159,7 +159,7 @@ function USMap(){
 
 function MilestoneSlideshow(){
   var slides=[
-    {step:"01/06",tag:"Owner Lists",title:"Inherited home submitted",desc:"Owner submits property details. FundFlip orders a certified ARV appraisal and verifies clean title before the deal goes live.",s1:["Est. Value","$148K"],s2:["After Repair","$265K"],s3:["Potential Profit","$65K"]},
+    {step:"01/06",tag:"Owner Lists",title:"Distressed property submitted",desc:"Owner submits property details. FundFlip orders a certified ARV appraisal and verifies clean title before the deal goes live.",s1:["Est. Value","$148K"],s2:["After Repair","$265K"],s3:["Potential Profit","$65K"]},
     {step:"02/06",tag:"AI Matches",title:"AI finds your ideal investor",desc:"FundFlip AI analyzes 200+ data points to match your property with the highest-probability investor in 48 hours.",s1:["Data Points","200+"],s2:["Match Time","48 hrs"],s3:["Accuracy","AI-Verified"]},
     {step:"03/06",tag:"Investor Picks",title:"One investor funds the rehab",desc:"A private investor browses the deal and funds the full rehab cost directly into escrow. No pools. 1-on-1.",s1:["Rehab Funded","$52K"],s2:["Into Escrow","100%"],s3:["Investors","1"]},
     {step:"04/06",tag:"JV Contract",title:"Both parties sign on-platform",desc:"A Joint Venture agreement is auto-generated. Both owner and investor sign digitally. No lawyers needed.",s1:["Contract","Auto"],s2:["E-Signature","Yes"],s3:["Binding","Legal"]},
@@ -223,8 +223,8 @@ function MilestoneSlideshow(){
 function HowItWorks(){
   var [active,setActive]=useState(null);
   var steps=[
-    {n:"01",t:"Owner Lists",sub:"Submit your inherited property and get top value with trusted investors.",bullets:[["Certified ARV appraisal","ordered by FundFlip before the deal goes live"],["Title verified","clean title confirmed before any funding"],["Free to list","no upfront cost to the homeowner"],["Partner with Experts","experts already know what to do — you just say yes"]],
-     detail:{overview:"Most inherited homeowners are told they have two options: sell cheap to a cash buyer or spend money they don't have. FundFlip is a third option.",items:[["Do I pay anything upfront?","No. Listing is free. FundFlip covers the appraisal. The entire rehab is funded by your investor partner."],["Do I lose ownership?","Never. You hold the deed throughout. The JV agreement only governs profit distribution at closing."],["How long does it take?","It depends on the scope of work. Minor cosmetic rehabs can close in 1 to 2 months. Mid-level renovations typically take 3 to 4 months. Major overhauls can run 5 to 6 months. Your timeline is set before funding begins."]]}},
+    {n:"01",t:"Owner Lists",sub:"Submit your distressed property and get top value with trusted investors.",bullets:[["Certified ARV appraisal","ordered by FundFlip before the deal goes live"],["Title verified","clean title confirmed before any funding"],["Free to list","no upfront cost to the property owner"],["Partner with Experts","experts already know what to do — you just say yes"]],
+     detail:{overview:"Most property owners are told they have two options: sell cheap to a cash buyer or spend money they don't have. FundFlip is a third option.",items:[["Do I pay anything upfront?","No. Listing is free. FundFlip covers the appraisal. The entire rehab is funded by your investor partner."],["Do I lose ownership?","Never. You hold the deed throughout. The JV agreement only governs profit distribution at closing."],["How long does it take?","It depends on the scope of work. Minor cosmetic rehabs can close in 1 to 2 months. Mid-level renovations typically take 3 to 4 months. Major overhauls can run 5 to 6 months. Your timeline is set before funding begins."]]}},
     {n:"02",t:"AI Matches Investor",sub:"Our AI finds the right investor for your property in 48 hours.",bullets:[["200+ data points","location, ARV, rehab scope, and investor history all analyzed instantly"],["48-hour match","most properties matched with a qualified investor the same day"],["Explainable results","you see exactly why your investor was selected"]],
      detail:{overview:"FundFlip's AI analyzes your property against our full investor database and surfaces the highest-probability match based on deal history, market knowledge, and availability.",items:[["What data does the AI use?","Property location, current value, ARV estimate, rehab scope, and your timeline — all factored alongside investor history and past deal performance."],["How fast does it work?","Most properties receive an investor match within 48 hours of listing."],["Can I reject a match?","Yes. You review the matched investor's profile before any contract is signed."]]}},
     {n:"03",t:"Investor Picks",sub:"One investor funds the full rehab, direct and 1-on-1.",bullets:[["Full financials visible","ARV, rehab cost, profit projection, contractor scope"],["1-on-1 deal","no pools, no shared risk"],["Funds go to escrow","never touched by the owner until milestones hit"]],
@@ -519,7 +519,7 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
                 <div style={{fontSize:13,color:TMU,marginBottom:20,lineHeight:1.6}}>No upfront cost. No risk. Your home sells at full market value.</div>
                 <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:24}}>
                   {[
-                    ["01","List your property free","Submit your inherited home in 3 minutes. No fees. No commitment. FundFlip orders a certified ARV appraisal at no cost to you."],
+                    ["01","List your property free","Submit your distressed property in 3 minutes. No fees. No commitment. FundFlip orders a certified ARV appraisal at no cost to you."],
                     ["02","AI matches you with an investor","Our AI analyzes 200+ data points and matches your property with the ideal investor within 48 hours."],
                     ["03","Investor funds the full rehab","One investor funds the entire renovation directly into escrow. You pay nothing. Work begins immediately."],
                     ["04","FundFlip AI monitors contractor progress","Contractor submits photos at each milestone. FundFlip AI verifies completion before funds release. No delays, no disputes."],
@@ -594,11 +594,11 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
             </div>
             <div style={{display:"flex",flexDirection:"column",gap:14}}>
               {[
-                ["01","A network you can't find on your own","We built exclusive relationships with seasoned real estate investors — people who've closed hundreds of deals and know exactly how to price, fund, and exit inherited properties for maximum value."],
-                ["02","The only AI trained on inherited homes","Most AI tools are built for generic real estate. Ours was built exclusively for inherited property — it understands probate timelines, title complications, co-heir dynamics, and distressed condition pricing."],
-                ["03","Don't sell your home for 60\u00A2 on the dollar.","Cash buyers profit from your urgency. FundFlip connects you with an investor who funds the full rehab — so your home sells at full market value through a seasoned agent, not at a desperate discount."],
-                ["04","Everyone watches everything, live.","Homeowner sees rehab progress. Investor sees fund releases. Contractor sees milestone approvals. No one is left wondering where the money went or how the work is going."],
-                ["05","FundFlip controls the listing — not the investor.","We maintain a vetted network of licensed agents in every market we operate. When your home is ready to list, FundFlip selects the right agent — someone who specializes in your neighborhood and is incentivized to maximize your sale price. Not the investor's preferred agent. Yours."],
+                ["01","A network you can't find on your own","We built exclusive relationships with seasoned real estate investors — people who've closed hundreds of deals and know exactly how to price, fund, and exit distressed properties for maximum value."],
+                ["02","The only AI built for distressed property deals","Most AI tools are built for generic real estate. Ours was built exclusively for distressed properties — it understands motivated sellers, title complications, rehab scoping, and market timing."],
+                ["03","Don't sell your property for 60\u00A2 on the dollar.","Cash buyers profit from your urgency. FundFlip connects you with an investor who funds the full rehab — so your property sells at full market value through a seasoned agent, not at a desperate discount."],
+                ["04","Everyone watches everything, live.","Owner sees rehab progress. Investor sees fund releases. Contractor sees milestone approvals. No one is left wondering where the money went or how the work is going."],
+                ["05","FundFlip controls the listing — not the investor.","We maintain a vetted network of licensed agents in every market we operate. When your property is ready to list, FundFlip selects the right agent — someone who specializes in your neighborhood and is incentivized to maximize your sale price. Not the investor's preferred agent. Yours."],
               ].map(function(item){return(
                 <div key={item[0]} style={{display:"flex",gap:14,alignItems:"flex-start",background:BG,borderRadius:14,padding:"16px 14px",border:"1px solid "+BRD}}>
                   <div style={{fontSize:11,fontWeight:900,color:ROSE,minWidth:22,paddingTop:1}}>{item[0]}</div>
@@ -662,7 +662,7 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
         <div style={{padding:"20px 6% 0",opacity:vis?1:0,transform:vis?"none":"translateY(24px)",transition:"all 0.8s"}}>
           <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:14}}>
             <div style={{width:18,height:18,borderRadius:"50%",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontSize:8,color:WHT,fontWeight:800}}>AI</span></div>
-            <span style={{fontSize:11,color:BLK,fontWeight:700}}>Powered. Human Backed.</span>
+            <span style={{fontSize:11,color:BLK,fontWeight:700}}>We Find It. You Fund It. We Sell It.</span>
           </div>
 
           <div style={{display:"flex",gap:6,marginBottom:24,flexWrap:"nowrap"}}>
@@ -674,11 +674,11 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
           {heroTab==="owner"?(
             <div>
               <h1 style={{fontSize:"clamp(28px,6vw,64px)",fontWeight:900,lineHeight:1.05,letterSpacing:"-0.04em",color:BLK,marginBottom:16,maxWidth:820}}>
-                {"Don't Sell Your Inherited Home"}<br/>
-                <span style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{"for 60\u00A2 on the Dollar."}</span>
+                {"We Find It. You Fund It."}<br/>
+                <span style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{"FundFlip Sells It."}</span>
               </h1>
               <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:16,maxWidth:440}}>
-                {[["Full market value","Your home sells at full ARV — not the discounted cash buyer price."],["Zero upfront cost","FundFlip covers the appraisal. The rehab is funded by your investor. You pay nothing."],["AI match in 48 hrs","Our AI finds the right investor for your property within 2 days of listing."]].map(function(item,i){return(
+                {[["Full market value","Your property sells at full ARV — not the discounted cash buyer price."],["Zero upfront cost","FundFlip covers the appraisal. The rehab is funded by your investor. You pay nothing."],["AI match in 48 hrs","Our AI finds the right investor for your property within 2 days of listing."]].map(function(item,i){return(
                   <div key={i} style={{display:"flex",gap:10,alignItems:"flex-start"}}>
                     <div style={{width:20,height:20,borderRadius:"50%",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>
                       <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -691,7 +691,7 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
           ):heroTab==="investor"?(
             <div>
               <h1 style={{fontSize:"clamp(28px,6vw,64px)",fontWeight:900,lineHeight:1.05,letterSpacing:"-0.04em",color:BLK,marginBottom:16,maxWidth:820}}>
-                {"Fund The Rehab."}<br/>
+                {"Fund One Rehab."}<br/>
                 <span style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{"Average 40% ROI."}</span>
               </h1>
               <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:16,maxWidth:440}}>
@@ -752,8 +752,8 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",borderTop:"1px solid "+BRD}}>
           <div style={{padding:"24px 6%",borderRight:"1px solid "+BRD,display:"flex",flexDirection:"column"}}>
-            <div style={{fontWeight:900,fontSize:15,color:BLK,marginBottom:4}}>Homeowner</div>
-            <div style={{fontSize:12,color:TMU,marginBottom:20,lineHeight:1.5}}>You own the home. We find the investor.</div>
+            <div style={{fontWeight:900,fontSize:15,color:BLK,marginBottom:4}}>Property Owner</div>
+            <div style={{fontSize:12,color:TMU,marginBottom:20,lineHeight:1.5}}>You own the property. We find the investor.</div>
             <div style={{flex:1}}>
             {[["50%","of net profit at closing"],["$0","upfront cost to you"],["48hrs","AI investor match"],["100%","your ownership rights protected"]].map(function(item){return(
               <div key={item[0]} style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
@@ -896,7 +896,7 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
         <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:32,marginBottom:32}}>
           <div>
             <span style={{fontWeight:900,fontSize:16,letterSpacing:"-0.03em",color:BLK,display:"block",marginBottom:8}}>Fund<span style={{color:ROSE}}>Flip</span></span>
-            <div style={{fontSize:12,color:TMU,lineHeight:1.7,maxWidth:220}}>AI-powered inherited home investment platform. Connecting owners with trusted investors since 2024.</div>
+            <div style={{fontSize:12,color:TMU,lineHeight:1.7,maxWidth:220}}>We find it. You fund it. FundFlip sells it. Connecting property owners with trusted investors since 2024.</div>
           </div>
           <div>
             <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>Platform</div>
@@ -1493,20 +1493,23 @@ function AuthPage({onSuccess,initMode,initRole,onBack}){
         body:JSON.stringify({email:email,password:password})
       });
       var data=await res.json();
-      if(data.error){setError(data.error_description||"Could not create account.");setLoading(false);return;}
+      console.log("Signup response:", JSON.stringify(data));
+      if(data.error){setError(data.error_description||data.error||"Could not create account.");setLoading(false);return;}
       var token=data.access_token;
-      var uid=data.user.id;
-      await fetch(SUPA_URL+"/rest/v1/profiles",{
-        method:"POST",
-        headers:{"Content-Type":"application/json","apikey":SUPA_KEY,"Authorization":"Bearer "+token,"Prefer":"return=minimal"},
-        body:JSON.stringify({id:uid,role:role,name:name})
-      });
-      if(role==="investor"){
-        await fetch(SUPA_URL+"/rest/v1/investors",{
+      var uid=data.user?.id||data.id;
+      if(token&&uid){
+        await fetch(SUPA_URL+"/rest/v1/profiles",{
           method:"POST",
           headers:{"Content-Type":"application/json","apikey":SUPA_KEY,"Authorization":"Bearer "+token,"Prefer":"return=minimal"},
-          body:JSON.stringify({name:name,email:email,status:"new"})
+          body:JSON.stringify({id:uid,role:role,name:name})
         });
+        if(role==="investor"){
+          await fetch(SUPA_URL+"/rest/v1/investors",{
+            method:"POST",
+            headers:{"Content-Type":"application/json","apikey":SUPA_KEY,"Authorization":"Bearer "+token,"Prefer":"return=minimal"},
+            body:JSON.stringify({name:name,email:email,status:"new"})
+          });
+        }
       }
       await fetch("https://api.resend.com/emails",{
         method:"POST",
@@ -1518,8 +1521,8 @@ function AuthPage({onSuccess,initMode,initRole,onBack}){
           html:"<div style='font-family:Inter,sans-serif;padding:32px;'><h2 style='color:#09090B;'>New signup on FundFlip</h2><p><strong>Name:</strong> "+name+"</p><p><strong>Email:</strong> "+email+"</p><p><strong>Role:</strong> "+role+"</p><p><strong>Time:</strong> "+new Date().toLocaleString()+"</p>"+(role==="investor"?"<p style='color:#F43F5E;font-weight:700;font-size:16px;'>⚡ INVESTOR — Call within 20 minutes to complete their profile!</p>":"")+"</div>"
         })
       });
-      onSuccess({token,uid,role,name});
-    }catch(e){setError("Something went wrong. Try again.");}
+      onSuccess({token:token||"pending",uid:uid,role:role,name:name,demo:false});
+    }catch(e){setError("Error: "+e.message);}
     setLoading(false);
   }
 
@@ -1557,7 +1560,7 @@ function AuthPage({onSuccess,initMode,initRole,onBack}){
               <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:6}}>Password</div>
               <input style={inp} type="password" placeholder="••••••••" value={password} onChange={function(e){setPassword(e.target.value);}}/>
             </div>
-            {mode==="register"&&(
+            {mode==="register"&&!initRole&&(
               <div>
                 <div style={{fontSize:11,fontWeight:700,color:TMU,textTransform:"uppercase",marginBottom:8}}>I am a</div>
                 <div style={{display:"flex",gap:8}}>
@@ -1565,6 +1568,11 @@ function AuthPage({onSuccess,initMode,initRole,onBack}){
                   <button onClick={function(){setRole("investor");}} style={pill(role==="investor")}>📈 Investor</button>
                   <button onClick={function(){setRole("contractor");}} style={pill(role==="contractor")}>🔨 Contractor</button>
                 </div>
+              </div>
+            )}
+            {mode==="register"&&initRole&&(
+              <div style={{background:BG,border:"1px solid "+BRD,borderRadius:10,padding:"10px 14px",fontSize:13,color:TMU}}>
+                Signing up as: <strong style={{color:BLK,textTransform:"capitalize"}}>{initRole}</strong>
               </div>
             )}
             <button onClick={mode==="login"?handleLogin:handleRegister} style={{width:"100%",padding:"14px",background:email&&password?"linear-gradient(135deg,"+ROSE+","+ROSE2+")":BGA,border:"none",borderRadius:10,color:email&&password?WHT:TL,fontSize:14,fontWeight:700,cursor:email&&password?"pointer":"default",marginTop:4}}>
@@ -1743,7 +1751,7 @@ function App(){
   var [prefillEmail,setPrefillEmail]=useState("");
   var [authInitRole,setAuthInitRole]=useState("");
   useEffect(function(){
-    document.title="FundFlip — AI-Powered Inherited Home Investment";
+    document.title="FundFlip — We Find It. You Fund It. We Sell It.";
     setTimeout(function(){setFadeOut(true);},1700);
     setTimeout(function(){setSplash(false);setTimeout(function(){setLandingVis(true);},50);},2000);
   },[]);
