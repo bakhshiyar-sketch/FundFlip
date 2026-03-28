@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FundFlip — The First AI Platform for Inherited & Undervalued Properties</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <style>*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}body{background:#09090B;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased;}#root{min-height:100vh;}</style>
+  <style>*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}body{background:#09090B;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;}#root{min-height:100vh;}</style>
 </head>
 <body>
   <div id="root"></div>
@@ -659,14 +659,15 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
         </div>
       )}
       {showSpecialist&&(
-        <div onClick={function(){setShowSpecialist(false);}} style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(8px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
-          <div onClick={function(e){e.stopPropagation();}} style={{background:WHT,width:"100%",maxWidth:480,borderRadius:"24px 24px 0 0",padding:"12px 24px 48px",boxShadow:"0 -8px 40px rgba(0,0,0,0.15)"}}>
+        <div onClick={function(){setShowSpecialist(false);setSpecialistDone(false);setSpecName("");setSpecPhone("");setSpecEmail("");}} style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(8px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+          <div onClick={function(e){e.stopPropagation();}} style={{background:WHT,width:"100%",maxWidth:480,borderRadius:"24px 24px 0 0",padding:"12px 24px 48px",boxShadow:"0 -8px 40px rgba(0,0,0,0.15)",boxSizing:"border-box",overflowX:"hidden"}}>
             <div style={{width:36,height:4,borderRadius:99,background:BGA,margin:"0 auto 20px"}}/>
             {specialistDone?(
               <div style={{textAlign:"center",padding:"20px 0"}}>
                 <div style={{fontSize:36,marginBottom:12}}>{"📞"}</div>
                 <div style={{fontWeight:900,fontSize:20,color:BLK,marginBottom:8}}>{"We'll call you shortly."}</div>
-                <div style={{fontSize:13,color:TMU,lineHeight:1.7}}>{"One of our specialists will contact you in under 20 minutes. Keep your phone nearby."}</div>
+                <div style={{fontSize:13,color:TMU,lineHeight:1.7,maxWidth:280,margin:"0 auto"}}>{"One of our specialists will contact you in under 20 minutes. Keep your phone nearby."}</div>
+                <button onClick={function(){setShowSpecialist(false);setSpecialistDone(false);setSpecName("");setSpecPhone("");setSpecEmail("");}} style={{marginTop:20,background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 16px",color:ROSE,fontSize:13,fontWeight:700,cursor:"pointer"}}>Done</button>
               </div>
             ):(
               <div>
@@ -726,7 +727,6 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
 
           <div style={{display:"flex",gap:10,marginBottom:32,alignItems:"center"}}>
             <button onClick={function(){setShowLearnMore(true);}} style={{background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 16px",color:ROSE,fontSize:13,fontWeight:700,cursor:"pointer"}}>Learn More</button>
-            <button onClick={function(){setShowSpecialist(true);}} style={{fontSize:11,fontWeight:700,color:TMU,background:"none",border:"none",cursor:"pointer",padding:0}}>{"Talk to a Specialist →"}</button>
           </div>
 
           <div style={{marginBottom:16}}><MilestoneSlideshow/></div>
@@ -897,7 +897,7 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
           </div>
           <div>
             <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>Company</div>
-            {["About Us","How We Vet","Contractor Apply","Careers","Contact"].map(function(l){return <div key={l} onClick={function(){if(l==="Contractor Apply")onContractor();}} style={{fontSize:12,color:TMU,marginBottom:8,cursor:"pointer"}}>{l}</div>;})}
+            {["About Us","How We Vet","Contractor Apply","Careers","Contact"].map(function(l){return <div key={l} onClick={function(){if(l==="Contractor Apply")onContractor();else if(l==="Contact")setShowSpecialist(true);}} style={{fontSize:12,color:TMU,marginBottom:8,cursor:"pointer"}}>{l}</div>;})}
           </div>
           <div>
             <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>Legal</div>
