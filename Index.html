@@ -3,13 +3,9 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FundFlip — We Find It. You Fund It. We Sell It.</title>
+  <title>FundFlip — The First AI Platform for Inherited & Undervalued Properties</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <style>
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-    body{background:#09090B;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased;}
-    #root{min-height:100vh;}
-  </style>
+  <style>*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}body{background:#09090B;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased;}#root{min-height:100vh;}</style>
 </head>
 <body>
   <div id="root"></div>
@@ -434,6 +430,7 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
   var [showLogin,setShowLogin]=useState(false);
   var [heroTab,setHeroTab]=useState("owner");
   var [showWhy,setShowWhy]=useState(false);
+  var [showLearnMore,setShowLearnMore]=useState(false);
   useEffect(function(){setTimeout(function(){setVis(true);},100);},[]);
 
   var faqs=[
@@ -571,13 +568,62 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
           </div>
         </div>
       )}
+      {showLearnMore&&(
+        <div onClick={function(){setShowLearnMore(false);}} style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(8px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+          <div onClick={function(e){e.stopPropagation();}} style={{background:WHT,width:"100%",maxWidth:560,borderRadius:"24px 24px 0 0",padding:"12px 24px 48px",boxShadow:"0 -8px 40px rgba(0,0,0,0.15)",maxHeight:"88vh",overflowY:"auto"}}>
+            <div style={{width:36,height:4,borderRadius:99,background:BGA,margin:"0 auto 20px"}}/>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16}}>
+              <div>
+                <div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:4}}>About FundFlip</div>
+                <div style={{fontWeight:900,fontSize:20,color:BLK,letterSpacing:"-0.03em",lineHeight:1.1,maxWidth:260}}>The first AI platform built exclusively for inherited properties.</div>
+              </div>
+              <button onClick={function(){setShowLearnMore(false);}} style={{background:BGA,border:"none",borderRadius:8,width:28,height:28,cursor:"pointer",fontSize:14,color:TMU,flexShrink:0,marginLeft:12}}>{"×"}</button>
+            </div>
+            <p style={{fontSize:13,color:TMU,lineHeight:1.7,marginBottom:16}}>{"Most inherited homeowners are offered 60¢ on the dollar by cash buyers. FundFlip changes that — connecting property owners with elite investors and reputable builders for full market value."}</p>
+            <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+              {[
+                ["01","We find the property","FundFlip sources distressed and inherited properties from motivated owners who want full market value."],
+                ["02","Elite investor funds the rehab","One vetted investor funds the full renovation cost into escrow. No pools. No shared risk."],
+                ["03","Reputable builder does the work","FundFlip assigns a vetted, licensed builder. Paid by milestone. AI monitors progress."],
+                ["04","FundFlip sells for maximum value","Our exclusive agents list at full ARV. Owner 50% · Investor 40% · FundFlip 10%."],
+              ].map(function(item){return(
+                <div key={item[0]} style={{display:"flex",gap:14,padding:"12px 14px",background:BG,borderRadius:12,border:"1px solid "+BRD}}>
+                  <div style={{fontSize:11,fontWeight:900,color:ROSE,minWidth:22,paddingTop:1}}>{item[0]}</div>
+                  <div>
+                    <div style={{fontWeight:700,fontSize:13,color:BLK,marginBottom:3}}>{item[1]}</div>
+                    <div style={{fontSize:12,color:TMU,lineHeight:1.5}}>{item[2]}</div>
+                  </div>
+                </div>
+              );})}
+            </div>
+            <button onClick={function(){setShowLearnMore(false);setShowLogin(true);}} style={{background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 16px",color:ROSE,fontSize:13,fontWeight:700,cursor:"pointer"}}>{"Get Started →"}</button>
+          </div>
+        </div>
+      )}
       {showLogin&&(
         <div onClick={function(){setShowLogin(false);}} style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(8px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
-          <div onClick={function(e){e.stopPropagation();}} style={{background:WHT,width:"100%",maxWidth:480,borderRadius:"24px 24px 0 0",padding:"12px 24px 48px",boxShadow:"0 -8px 40px rgba(0,0,0,0.15)"}}>
+          <div onClick={function(e){e.stopPropagation();}} style={{background:WHT,width:"100%",maxWidth:480,borderRadius:"24px 24px 0 0",padding:"12px 24px 48px",boxShadow:"0 -8px 40px rgba(0,0,0,0.15)",maxHeight:"88vh",overflowY:"auto"}}>
             <div style={{width:36,height:4,borderRadius:99,background:BGA,margin:"0 auto 20px"}}/>
-            <div style={{fontWeight:900,fontSize:20,color:BLK,marginBottom:4,letterSpacing:"-0.03em",textAlign:"center"}}>Welcome back.</div>
-            <div style={{fontSize:13,color:TMU,textAlign:"center",marginBottom:20}}>Sign in to your FundFlip account.</div>
-            <LoginForm onSuccess={onLogin} onClose={function(){setShowLogin(false);}}/>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+              <div style={{fontWeight:900,fontSize:20,color:BLK,letterSpacing:"-0.03em"}}>Who are you?</div>
+              <button onClick={function(){setShowLogin(false);}} style={{background:BGA,border:"none",borderRadius:8,width:28,height:28,cursor:"pointer",fontSize:14,color:TMU}}>{"×"}</button>
+            </div>
+            <p style={{fontSize:13,color:TMU,marginBottom:20,lineHeight:1.5}}>Select your role to get started or sign in.</p>
+            {[
+              {role:"homeowner",emoji:"🏠",label:"I Own a Property",sub:"Inherited, distressed, or undervalued"},
+              {role:"investor",emoji:"📈",label:"I Want to Invest",sub:"Fund one rehab, earn 40% ROI"},
+              {role:"builder",emoji:"🔨",label:"I'm a Builder",sub:"Consistent work, guaranteed pay"},
+            ].map(function(item){return(
+              <div key={item.role} onClick={function(){setShowLogin(false);onSignUp(item.role==="builder"?"contractor":item.role);}} style={{background:BGA,border:"1px solid "+BRD,borderRadius:14,padding:"16px",marginBottom:10,cursor:"pointer",display:"flex",gap:12,alignItems:"center"}}>
+                <div style={{fontSize:24,flexShrink:0}}>{item.emoji}</div>
+                <div style={{flex:1}}>
+                  <div style={{fontWeight:800,fontSize:14,color:BLK,marginBottom:2}}>{item.label}</div>
+                  <div style={{fontSize:12,color:TMU}}>{item.sub}</div>
+                </div>
+                <div style={{color:TMU,fontSize:18}}>{"›"}</div>
+              </div>
+            );})}
+            <div style={{textAlign:"center",marginTop:16,fontSize:12,color:TL}}>{"Already have an account? "}<span onClick={function(){setShowLogin(false);onLogin();}} style={{color:ROSE,fontWeight:700,cursor:"pointer"}}>Sign in</span></div>
           </div>
         </div>
       )}
@@ -654,86 +700,33 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
       <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:200,height:48,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 5%",background:"rgba(255,255,255,0.92)",backdropFilter:"blur(20px)",borderBottom:"1px solid "+BRD}}>
         <span style={{fontWeight:800,fontSize:13,letterSpacing:"-0.03em",color:BLK,lineHeight:1,background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 12px"}}>Fund<span style={{color:ROSE}}>Flip</span></span>
         <div style={{display:"flex",gap:8,alignItems:"center"}}>
-          <button onClick={function(){setShowLogin(true);}} style={{background:BLK,border:"none",borderRadius:7,padding:"7px 12px",color:WHT,fontSize:13,fontWeight:700,cursor:"pointer",lineHeight:1}}>Client Account</button>
+          <button onClick={function(){setShowLogin(true);}} style={{background:BLK,border:"none",borderRadius:7,padding:"7px 12px",color:WHT,fontSize:13,fontWeight:700,cursor:"pointer",lineHeight:1}}>Select Role</button>
         </div>
       </nav>
 
       <section style={{paddingTop:48,background:WHT}}>
-        <div style={{padding:"20px 6% 0",opacity:vis?1:0,transform:vis?"none":"translateY(24px)",transition:"all 0.8s"}}>
-          <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:14}}>
+        <div style={{padding:"28px 6% 0",opacity:vis?1:0,transform:vis?"none":"translateY(24px)",transition:"all 0.8s"}}>
+
+          <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:20}}>
             <div style={{width:18,height:18,borderRadius:"50%",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontSize:8,color:WHT,fontWeight:800}}>AI</span></div>
-            <span style={{fontSize:11,color:BLK,fontWeight:700}}>We Find It. You Fund It. We Sell It.</span>
+            <span style={{fontSize:11,color:TMU,fontWeight:600,letterSpacing:"0.02em"}}>Powered. Human Backed.</span>
           </div>
 
-          <div style={{display:"flex",gap:6,marginBottom:24,flexWrap:"nowrap"}}>
-            <button onClick={function(){setHeroTab("owner");setActivePopupTab("owner");setShowContractorInfo(false);}} style={{padding:"7px 14px",borderRadius:99,fontSize:11,fontWeight:700,border:"1.5px solid "+(heroTab==="owner"?BLK:BRD),background:heroTab==="owner"?BLK:WHT,color:heroTab==="owner"?WHT:TMU,cursor:"pointer",whiteSpace:"nowrap"}}>I own a home</button>
-            <button onClick={function(){setHeroTab("investor");setActivePopupTab("investor");setShowContractorInfo(false);}} style={{padding:"7px 14px",borderRadius:99,fontSize:11,fontWeight:700,border:"1.5px solid "+(heroTab==="investor"?BLK:BRD),background:heroTab==="investor"?BLK:WHT,color:heroTab==="investor"?WHT:TMU,cursor:"pointer",whiteSpace:"nowrap"}}>I want to invest</button>
-            <button onClick={function(){setHeroTab("contractor");setActivePopupTab("contractor");setShowContractorInfo(false);setShowWho(true);}} style={{padding:"7px 14px",borderRadius:99,fontSize:11,fontWeight:700,border:"1.5px solid "+(heroTab==="contractor"?BLK:BRD),background:heroTab==="contractor"?BLK:WHT,color:heroTab==="contractor"?WHT:TMU,cursor:"pointer",whiteSpace:"nowrap"}}>{"I'm a Contractor"}</button>
-          </div>
+          <h1 style={{fontSize:"clamp(26px,6vw,60px)",fontWeight:900,lineHeight:1.05,letterSpacing:"-0.04em",color:BLK,marginBottom:16}}>
+            {"The First AI Powered"}<br/>
+            {"Platform Built Exclusively"}<br/>
+            {"for "}
+            <span style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{"Inherited & Undervalued"}</span><br/>
+            {"Properties."}
+          </h1>
 
-          {heroTab==="owner"?(
-            <div>
-              <h1 style={{fontSize:"clamp(28px,6vw,64px)",fontWeight:900,lineHeight:1.05,letterSpacing:"-0.04em",color:BLK,marginBottom:16,maxWidth:820}}>
-                {"We Find It. You Fund It."}<br/>
-                <span style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{"FundFlip Sells It."}</span>
-              </h1>
-              <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:16,maxWidth:440}}>
-                {[["Full market value","Your property sells at full ARV — not the discounted cash buyer price."],["Zero upfront cost","FundFlip covers the appraisal. The rehab is funded by your investor. You pay nothing."],["AI match in 48 hrs","Our AI finds the right investor for your property within 2 days of listing."]].map(function(item,i){return(
-                  <div key={i} style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-                    <div style={{width:20,height:20,borderRadius:"50%",background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </div>
-                    <div><span style={{fontWeight:700,fontSize:13,color:BLK}}>{item[0]} — </span><span style={{fontSize:13,color:TMU}}>{item[1]}</span></div>
-                  </div>
-                );})}
-              </div>
-            </div>
-          ):heroTab==="investor"?(
-            <div>
-              <h1 style={{fontSize:"clamp(28px,6vw,64px)",fontWeight:900,lineHeight:1.05,letterSpacing:"-0.04em",color:BLK,marginBottom:16,maxWidth:820}}>
-                {"Fund One Rehab."}<br/>
-                <span style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{"Average 40% ROI."}</span>
-              </h1>
-              <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:16,maxWidth:440}}>
-                {[["Vetted deals only","Every property has a certified ARV, clean title, and a locked rehab scope before you see it."],["1-on-1 direct","You fund one property directly. No pools. No shared risk. Your deal, your terms."],["Escrow protected","All funds go into milestone escrow. Released only when FundFlip AI approves contractor work."]].map(function(item,i){return(
-                  <div key={i} style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-                    <div style={{width:20,height:20,borderRadius:"50%",background:BLK,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </div>
-                    <div><span style={{fontWeight:700,fontSize:13,color:BLK}}>{item[0]} — </span><span style={{fontSize:13,color:TMU}}>{item[1]}</span></div>
-                  </div>
-                );})}
-              </div>
-            </div>
-          ):(
-            <div>
-              <h1 style={{fontSize:"clamp(28px,6vw,64px)",fontWeight:900,lineHeight:1.05,letterSpacing:"-0.04em",color:BLK,marginBottom:16,maxWidth:820}}>
-                {"Get Consistent Rehab Work."}<br/>
-                <span style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{"Paid on Every Milestone."}</span>
-              </h1>
-              <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:16,maxWidth:440}}>
-                {[["Escrow-guaranteed pay","Every dollar is secured in escrow before work begins. No chasing invoices. No payment disputes."],["Clear scope, locked budget","You work from a locked scope. No surprise change orders. No budget arguments mid-rehab."],["Repeat business","Top-rated contractors get first access to every new deal. Build a consistent pipeline."]].map(function(item,i){return(
-                  <div key={i} style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-                    <div style={{width:20,height:20,borderRadius:"50%",background:BGA,border:"1px solid "+BRD,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke={TMU} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </div>
-                    <div><span style={{fontWeight:700,fontSize:13,color:BLK}}>{item[0]} — </span><span style={{fontSize:13,color:TMU}}>{item[1]}</span></div>
-                  </div>
-                );})}
-              </div>
-            </div>
-          )}
+          <p style={{fontSize:14,color:TMU,lineHeight:1.7,maxWidth:400,marginBottom:24}}>
+            {"Connecting distressed property owners with elite investors and reputable builders — for maximum value, zero upfront cost, and full transparency."}
+          </p>
 
-          <div style={{display:"flex",justifyContent:"space-between",marginBottom:28,alignItems:"flex-end",width:"100%"}}>
-            <button onClick={function(){setShowWhy(true);}} style={{display:"flex",alignItems:"center",gap:0,background:"transparent",border:"1.5px solid "+BLK,borderRadius:99,padding:"0 16px",cursor:"pointer",overflow:"hidden",height:32,flexShrink:0}}>
-              <span style={{fontSize:11,fontWeight:800,letterSpacing:"0.12em",textTransform:"uppercase",color:BLK}}>Why FundFlip</span>
-            </button>
-            <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6}}>
-              {heroTab==="owner"&&<button onClick={function(){onSignUp("homeowner");}} style={{background:"none",border:"none",fontSize:12,fontWeight:700,color:TMU,cursor:"pointer",padding:0}}>{"List my property free →"}</button>}
-              {heroTab==="investor"&&<button onClick={function(){onSignUp("investor");}} style={{background:"none",border:"none",fontSize:12,fontWeight:700,color:TMU,cursor:"pointer",padding:0}}>{"Create an investor account →"}</button>}
-              {heroTab==="contractor"&&<button onClick={function(){onSignUp("contractor");}} style={{background:"none",border:"none",fontSize:12,fontWeight:700,color:TMU,cursor:"pointer",padding:0}}>{"Apply to join our network →"}</button>}
-              <button onClick={function(){setShowSpecialist(true);}} style={{fontSize:11,fontWeight:700,color:ROSE,background:"none",border:"none",cursor:"pointer",padding:0,whiteSpace:"nowrap"}}>{"Talk to a Specialist →"}</button>
-            </div>
+          <div style={{display:"flex",gap:10,marginBottom:32,alignItems:"center"}}>
+            <button onClick={function(){setShowLearnMore(true);}} style={{background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 16px",color:ROSE,fontSize:13,fontWeight:700,cursor:"pointer"}}>Learn More</button>
+            <button onClick={function(){setShowSpecialist(true);}} style={{fontSize:11,fontWeight:700,color:TMU,background:"none",border:"none",cursor:"pointer",padding:0}}>{"Talk to a Specialist →"}</button>
           </div>
 
           <div style={{marginBottom:16}}><MilestoneSlideshow/></div>
@@ -1500,7 +1493,9 @@ function AuthPage({onSuccess,initMode,initRole,onBack}){
         body:JSON.stringify({email:email,password:password,data:{name:name,role:role}})
       });
       var data=await res.json();
-      if(data.error){setError(data.error_description||data.error||"Could not create account.");setLoading(false);return;}
+      var fullError=JSON.stringify(data);
+      console.log("Signup response:", fullError);
+      if(data.error||data.msg||data.message){setError((data.error_description||data.error||data.msg||data.message||fullError));setLoading(false);return;}
       var token=data.access_token;
       var uid=data.user?.id;
       if(token&&uid){
