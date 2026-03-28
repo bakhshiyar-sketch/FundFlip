@@ -398,6 +398,193 @@ function LoginForm({onSuccess,onClose}){
   );
 }
 
+function ProtectionFAQ({items}){
+  var [open,setOpen]=useState(null);
+  return(
+    <div style={{padding:"0 6% 32px"}}>
+      <div style={{fontSize:11,fontWeight:700,color:"#F43F5E",textTransform:"uppercase",letterSpacing:"0.12em",marginBottom:16}}>Common Questions</div>
+      {items.map(function(faq,i){return(
+        <div key={i} style={{borderTop:"1px solid rgba(0,0,0,0.07)"}}>
+          <div onClick={function(){setOpen(open===i?null:i);}} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 0",cursor:"pointer"}}>
+            <div style={{fontWeight:700,fontSize:13,color:"#09090B",paddingRight:12,lineHeight:1.3}}>{faq[0]}</div>
+            <div style={{fontSize:18,color:"#71717A",flexShrink:0,transition:"transform 0.2s",transform:open===i?"rotate(45deg)":"rotate(0)"}}>+</div>
+          </div>
+          {open===i&&<div style={{fontSize:12,color:"#71717A",lineHeight:1.7,paddingBottom:14}}>{faq[1]}</div>}
+        </div>
+      );})}
+      <div style={{borderTop:"1px solid rgba(0,0,0,0.07)"}}/>
+    </div>
+  );
+}
+
+function OwnerProtectionPage({onBack,onSignup}){
+  var ROSE="#F43F5E";var ROSE2="#FB7185";var RF="rgba(244,63,94,0.07)";var RB="rgba(244,63,94,0.2)";
+  var BLK="#09090B";var WHT="#FFFFFF";var BG="#FAFAFA";var BGA="#F4F4F5";
+  var TMU="#71717A";var GRN="#10B981";var BRD="rgba(0,0,0,0.07)";
+  return(
+    <div style={{minHeight:"100vh",background:WHT,fontFamily:"Inter,sans-serif",color:BLK}}>
+      <div style={{position:"sticky",top:0,zIndex:200,height:48,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 5%",background:"rgba(255,255,255,0.95)",backdropFilter:"blur(20px)",borderBottom:"1px solid "+BRD}}>
+        <button onClick={onBack} style={{background:"none",border:"none",cursor:"pointer",color:TMU,fontSize:12,fontWeight:600,display:"flex",alignItems:"center",gap:4,padding:0}}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="#71717A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          Back
+        </button>
+        <span style={{fontWeight:800,fontSize:13,color:BLK,background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 12px"}}>Fund<span style={{color:ROSE}}>Flip</span></span>
+        <span style={{fontSize:10,fontWeight:700,color:ROSE,background:RF,border:"1px solid "+RB,borderRadius:99,padding:"3px 10px"}}>Owner Protection</span>
+      </div>
+      <div style={{background:BLK,padding:"36px 6% 32px"}}>
+        <div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.12em",marginBottom:10}}>How You Are Protected</div>
+        <h1 style={{fontSize:"clamp(22px,5vw,44px)",fontWeight:900,color:WHT,letterSpacing:"-0.04em",lineHeight:1.05,marginBottom:14}}>You keep the deed.<br/><span style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>You own it throughout.</span></h1>
+        <p style={{fontSize:13,color:"rgba(255,255,255,0.45)",lineHeight:1.7,maxWidth:380,marginBottom:20}}>You never give up ownership. The JV agreement only governs profit distribution at closing — nothing else.</p>
+        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+          {["You Keep the Deed","No Upfront Cost","Profit at Closing","Licensed Agents Only"].map(function(t){return <span key={t} style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:99,padding:"4px 10px",fontSize:9,fontWeight:600,color:"rgba(255,255,255,0.4)"}}>{t}</span>;})}
+        </div>
+      </div>
+      <div style={{padding:"28px 6% 0"}}>
+        {[
+          {n:"01",t:"You Never Give Up Ownership",s:"The deed stays in your name from listing to closing.",b:"FundFlip's JV agreement is not a purchase agreement. You remain the legal owner throughout. The investor funds the rehab — they do not own any part of your property. The JV contract only governs how net profit is split at closing.",badge:"Deed In Your Name",green:true},
+          {n:"02",t:"Zero Upfront Cost",s:"FundFlip covers the appraisal. The investor covers the rehab.",b:"Listing is free. FundFlip orders the certified ARV appraisal at no cost to you. The investor funds the entire rehab into escrow. You pay nothing until your property sells.",badge:"$0 Out of Pocket",green:true},
+          {n:"03",t:"FundFlip Controls the Listing Agent",s:"Not the investor's agent — an agent who works for your sale price.",b:"FundFlip selects the listing agent from our exclusive vetted network — not the investor's preferred agent. Our agents are incentivized to maximize your sale price.",badge:"Independent Agent",green:true},
+          {n:"04",t:"Automatic Profit at Closing",s:"Your 50% is paid directly from escrow. No disputes.",b:"At closing, proceeds are distributed automatically per the JV contract. Your 50% of net profit is released directly from escrow — the investor cannot block or delay your payment.",badge:"Auto-Distributed",green:false},
+          {n:"05",t:"Right to Walk Away Before Signing",s:"No commitment until you sign. No penalty if you change your mind.",b:"You are never locked in until the JV contract is signed. Reviewing the deal, meeting the investor, and seeing the rehab scope all happen before you commit.",badge:"No Lock-In Pre-Contract",green:true},
+        ].map(function(item){return(
+          <div key={item.n} style={{borderTop:"1px solid "+BRD,paddingTop:20,paddingBottom:20}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}>
+              <div style={{fontSize:10,fontWeight:800,color:ROSE}}>{item.n}</div>
+              <span style={{fontSize:9,fontWeight:700,color:item.green?GRN:ROSE,background:item.green?"rgba(16,185,129,0.08)":RF,border:"1px solid "+(item.green?"rgba(16,185,129,0.2)":RB),borderRadius:99,padding:"2px 8px",marginLeft:8,whiteSpace:"nowrap"}}>{item.badge}</span>
+            </div>
+            <div style={{fontWeight:900,fontSize:16,color:BLK,letterSpacing:"-0.02em",marginBottom:3}}>{item.t}</div>
+            <div style={{fontSize:11,color:ROSE,fontWeight:600,marginBottom:10}}>{item.s}</div>
+            <div style={{fontSize:12,color:TMU,lineHeight:1.7}}>{item.b}</div>
+          </div>
+        );})}
+      </div>
+      <ProtectionFAQ items={[
+        ["Do I give up ownership?","Never. You hold the deed throughout. The JV agreement only governs profit distribution at closing — not ownership."],
+        ["What if I change my mind before signing?","No penalty. You can walk away at any point before the JV contract is signed by both parties."],
+        ["Who selects the listing agent?","FundFlip selects the agent from our exclusive vetted network — not the investor. Our agents are incentivized to maximize your sale price."],
+        ["What if my property doesn't sell at ARV?","Any price adjustment requires mutual written consent from both parties."],
+      ]}/>
+      <div style={{margin:"0 6% 48px",background:RF,border:"1px solid "+RB,borderRadius:16,padding:"20px",textAlign:"center"}}>
+        <div style={{fontWeight:900,fontSize:16,color:BLK,marginBottom:6}}>Ready to list your property?</div>
+        <div style={{fontSize:12,color:TMU,marginBottom:16,lineHeight:1.6}}>Free to list. No upfront cost. Full market value at closing.</div>
+        <button onClick={onSignup} style={{background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 16px",color:ROSE,fontSize:13,fontWeight:700,cursor:"pointer"}}>{"List My Property — Free →"}</button>
+      </div>
+    </div>
+  );
+}
+
+function InvestorProtectionPage({onBack,onSignup}){
+  var ROSE="#F43F5E";var ROSE2="#FB7185";var RF="rgba(244,63,94,0.07)";var RB="rgba(244,63,94,0.2)";
+  var BLK="#09090B";var WHT="#FFFFFF";var BG="#FAFAFA";var BGA="#F4F4F5";
+  var TMU="#71717A";var GRN="#10B981";var BRD="rgba(0,0,0,0.07)";
+  return(
+    <div style={{minHeight:"100vh",background:WHT,fontFamily:"Inter,sans-serif",color:BLK}}>
+      <div style={{position:"sticky",top:0,zIndex:200,height:48,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 5%",background:"rgba(255,255,255,0.95)",backdropFilter:"blur(20px)",borderBottom:"1px solid "+BRD}}>
+        <button onClick={onBack} style={{background:"none",border:"none",cursor:"pointer",color:TMU,fontSize:12,fontWeight:600,display:"flex",alignItems:"center",gap:4,padding:0}}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="#71717A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          Back
+        </button>
+        <span style={{fontWeight:800,fontSize:13,color:BLK,background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 12px"}}>Fund<span style={{color:ROSE}}>Flip</span></span>
+        <span style={{fontSize:10,fontWeight:700,color:ROSE,background:RF,border:"1px solid "+RB,borderRadius:99,padding:"3px 10px"}}>Investor Protection</span>
+      </div>
+      <div style={{background:BLK,padding:"36px 6% 32px"}}>
+        <div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.12em",marginBottom:10}}>How Your Money Is Protected</div>
+        <h1 style={{fontSize:"clamp(22px,5vw,44px)",fontWeight:900,color:WHT,letterSpacing:"-0.04em",lineHeight:1.05,marginBottom:14}}>Your capital is secured.<br/><span style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Before Day One.</span></h1>
+        <p style={{fontSize:13,color:"rgba(255,255,255,0.45)",lineHeight:1.7,maxWidth:380,marginBottom:20}}>Attorney-drafted contracts. Recorded deed of trust. FDIC-insured escrow. Every deal is legally protected — not just promised.</p>
+        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+          {["Deed of Trust","Escrow Protected","Attorney Contract","State-Specific Law"].map(function(t){return <span key={t} style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:99,padding:"4px 10px",fontSize:9,fontWeight:600,color:"rgba(255,255,255,0.4)"}}>{t}</span>;})}
+        </div>
+      </div>
+      <div style={{padding:"28px 6% 0"}}>
+        {[
+          {n:"01",t:"Attorney-Drafted JV Contract",s:"State-specific. Enforceable. Built for this deal structure.",b:"Every deal uses a Joint Venture agreement drafted by a licensed real estate attorney in the property's state. It governs profit split, timeline, escrow releases, and every default scenario. Both parties sign digitally before any funds move.",badge:"CA Live · CO & VA In Review",green:true},
+          {n:"02",t:"Deed of Trust Recorded First",s:"Your money is secured against the property — like a bank.",b:"Before rehab begins, FundFlip records a deed of trust against the property at the county recorder. The property cannot be sold, refinanced, or transferred without satisfying the investor's claim first.",badge:"Recorded Before Day 1",green:true},
+          {n:"03",t:"FDIC-Insured Milestone Escrow",s:"Funds never touch the owner. Released only at verified milestones.",b:"All capital goes into a licensed, FDIC-insured escrow account. Funds release in 4 stages only after FundFlip AI verifies completed work against the locked scope.",badge:"4 Milestones · AI Verified",green:false},
+          {n:"04",t:"Locked Scope & Budget",s:"No overruns. No surprises. Everything agreed before funding.",b:"Scope, budget, and timeline are locked and attached to the JV contract before any funding. FundFlip collects 3 bids and selects the best. Change orders require written approval from both parties.",badge:"3 Bids · Scope Locked",green:false},
+          {n:"05",t:"Default — Every Scenario Covered",s:"What happens if something goes wrong. In plain English.",b:"Owner backs out before rehab — full escrow refund in 5 days. During rehab — deed of trust enforceable, all costs recoverable. After rehab — property cannot close without satisfying investor's claim.",badge:"All Scenarios In Contract",green:true},
+        ].map(function(item){return(
+          <div key={item.n} style={{borderTop:"1px solid "+BRD,paddingTop:20,paddingBottom:20}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}>
+              <div style={{fontSize:10,fontWeight:800,color:ROSE}}>{item.n}</div>
+              <span style={{fontSize:9,fontWeight:700,color:item.green?GRN:ROSE,background:item.green?"rgba(16,185,129,0.08)":RF,border:"1px solid "+(item.green?"rgba(16,185,129,0.2)":RB),borderRadius:99,padding:"2px 8px",marginLeft:8,whiteSpace:"nowrap"}}>{item.badge}</span>
+            </div>
+            <div style={{fontWeight:900,fontSize:16,color:BLK,letterSpacing:"-0.02em",marginBottom:3}}>{item.t}</div>
+            <div style={{fontSize:11,color:ROSE,fontWeight:600,marginBottom:10}}>{item.s}</div>
+            <div style={{fontSize:12,color:TMU,lineHeight:1.7}}>{item.b}</div>
+          </div>
+        );})}
+      </div>
+      <ProtectionFAQ items={[
+        ["Do I need to be accredited?","No. FundFlip deals are direct JV agreements between two private parties — not a security. Accredited investor status is not required."],
+        ["What if the owner backs out after rehab?","The deed of trust recorded before rehab means the property cannot sell without you being paid first."],
+        ["What if rehab goes over budget?","Budget is locked in the JV contract. Overruns are the builder's responsibility. FundFlip AI monitors all spending at every milestone."],
+        ["Are contracts different by state?","Yes. FundFlip maintains attorney-drafted, state-specific JV templates for every market we operate in."],
+      ]}/>
+      <div style={{margin:"0 6% 48px",background:RF,border:"1px solid "+RB,borderRadius:16,padding:"20px",textAlign:"center"}}>
+        <div style={{fontWeight:900,fontSize:16,color:BLK,marginBottom:6}}>Ready to fund your first deal?</div>
+        <div style={{fontSize:12,color:TMU,marginBottom:16,lineHeight:1.6}}>Every active deal has a certified ARV, attorney-drafted JV contract, and escrow ready.</div>
+        <button onClick={onSignup} style={{background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 16px",color:ROSE,fontSize:13,fontWeight:700,cursor:"pointer"}}>{"Create Investor Account →"}</button>
+      </div>
+    </div>
+  );
+}
+
+function BuilderProtectionPage({onBack,onSignup}){
+  var ROSE="#F43F5E";var ROSE2="#FB7185";var RF="rgba(244,63,94,0.07)";var RB="rgba(244,63,94,0.2)";
+  var BLK="#09090B";var WHT="#FFFFFF";var BG="#FAFAFA";var BGA="#F4F4F5";
+  var TMU="#71717A";var GRN="#10B981";var BRD="rgba(0,0,0,0.07)";
+  return(
+    <div style={{minHeight:"100vh",background:WHT,fontFamily:"Inter,sans-serif",color:BLK}}>
+      <div style={{position:"sticky",top:0,zIndex:200,height:48,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 5%",background:"rgba(255,255,255,0.95)",backdropFilter:"blur(20px)",borderBottom:"1px solid "+BRD}}>
+        <button onClick={onBack} style={{background:"none",border:"none",cursor:"pointer",color:TMU,fontSize:12,fontWeight:600,display:"flex",alignItems:"center",gap:4,padding:0}}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="#71717A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          Back
+        </button>
+        <span style={{fontWeight:800,fontSize:13,color:BLK,background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 12px"}}>Fund<span style={{color:ROSE}}>Flip</span></span>
+        <span style={{fontSize:10,fontWeight:700,color:ROSE,background:RF,border:"1px solid "+RB,borderRadius:99,padding:"3px 10px"}}>Builder Protection</span>
+      </div>
+      <div style={{background:BLK,padding:"36px 6% 32px"}}>
+        <div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.12em",marginBottom:10}}>How You Are Protected</div>
+        <h1 style={{fontSize:"clamp(22px,5vw,44px)",fontWeight:900,color:WHT,letterSpacing:"-0.04em",lineHeight:1.05,marginBottom:14}}>Every dollar secured.<br/><span style={{background:"linear-gradient(135deg,"+ROSE+","+ROSE2+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Before you lift a hammer.</span></h1>
+        <p style={{fontSize:13,color:"rgba(255,255,255,0.45)",lineHeight:1.7,maxWidth:380,marginBottom:20}}>Escrow-guaranteed payments. Locked scope. No invoice chasing. FundFlip makes sure you get paid for every dollar of work you complete.</p>
+        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+          {["Escrow Guaranteed","Locked Scope","4 Milestone Payments","No Invoice Chasing"].map(function(t){return <span key={t} style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:99,padding:"4px 10px",fontSize:9,fontWeight:600,color:"rgba(255,255,255,0.4)"}}>{t}</span>;})}
+        </div>
+      </div>
+      <div style={{padding:"28px 6% 0"}}>
+        {[
+          {n:"01",t:"Escrow Funded Before You Start",s:"The full rehab budget is in escrow before Day 1.",b:"Before you begin any work, FundFlip confirms the full rehab budget is funded and secured in a licensed, FDIC-insured escrow account. You never start a job without guaranteed payment waiting.",badge:"Funded Before Day 1",green:true},
+          {n:"02",t:"Milestone Payments — 4 Stages",s:"You get paid as you complete work. No waiting until the end.",b:"Payment releases in 4 stages: Demo 20%, Rough-in 25%, Finishes 35%, Final 20%. Submit photos and a completion report. FundFlip AI verifies the work. Approved — funds release automatically.",badge:"4 Auto-Releases",green:true},
+          {n:"03",t:"Locked Scope — No Surprises",s:"You know exactly what you're building before you start.",b:"Every job has a fully locked scope attached to the builder agreement. No verbal change orders. If additional work is requested, it requires a written change order approved by all parties — and you get paid for it.",badge:"Scope Locked In Writing",green:false},
+          {n:"04",t:"Builder Agreement Protects Your Work",s:"Your rights are documented before the first nail.",b:"Every FundFlip builder signs a builder agreement that documents your scope, payment schedule, timeline, and dispute resolution rights. Completed milestone payments are non-refundable and already released.",badge:"Signed Before Work Starts",green:true},
+          {n:"05",t:"Rating System Rewards Quality",s:"Top-rated builders get first access to every new deal.",b:"Every deal you complete earns you a performance rating. Consistent high ratings mean you get first right of refusal on every new deal in your market. Quality work directly translates to more income.",badge:"Rating = Priority Access",green:false},
+        ].map(function(item){return(
+          <div key={item.n} style={{borderTop:"1px solid "+BRD,paddingTop:20,paddingBottom:20}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}>
+              <div style={{fontSize:10,fontWeight:800,color:ROSE}}>{item.n}</div>
+              <span style={{fontSize:9,fontWeight:700,color:item.green?GRN:ROSE,background:item.green?"rgba(16,185,129,0.08)":RF,border:"1px solid "+(item.green?"rgba(16,185,129,0.2)":RB),borderRadius:99,padding:"2px 8px",marginLeft:8,whiteSpace:"nowrap"}}>{item.badge}</span>
+            </div>
+            <div style={{fontWeight:900,fontSize:16,color:BLK,letterSpacing:"-0.02em",marginBottom:3}}>{item.t}</div>
+            <div style={{fontSize:11,color:ROSE,fontWeight:600,marginBottom:10}}>{item.s}</div>
+            <div style={{fontSize:12,color:TMU,lineHeight:1.7}}>{item.b}</div>
+          </div>
+        );})}
+      </div>
+      <ProtectionFAQ items={[
+        ["What if the deal falls apart mid-rehab?","Any milestones you've completed and had approved are already paid — those funds are yours."],
+        ["What if the owner requests extra work not in scope?","All change orders must be written and approved by all parties before you begin additional work."],
+        ["How quickly are milestone payments released?","Once FundFlip AI approves your milestone, funds release within 1-2 business days directly from escrow."],
+        ["Can I work on multiple FundFlip deals at once?","Yes. Top-rated builders often carry 2-3 active deals simultaneously."],
+      ]}/>
+      <div style={{margin:"0 6% 48px",background:RF,border:"1px solid "+RB,borderRadius:16,padding:"20px",textAlign:"center"}}>
+        <div style={{fontWeight:900,fontSize:16,color:BLK,marginBottom:6}}>Ready to join the network?</div>
+        <div style={{fontSize:12,color:TMU,marginBottom:16,lineHeight:1.6}}>Consistent work. Guaranteed pay. Apply in 3 minutes.</div>
+        <button onClick={onSignup} style={{background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 16px",color:ROSE,fontSize:13,fontWeight:700,cursor:"pointer"}}>{"Apply to Join Our Network →"}</button>
+      </div>
+    </div>
+  );
+}
+
 function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
   var [vis,setVis]=useState(false);
   var [faqOpen,setFaqOpen]=useState(null);
@@ -431,6 +618,8 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
   var [heroTab,setHeroTab]=useState("owner");
   var [showWhy,setShowWhy]=useState(false);
   var [showLearnMore,setShowLearnMore]=useState(false);
+  var [showRoleDetail,setShowRoleDetail]=useState(null);
+  var [showProtection,setShowProtection]=useState(null);
   useEffect(function(){setTimeout(function(){setVis(true);},100);},[]);
 
   var faqs=[
@@ -446,6 +635,19 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
 
   return(
     <div style={{minHeight:"100vh",background:WHT,fontFamily:"Inter,sans-serif",color:BLK,overflowX:"hidden"}}>
+      {showProtection&&(
+        <div style={{position:"fixed",inset:0,zIndex:10000,background:WHT,overflowY:"auto"}}>
+          {showProtection==="homeowner"&&(
+            <OwnerProtectionPage onBack={function(){setShowProtection(null);}} onSignup={function(){setShowProtection(null);onSignUp("homeowner");}}/>
+          )}
+          {showProtection==="investor"&&(
+            <InvestorProtectionPage onBack={function(){setShowProtection(null);}} onSignup={function(){setShowProtection(null);onSignUp("investor");}}/>
+          )}
+          {showProtection==="builder"&&(
+            <BuilderProtectionPage onBack={function(){setShowProtection(null);}} onSignup={function(){setShowProtection(null);onSignUp("contractor");}}/>
+          )}
+        </div>
+      )}
       {showWho&&(
         <div onClick={function(){setShowWho(false);setShowContractorInfo(false);}} style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(8px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
           <div onClick={function(e){e.stopPropagation();}} style={{background:WHT,width:"100%",maxWidth:560,borderRadius:"24px 24px 0 0",padding:"12px 24px 48px",boxShadow:"0 -8px 40px rgba(0,0,0,0.15)",maxHeight:"88vh",overflowY:"auto"}}>
@@ -601,29 +803,97 @@ function Landing({onDash,onOwner,onContractor,onInvestor,onLogin,onSignUp}){
         </div>
       )}
       {showLogin&&(
-        <div onClick={function(){setShowLogin(false);}} style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(8px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+        <div onClick={function(){setShowLogin(false);setShowRoleDetail(null);}} style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(8px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
           <div onClick={function(e){e.stopPropagation();}} style={{background:WHT,width:"100%",maxWidth:480,borderRadius:"24px 24px 0 0",padding:"12px 24px 48px",boxShadow:"0 -8px 40px rgba(0,0,0,0.15)",maxHeight:"88vh",overflowY:"auto"}}>
             <div style={{width:36,height:4,borderRadius:99,background:BGA,margin:"0 auto 20px"}}/>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
-              <div style={{fontWeight:900,fontSize:20,color:BLK,letterSpacing:"-0.03em"}}>Who are you?</div>
-              <button onClick={function(){setShowLogin(false);}} style={{background:BGA,border:"none",borderRadius:8,width:28,height:28,cursor:"pointer",fontSize:14,color:TMU}}>{"×"}</button>
-            </div>
-            <p style={{fontSize:13,color:TMU,marginBottom:20,lineHeight:1.5}}>Select your role to get started or sign in.</p>
-            {[
-              {role:"homeowner",emoji:"🏠",label:"I Own a Property",sub:"Inherited, distressed, or undervalued"},
-              {role:"investor",emoji:"📈",label:"I Want to Invest",sub:"Fund one rehab, earn 40% ROI"},
-              {role:"builder",emoji:"🔨",label:"I'm a Builder",sub:"Consistent work, guaranteed pay"},
-            ].map(function(item){return(
-              <div key={item.role} onClick={function(){setShowLogin(false);onSignUp(item.role==="builder"?"contractor":item.role);}} style={{background:BGA,border:"1px solid "+BRD,borderRadius:14,padding:"16px",marginBottom:10,cursor:"pointer",display:"flex",gap:12,alignItems:"center"}}>
-                <div style={{fontSize:24,flexShrink:0}}>{item.emoji}</div>
-                <div style={{flex:1}}>
-                  <div style={{fontWeight:800,fontSize:14,color:BLK,marginBottom:2}}>{item.label}</div>
-                  <div style={{fontSize:12,color:TMU}}>{item.sub}</div>
-                </div>
-                <div style={{color:TMU,fontSize:18}}>{"›"}</div>
+            {showRoleDetail?(
+              <div>
+                <button onClick={function(){setShowRoleDetail(null);}} style={{background:"none",border:"none",color:TMU,fontSize:12,cursor:"pointer",marginBottom:16,padding:0,display:"flex",alignItems:"center",gap:4}}>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="#71717A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  Back
+                </button>
+                {showRoleDetail==="homeowner"&&(
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:ROSE,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:6}}>For Property Owners</div>
+                    <div style={{fontWeight:900,fontSize:20,color:BLK,marginBottom:4,letterSpacing:"-0.03em"}}>{"Here's exactly how it works."}</div>
+                    <div style={{fontSize:13,color:TMU,marginBottom:16,lineHeight:1.5}}>No upfront cost. No risk. Your property sells at full market value.</div>
+                    <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+                      {[["01","List your property free","Submit in 3 minutes. FundFlip orders a certified ARV appraisal at no cost to you."],["02","AI matches you with an elite investor","Our AI finds the right investor for your property within 48 hours."],["03","Investor funds the full rehab","Full cost goes into escrow. You pay nothing. Work begins immediately."],["04","FundFlip AI monitors every milestone","Builder submits photos at each stage. AI verifies before funds release."],["05","Property sells — you collect 50%","At closing proceeds split per JV contract. Automatically. No disputes."]].map(function(item){return(
+                        <div key={item[0]} style={{display:"flex",gap:12,alignItems:"flex-start"}}>
+                          <div style={{fontSize:10,fontWeight:800,color:ROSE,minWidth:20,paddingTop:1}}>{item[0]}</div>
+                          <div><div style={{fontWeight:700,fontSize:13,color:BLK,marginBottom:2}}>{item[1]}</div><div style={{fontSize:11,color:TMU,lineHeight:1.5}}>{item[2]}</div></div>
+                        </div>
+                      );})}
+                    </div>
+                    <div style={{display:"flex",gap:10,alignItems:"center",marginTop:4}}>
+                      <button onClick={function(){setShowLogin(false);setShowRoleDetail(null);onSignUp("homeowner");}} style={{background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 16px",color:ROSE,fontSize:13,fontWeight:700,cursor:"pointer"}}>Get Started →</button>
+                      <button onClick={function(){setShowProtection("homeowner");}} style={{background:"none",border:"none",fontSize:11,fontWeight:600,color:TMU,cursor:"pointer",padding:0,textDecoration:"underline"}}>How you're protected</button>
+                    </div>
+                  </div>
+                )}
+                {showRoleDetail==="investor"&&(
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:6}}>For Investors</div>
+                    <div style={{fontWeight:900,fontSize:20,color:BLK,marginBottom:4,letterSpacing:"-0.03em"}}>{"Here's exactly how it works."}</div>
+                    <div style={{fontSize:13,color:TMU,marginBottom:16,lineHeight:1.5}}>Vetted deals. Escrow-protected funds. Average 40% ROI.</div>
+                    <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+                      {[["01","Browse AI-matched deals","Every deal has a certified ARV, verified title, locked rehab scope, and projected ROI."],["02","Review the full deal room","See property photos, ARV report, builder profile, rehab budget, and projected profit."],["03","Fund the rehab into escrow","Wire into FDIC-insured milestone escrow. Funds never touch the owner directly."],["04","FundFlip AI monitors all progress","Builder submits photos at each stage. AI verifies and releases funds automatically."],["05","Property sells — you collect 40%","At closing you receive 40% of net profit. Average 38-44% ROI in 3-6 months."]].map(function(item){return(
+                        <div key={item[0]} style={{display:"flex",gap:12,alignItems:"flex-start"}}>
+                          <div style={{fontSize:10,fontWeight:800,color:BLK,minWidth:20,paddingTop:1}}>{item[0]}</div>
+                          <div><div style={{fontWeight:700,fontSize:13,color:BLK,marginBottom:2}}>{item[1]}</div><div style={{fontSize:11,color:TMU,lineHeight:1.5}}>{item[2]}</div></div>
+                        </div>
+                      );})}
+                    </div>
+                    <div style={{display:"flex",gap:10,alignItems:"center",marginTop:4}}>
+                      <button onClick={function(){setShowLogin(false);setShowRoleDetail(null);onSignUp("investor");}} style={{background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 16px",color:ROSE,fontSize:13,fontWeight:700,cursor:"pointer"}}>Get Started →</button>
+                      <button onClick={function(){setShowProtection("investor");}} style={{background:"none",border:"none",fontSize:11,fontWeight:600,color:TMU,cursor:"pointer",padding:0,textDecoration:"underline"}}>How you're protected</button>
+                    </div>
+                  </div>
+                )}
+                {showRoleDetail==="builder"&&(
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:BLK,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:6}}>For Builders</div>
+                    <div style={{fontWeight:900,fontSize:20,color:BLK,marginBottom:4,letterSpacing:"-0.03em"}}>Why join FundFlip?</div>
+                    <div style={{fontSize:13,color:TMU,marginBottom:16,lineHeight:1.5}}>Consistent work. Guaranteed pay. No chasing clients.</div>
+                    <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+                      {[["01","Escrow-guaranteed pay","Every dollar secured before work starts. Paid on every milestone automatically."],["02","Consistent deal flow","Steady pipeline of vetted rehab projects. No slow seasons. No marketing needed."],["03","Clear scope, locked budget","Every job has a locked scope. No surprise change orders. No mid-rehab disputes."],["04","Build your reputation","Every deal earns you a rating. Top builders get first access to every new deal."],["05","Work with serious investors","Every investor is vetted and funded. No flaky clients. No deals that fall through."]].map(function(item){return(
+                        <div key={item[0]} style={{display:"flex",gap:12,alignItems:"flex-start"}}>
+                          <div style={{fontSize:10,fontWeight:800,color:BLK,minWidth:20,paddingTop:1}}>{item[0]}</div>
+                          <div><div style={{fontWeight:700,fontSize:13,color:BLK,marginBottom:2}}>{item[1]}</div><div style={{fontSize:11,color:TMU,lineHeight:1.5}}>{item[2]}</div></div>
+                        </div>
+                      );})}
+                    </div>
+                    <div style={{display:"flex",gap:10,alignItems:"center",marginTop:4}}>
+                      <button onClick={function(){setShowLogin(false);setShowRoleDetail(null);onSignUp("contractor");}} style={{background:BGA,border:"1px solid "+BRD,borderRadius:7,padding:"7px 16px",color:ROSE,fontSize:13,fontWeight:700,cursor:"pointer"}}>Get Started →</button>
+                      <button onClick={function(){setShowProtection("builder");}} style={{background:"none",border:"none",fontSize:11,fontWeight:600,color:TMU,cursor:"pointer",padding:0,textDecoration:"underline"}}>How you're protected</button>
+                    </div>
+                  </div>
+                )}
               </div>
-            );})}
-            <div style={{textAlign:"center",marginTop:16,fontSize:12,color:TL}}>{"Already have an account? "}<span onClick={function(){setShowLogin(false);onLogin();}} style={{color:ROSE,fontWeight:700,cursor:"pointer"}}>Sign in</span></div>
+            ):(
+              <div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+                  <div style={{fontWeight:900,fontSize:20,color:BLK,letterSpacing:"-0.03em"}}>Who are you?</div>
+                  <button onClick={function(){setShowLogin(false);}} style={{background:BGA,border:"none",borderRadius:8,width:28,height:28,cursor:"pointer",fontSize:14,color:TMU}}>{"×"}</button>
+                </div>
+                <p style={{fontSize:13,color:TMU,marginBottom:20,lineHeight:1.5}}>Select your role to learn how FundFlip works for you.</p>
+                {[
+                  {role:"homeowner",emoji:"🏠",label:"I Own a Property",sub:"Inherited, distressed, or undervalued"},
+                  {role:"investor",emoji:"📈",label:"I Want to Invest",sub:"Fund one rehab, earn 40% ROI"},
+                  {role:"builder",emoji:"🔨",label:"I'm a Builder",sub:"Consistent work, guaranteed pay"},
+                ].map(function(item){return(
+                  <div key={item.role} onClick={function(){setShowRoleDetail(item.role);}} style={{background:BGA,border:"1px solid "+BRD,borderRadius:14,padding:"16px",marginBottom:10,cursor:"pointer",display:"flex",gap:12,alignItems:"center"}}>
+                    <div style={{fontSize:24,flexShrink:0}}>{item.emoji}</div>
+                    <div style={{flex:1}}>
+                      <div style={{fontWeight:800,fontSize:14,color:BLK,marginBottom:2}}>{item.label}</div>
+                      <div style={{fontSize:12,color:TMU}}>{item.sub}</div>
+                    </div>
+                    <div style={{color:TMU,fontSize:18}}>{"›"}</div>
+                  </div>
+                );})}
+                <div style={{textAlign:"center",marginTop:16,fontSize:12,color:TL}}>{"Already have an account? "}<span onClick={function(){setShowLogin(false);onLogin();}} style={{color:ROSE,fontWeight:700,cursor:"pointer"}}>Sign in</span></div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -1771,6 +2041,8 @@ function App(){
     setTimeout(function(){setFadeOut(true);},1700);
     setTimeout(function(){setSplash(false);setTimeout(function(){setLandingVis(true);},50);},2000);
   },[]);
+  var [savedScroll,setSavedScroll]=useState(0);
+
   function handleAuthSuccess(userData){
     setUser(userData);
     if(userData.role==="homeowner")setView("owner");
@@ -1780,6 +2052,16 @@ function App(){
   function handleLogout(){
     setUser(null);
     setView("landing");
+    setTimeout(function(){window.scrollTo(0,0);},50);
+  }
+  function goToView(v){
+    setSavedScroll(window.scrollY);
+    setView(v);
+    window.scrollTo(0,0);
+  }
+  function goBack(){
+    setView("landing");
+    setTimeout(function(){window.scrollTo(0,savedScroll);},50);
   }
   if(splash) return(
     <div style={{minHeight:"100vh",background:BLK,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"Inter,sans-serif",opacity:fadeOut?0:1,transition:"opacity 0.5s ease"}}>
@@ -1792,13 +2074,13 @@ function App(){
   );
   return(
     <div style={{opacity:landingVis?1:0,transform:landingVis?"none":"translateY(12px)",transition:"opacity 0.7s ease, transform 0.7s ease"}}>
-      {view==="landing"&&<Landing onDash={function(){setView("auth");}} onOwner={function(){setView("listing");}} onContractor={function(){setView("contractor-apply");}} onInvestor={function(){setView("auth");}} onLogin={handleAuthSuccess} onSignUp={function(role){setAuthInitRole(role);setView("auth-register");}}/>}
-      {view==="listing"&&<ListingFlow onBack={function(){setView("landing");}} onCreateAccount={function(em){setPrefillEmail(em);setView("auth");}}/>}
-      {view==="auth"&&<AuthPage onSuccess={handleAuthSuccess} prefillEmail={prefillEmail} initMode="login" onBack={function(){setView("landing");}}/>}
-      {view==="auth-register"&&<AuthPage onSuccess={handleAuthSuccess} initMode="register" initRole={authInitRole} onBack={function(){setView("landing");}}/>}
+      {view==="landing"&&<Landing onDash={function(){goToView("auth");}} onOwner={function(){goToView("listing");}} onContractor={function(){goToView("contractor-apply");}} onInvestor={function(){goToView("auth");}} onLogin={handleAuthSuccess} onSignUp={function(role){setAuthInitRole(role);goToView("auth-register");}}/>}
+      {view==="listing"&&<ListingFlow onBack={goBack} onCreateAccount={function(em){setPrefillEmail(em);goToView("auth");}}/>}
+      {view==="auth"&&<AuthPage onSuccess={handleAuthSuccess} prefillEmail={prefillEmail} initMode="login" onBack={goBack}/>}
+      {view==="auth-register"&&<AuthPage onSuccess={handleAuthSuccess} initMode="register" initRole={authInitRole} onBack={goBack}/>}
       {view==="contractor"&&user&&<ContractorDash onBack={handleLogout} demo={user.demo} name={user.name}/>}
-      {view==="contractor-apply"&&<ContractorSignup onBack={function(){setView("landing");}}/>}
-      {view==="investor"&&<InvestorDash onBack={handleLogout} onDeal={function(d){setSelectedDeal(d);setView("dealroom");}} demo={user&&user.demo} name={user&&user.name}/>}
+      {view==="contractor-apply"&&<ContractorSignup onBack={goBack}/>}
+      {view==="investor"&&<InvestorDash onBack={handleLogout} onDeal={function(d){setSelectedDeal(d);goToView("dealroom");}} demo={user&&user.demo} name={user&&user.name}/>}
       {view==="owner"&&<OwnerDash onBack={handleLogout} demo={user&&user.demo} name={user&&user.name}/>}
       {view==="dealroom"&&selectedDeal&&<DealRoom d={selectedDeal} onBack={function(){setView("investor");}}/>}
     </div>
